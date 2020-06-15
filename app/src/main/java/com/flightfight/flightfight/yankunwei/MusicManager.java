@@ -1,9 +1,11 @@
 package com.flightfight.flightfight.yankunwei;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +18,7 @@ public class MusicManager {
     private MediaPlayer bgmMediaPlayer;
     private static final MusicManager musicManager = new MusicManager();
 
-    public static MusicManager getInstance() {
+    public static synchronized MusicManager getInstance() {
         return musicManager;
     }
 
@@ -28,7 +30,8 @@ public class MusicManager {
         loadSoundEffect(context);
         bgmMediaPlayer = new MediaPlayer();
         try {
-            bgmMediaPlayer.setDataSource(context.getApplicationContext().getAssets().openFd("sounds/background_music.mp3"));
+            AssetFileDescriptor assetFileDescriptor = context.getApplicationContext().getAssets().openFd("sounds/blast.wav");
+            bgmMediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
             bgmMediaPlayer.prepare();
             bgmMediaPlayer.setLooping(true);
         } catch (IOException e) {
@@ -39,7 +42,8 @@ public class MusicManager {
     private void loadSoundEffect(Context context) {
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(context.getApplicationContext().getAssets().openFd("sounds/blast.wav"));
+            AssetFileDescriptor assetFileDescriptor = context.getApplicationContext().getAssets().openFd("sounds/blast.wav");
+            mediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
             mediaPlayer.prepare();
             soundNameMap.put(SOUND_EXPLOSION, mediaPlayer);
         } catch (IOException e) {
@@ -82,7 +86,7 @@ public class MusicManager {
     }
 
     public void play(String soundType, int leftVolume, int rightVolume, boolean loop) {
-        MediaPlayer mediaPlayer = soundNameMap.get("SOUND_EXPLOSION");
+        MediaPlayer mediaPlayer = soundNameMap.get(soundType);
         if (mediaPlayer == null) {
             throw new IllegalArgumentException("Sound type: " + soundType + " not exist");
         }
