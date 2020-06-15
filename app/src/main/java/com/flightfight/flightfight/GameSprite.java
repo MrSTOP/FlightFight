@@ -16,20 +16,21 @@ public class GameSprite {
     public static final int UP = 3;
 
 
-    private Bitmap[] spriteBitmaps;
-    private int totalFrames;
-    private int currentFrame;
-    private float width;
-    private float height;
-    private float x;
-    private float y;
-    private int dir;
-    private float speed;
-    private boolean active;
-    private float ratio;
-    private int alpha;
-    private boolean flip;
-
+    private Bitmap[] spriteBitmaps;         //Sprite位图（有动画的大于1，无动画的为1）
+    private int totalFrames;                //动画总帧数
+    private int currentFrame;               //当前帧
+    private float width;                    //Sprite宽（有动画的Sprite，该值是帧宽）
+    private float height;                   //Sprite高（有动画的Sprite，该值是帧高）
+    private float x;                        //Sprite的x坐标
+    private float y;                        //Sprite的y坐标
+    private int dir;                        //Sprite方向
+    private float speed;                    //Sprite当前行走方向
+    private boolean active;                 //Sprite是否可动
+    private float ratio;                    //图像缩小比例（小于1缩小，大于1放大）
+    private int alpha;                      //透明度
+    private boolean flip;                   //是否水平翻转
+    private int hp;                     //血量
+    private int life;                   //生命数
 
     private RectF boundRect;
 
@@ -50,6 +51,10 @@ public class GameSprite {
 
     }
 
+    //构造具有帧动画的Sprite
+    //rowBitmap：有帧图的原始动画位图
+    //totalFrames：帧图的总数
+    //rowFrames：原始动画位图每行的帧数
     public GameSprite(Context context, Bitmap rowBitmap, int totalFrames, int rowFrames) {
         x = 0;
         y = 0;
@@ -231,4 +236,19 @@ public class GameSprite {
         this.flip = flip;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
 }
