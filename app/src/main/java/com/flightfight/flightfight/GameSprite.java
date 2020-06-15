@@ -16,21 +16,28 @@ public class GameSprite {
     public static final int UP = 3;
 
 
-    private Bitmap[] spriteBitmaps;         //Sprite位图（有动画的大于1，无动画的为1）
-    private int totalFrames;                //动画总帧数
-    private int currentFrame;               //当前帧
-    private float width;                    //Sprite宽（有动画的Sprite，该值是帧宽）
-    private float height;                   //Sprite高（有动画的Sprite，该值是帧高）
-    private float x;                        //Sprite的x坐标
-    private float y;                        //Sprite的y坐标
-    private int dir;                        //Sprite方向
-    private float speed;                    //Sprite当前行走方向
-    private boolean active;                 //Sprite是否可动
-    private float ratio;                    //图像缩小比例（小于1缩小，大于1放大）
-    private int alpha;                      //透明度
-    private boolean flip;                   //是否水平翻转
-    private int hp;                         //血量
-    private int life;                       //生命数
+    protected Bitmap[] spriteBitmaps;         //Sprite位图（有动画的大于1，无动画的为1）
+    protected int totalFrames;                //动画总帧数
+    protected int currentFrame;               //当前帧
+    protected float width;                    //Sprite宽（有动画的Sprite，该值是帧宽）
+    protected float height;                   //Sprite高（有动画的Sprite，该值是帧高）
+
+    /**
+     * Sprite的x坐标，请使用Set方法设置值
+     */
+    protected float x;
+    /**
+     * Sprite的y坐标，请使用Set方法设置值
+     */
+    protected float y;
+    protected int dir;                        //Sprite方向
+    protected float speed;                    //Sprite当前行走方向
+    protected boolean active;                 //Sprite是否可动
+    protected float ratio;                    //图像缩小比例（小于1缩小，大于1放大）
+    protected int alpha;                      //透明度
+    protected boolean flip;                   //是否水平翻转
+    protected int hp;                         //血量
+    protected int life;                       //生命数
 
     private RectF boundRect;
 
