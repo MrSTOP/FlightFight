@@ -1,6 +1,8 @@
 package com.flightfight.flightfight.yankunwei.database.bean;
 
-public class PlayerRecord {
+import java.io.Serializable;
+
+public class PlayerRecord implements Serializable {
 
     private int id;
     private long time;

@@ -29,8 +29,8 @@ public class GameSprite {
     private float ratio;                    //图像缩小比例（小于1缩小，大于1放大）
     private int alpha;                      //透明度
     private boolean flip;                   //是否水平翻转
-    private int hp;                     //血量
-    private int life;                   //生命数
+    private int hp;                         //血量
+    private int life;                       //生命数
 
     private RectF boundRect;
 
