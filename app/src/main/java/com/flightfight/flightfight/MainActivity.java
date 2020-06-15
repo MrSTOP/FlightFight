@@ -1,4 +1,4 @@
-package com.yankunwei.flightfight;
+package com.flightfight.flightfight;
 
 import androidx.appcompat.app.AppCompatActivity;
 
