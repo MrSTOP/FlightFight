@@ -14,7 +14,7 @@ import java.util.List;
 
 public class GamePlayerSprite extends GameSprite {
 
-    public static final int HALF_DESTINATION_AREA_LENGTH = 15;
+    public static final int HALF_DESTINATION_AREA_LENGTH = 20;
     public static final int SHOOT_COOL_TICK = 5;
 
     private double angelArc;
@@ -69,21 +69,28 @@ public class GamePlayerSprite extends GameSprite {
 
     @Override
     public void move() {
-        if (this.active && !arriveDestination()) {
-            this.setX(this.x + getXSpeed());
-            this.setY(this.y + getYSpeed());
-            float centerX = this.boundRect.centerX();
-            float centerY = this.boundRect.centerY();
-            this.destinationArea.top = centerY - HALF_DESTINATION_AREA_LENGTH;
-            this.destinationArea.bottom = centerY + HALF_DESTINATION_AREA_LENGTH;
-            this.destinationArea.left = centerX - HALF_DESTINATION_AREA_LENGTH;
-            this.destinationArea.right = centerX + HALF_DESTINATION_AREA_LENGTH;
+        if (this.active) {
+            if (!arriveDestination()) {
+
+                this.setX(this.x + getXSpeed());
+                this.setY(this.y + getYSpeed());
+                float centerX = this.boundRect.centerX();
+                float centerY = this.boundRect.centerY();
+                this.destinationArea.top = centerY - HALF_DESTINATION_AREA_LENGTH;
+                this.destinationArea.bottom = centerY + HALF_DESTINATION_AREA_LENGTH;
+                this.destinationArea.left = centerX - HALF_DESTINATION_AREA_LENGTH;
+                this.destinationArea.right = centerX + HALF_DESTINATION_AREA_LENGTH;
 //            Log.d("PLAYER_MOVE", "SX: " + getXSpeed() + "  SY: " + getYSpeed() + "  Angle:" + (angelArc * 180 / Math.PI));
 //            angelArc = Utils.calculate2PointAngleArc(destinationX, destinationY, centerX, centerY);
 //            Log.d("PLAYER_MOVE", "PX: " + this.destinationArea.centerX() + "  PY: " + this.destinationArea.centerY() + "  DX: " + destinationX + "  DY: " + destinationY);
+            } else {
+                spriteBitmaps = normalBitmap;
+                totalFrames = 1;
+                currentFrame = 0;
+            }
         }
         coolTime--;
-        if (coolTime <=0) {
+        if (coolTime <= 0) {
             canShoot = true;
         }
         if (canShoot) {

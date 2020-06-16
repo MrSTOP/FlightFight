@@ -1,5 +1,7 @@
 package com.flightfight.flightfight.yankunwei;
 
+import android.graphics.RectF;
+
 public class Utils {
     public static double calculate2PointAngleArc(float x1, float y1, float x2, float y2) {
         double horizontalX = x2 + 1;
@@ -12,5 +14,9 @@ public class Utils {
         }
 //        System.out.println("ANGLE: " + angle * 180 / Math.PI);
         return angle;
+    }
+
+    public boolean rectCollide(RectF rect1, RectF rect2) {
+        return rect1.intersect(rect2);
     }
 }
