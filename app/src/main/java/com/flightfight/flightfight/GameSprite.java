@@ -39,7 +39,7 @@ public class GameSprite {
     protected int hp;                         //血量
     protected int life;                       //生命数
 
-    private RectF boundRect;
+    protected RectF boundRect;
 
     public GameSprite(Context context, Bitmap rowBitmap) {
         this(context, rowBitmap, 1, 1);

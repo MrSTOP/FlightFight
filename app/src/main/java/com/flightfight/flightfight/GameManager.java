@@ -6,7 +6,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
+
+import com.flightfight.flightfight.yankunwei.GamePlayerSprite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,7 +22,7 @@ public class GameManager {
     private Context context;
     private Random rand;
     private GameSprite[] bubbles;
-    private GameSprite happyFish;
+    private GamePlayerSprite happyFish;
     private Bitmap backBmp;
     private List<GameSprite> bubbleList = null;
     private List<GameSprite> clonebubblelist = null;
@@ -35,7 +38,7 @@ public class GameManager {
         this.ScreenWidth = ScreenWidth;
         this.ScreenHeight = ScreenHeight;
         density = context.getResources().getDisplayMetrics().density;
-        backBmp = null;//BitmapFactory.decodeResource(context.getResources(), R.mipmap.sea);
+        backBmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background);
         this.srcRect = new Rect(0, 0, backBmp.getWidth(), backBmp.getHeight());
         this.destRect = new Rect();
         this.paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -43,12 +46,16 @@ public class GameManager {
         initHappyFish();
     }
 
-    public void setPlayerDir(int dir) {
-        happyFish.setDir(dir);
+    public void setPlayerAngelArc(double angle) {
+        happyFish.setAngelArc(angle);
     }
 
     public void setPlayerActive(boolean active) {
         happyFish.setActive(active);
+    }
+
+    public void setPlayerDestination(float x, float y) {
+        happyFish.serDestination(x, y);
     }
 
     public void setPlayerFlip(boolean flip) {
@@ -60,16 +67,20 @@ public class GameManager {
     }
 
     private void initHappyFish() {
-        Bitmap source = null;//BitmapFactory.decodeResource(context.getResources(), R.mipmap.happy_fish);
-        happyFish = new GameSprite(context, source, 4, 4);
+        Bitmap source = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player_test);
+        happyFish = new GamePlayerSprite(context, source, 5, 5);
         happyFish.setSpeed(10 * density);
         happyFish.setActive(false);
-        happyFish.setRatio(0.15f * density);
-        happyFish.setDir(GameSprite.RIGHT);
+        happyFish.setRatio(0.1f * density);
+        happyFish.setAngelArc(0);
         float px = (ScreenWidth - happyFish.getWidth()) / 2;
-        float py = ScreenHeight - happyFish.getHeight();
+        float py = (ScreenHeight - happyFish.getHeight()) / 2;
         happyFish.setX(px);
         happyFish.setY(py);
+    }
+
+    public RectF getPlayerRectF() {
+        return happyFish.getBoundRectF();
     }
 
     public void loadBubbles() {
@@ -154,36 +165,9 @@ public class GameManager {
     }
 
     public void updateHappyFish() {
-        int pWidth = (int) happyFish.getWidth();
-        int pHeight = (int) happyFish.getHeight();
-        int pDir = happyFish.getDir();
-        switch (pDir) {
-            case GameSprite.LEFT:
-                happyFish.move();
-                if (happyFish.getX() <= 0) {
-                    happyFish.setX(0);
-                }
-                setPlayerFlip(true);
-                break;
-            case GameSprite.RIGHT:
-                happyFish.move();
-                if (happyFish.getX() > ScreenWidth - pWidth) {
-                    happyFish.setX(ScreenWidth - pWidth);
-                }
-                setPlayerFlip(false);
-                break;
-            case GameSprite.UP:
-                happyFish.move();
-                if (happyFish.getY() <= 0) {
-                    happyFish.setY(0);
-                }
-                break;
-            case GameSprite.DOWN:
-                happyFish.move();
-                if (happyFish.getY() >= ScreenHeight - pHeight) {
-                    happyFish.setY(ScreenHeight - pHeight);
-                }
-                break;
-        }
+//        int pWidth = (int) happyFish.getWidth();
+//        int pHeight = (int) happyFish.getHeight();
+//        int pDir = happyFish.getDir();
+        happyFish.move();
     }
 }

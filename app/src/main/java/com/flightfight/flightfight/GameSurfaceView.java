@@ -6,6 +6,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import com.flightfight.flightfight.yankunwei.Utils;
+
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static int TIME_IN_FRAME = 24;
     private SurfaceHolder mHolder;
@@ -18,6 +20,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         initView();
         game = new GameManager(context, ScreenWidth, ScreenHeight);
         controller = new GameControl(ScreenWidth, ScreenHeight);
+        controller.setPlayerRect(game.getPlayerRectF());
     }
 
     private void initView() {
@@ -83,16 +86,17 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         controller.getTouch(event);
-        if (controller.isNoTouched() || !controller.isJoyTouched()) {
+        if (controller.isNoTouched() || !controller.isPlayerTouched()) {
             game.setPlayerActive(false);
         }
-        if (controller.isJoyTouched()) {
+        if (controller.isPlayerTouched()) {
             game.setPlayerActive(true);
         }
         if (controller.isFireTouched()) {
             game.loadBubbles();
         }
-        game.setPlayerDir(controller.getCurrentDir());
+        game.setPlayerAngelArc(controller.getPlayerAngleArc());
+        game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
         return true;
     }
 }

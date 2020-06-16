@@ -2,7 +2,10 @@ package com.flightfight.flightfight;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.MotionEvent;
+
+import com.flightfight.flightfight.yankunwei.Utils;
 
 public class GameControl {
     private int screenWidth;
@@ -27,6 +30,11 @@ public class GameControl {
     private boolean fireTouched;
     private int currentDir;
 
+    private RectF playerRect;
+    private boolean playerTouched;
+    private double playerAngleArc;
+    private float playerDestinationX;
+    private float playerDestinationY;
 
     public GameControl(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
@@ -75,11 +83,39 @@ public class GameControl {
         fireTouched = false;
         noTouched = false;
         int joyId = 0;
-        float x1 = 0, y1 = 0;
+        int playerTouchID = 0;
+        float x1 = 0;
+        float y1 = 0;
+        float x = 0;
+        float y = 0;
         int pointCount = event.getPointerCount();
+        int pointerId = -1;
+        ///////////////////////////////////////////////////////
+        for (int i = 0; i < pointCount; i++) {
+            x = event.getX(i);
+            y = event.getY(i);
+            pointerId = event.getPointerId(i);
+            if (!playerTouched) {
+                if (checkPointInPlayerRectF(x, y)) {
+                    playerTouchID = pointerId;
+                    playerTouched = true;
+                    playerDestinationX = x;
+                    playerDestinationY = y;
+//                    Log.d("PLAYER_MOVE", "DX: " + playerDestinationX + "  DY: " + playerDestinationY);
+                }
+            } else {
+                if (playerTouchID == event.getPointerId(i)) {
+                    playerAngleArc = Utils.calculate2PointAngleArc(x, y, playerRect.centerX(), playerRect.centerY());
+                    playerDestinationX = x;
+                    playerDestinationY = y;
+//                    Log.d("PLAYER_MOVE", "DX: " + playerDestinationX + "  DY: " + playerDestinationY);
+                }
+            }
+        }
+        ///////////////////////////////////////////////////////
         if (pointCount == 1) {
-            float x = (int) event.getX(0);
-            float y = (int) event.getY(0);
+            x = event.getX(0);
+            y = event.getY(0);
             if (checkPointInCircle(x, y, joyTouchX, joyTouchY, joyTouchR)) {
                 joyTouched = true;
                 x1 = x;
@@ -91,11 +127,10 @@ public class GameControl {
                 //x2 = x;
                 //y2 = y;
             }
-        }
-        if (pointCount > 1) {
+        } else if (pointCount > 1) {
             for (int i = 0; i < pointCount; i++) {
-                float x = (int) event.getX(i);
-                float y = (int) event.getY(i);
+                x = event.getX(i);
+                y = event.getY(i);
                 if (checkPointInCircle(x, y, joyTouchX, joyTouchY, joyTouchR)) {
                     joyTouched = true;
                     x1 = x;
@@ -113,17 +148,20 @@ public class GameControl {
             joystickY = joyPlateY;
             noTouched = true;
             joyTouched = false;
-        }
-        //非最后—个手指离开
-        else if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
+            playerTouched = false;
+        } else if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
+            //非最后—个手指离开
             int pointerIndex = event.getActionIndex();
-            int pointerId = event.getPointerId(pointerIndex); // get pointer ID
-//如果离开的是控制摇杆的手指
+            pointerId = event.getPointerId(pointerIndex); // get pointer ID
+            //如果离开的是控制摇杆的手指
             if (pointerId == joyId) {
                 joystickX = joyPlateX;
                 joystickY = joyPlateY;
                 noTouched = false;
                 joyTouched = false;
+            }
+            if (pointerId == playerTouchID) {
+                playerTouched = false;
             }
         } else {
             if (joyTouched) {//当触屏区域不在活动范围内
@@ -175,6 +213,14 @@ public class GameControl {
         }
     }
 
+    private boolean checkPointInPlayerRectF(float x, float y) {
+        return this.playerRect.contains(x, y);
+    }
+
+    public double getPlayerAngleArc() {
+        return playerAngleArc;
+    }
+
     public double getTwoPointArc(float px1, float py1, float px2, float py2) {
         //得到两点X 的距离
         float x = px2 - px1;
@@ -214,5 +260,21 @@ public class GameControl {
 
     public int getCurrentDir() {
         return currentDir;
+    }
+
+    public void setPlayerRect(RectF playerRect) {
+        this.playerRect = playerRect;
+    }
+
+    public boolean isPlayerTouched() {
+        return playerTouched;
+    }
+
+    public float getPlayerDestinationY() {
+        return playerDestinationY;
+    }
+
+    public float getPlayerDestinationX() {
+        return playerDestinationX;
     }
 }
