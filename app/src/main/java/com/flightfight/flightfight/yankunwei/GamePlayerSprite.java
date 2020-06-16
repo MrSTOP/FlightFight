@@ -15,15 +15,41 @@ public class GamePlayerSprite extends GameSprite {
     private float destinationX;
     private float destinationY;
     private RectF destinationArea = new RectF();
+    //    private boolean banking = false;
+//    private boolean needSetBanking = true;
+    private Bitmap[] leftBank;
+    private Bitmap[] rightBank;
+    private Bitmap[] normalBitmap;
+    private int totalBankFrame;
 
-    public GamePlayerSprite(Context context, Bitmap rowBitmap) {
-        super(context, rowBitmap);
+
+    public GamePlayerSprite(Context context, Bitmap bitmap, Bitmap leftBankBitmap, Bitmap rightBankBitmap, int bankFrame) {
+        super(context, bitmap);
+        this.leftBank = new Bitmap[bankFrame];
+        this.rightBank = new Bitmap[bankFrame];
+        this.normalBitmap = new Bitmap[]{bitmap};
+        int frameWidth = leftBankBitmap.getWidth() / bankFrame;
+        int frameHeight = leftBankBitmap.getHeight();
+        for (int i = 0; i < bankFrame; i++) {
+            this.leftBank[i] = Bitmap.createBitmap(leftBankBitmap, frameWidth * i, 0, frameWidth, frameHeight);
+        }
+        frameWidth = rightBankBitmap.getWidth() / bankFrame;
+        frameHeight = rightBankBitmap.getHeight();
+        for (int i = 0; i < bankFrame; i++) {
+            this.rightBank[i] = Bitmap.createBitmap(rightBankBitmap, frameWidth * i, 0, frameWidth, frameHeight);
+        }
+        totalBankFrame = bankFrame;
+        this.spriteBitmaps = new Bitmap[1];
+        this.currentFrame = 0;
+        this.totalFrames = 1;
+        this.spriteBitmaps = normalBitmap;
     }
 
+    @Deprecated
     public GamePlayerSprite(Context context, Bitmap rowBitmap, int totalFrames, int rowFrames) {
         super(context, rowBitmap, totalFrames, rowFrames);
+        throw new UnsupportedOperationException("Do not use this constructor");
     }
-
 
     @Override
     public void move() {
@@ -65,12 +91,49 @@ public class GamePlayerSprite extends GameSprite {
         throw new UnsupportedOperationException("Please use getAngel()");
     }
 
+    @Override
+    public void loopFrame() {
+        if (totalFrames > 1) {
+            currentFrame = currentFrame + 1;
+            if (currentFrame > totalFrames - 1) {
+                currentFrame = totalBankFrame - 1;
+//                banking = false;
+            }
+        }
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        super.setActive(active);
+//        this.needSetBanking = active;
+
+        currentFrame = 0;
+        totalFrames = totalBankFrame;
+        if (!active) {
+            spriteBitmaps = normalBitmap;
+            totalFrames = 1;
+        }
+    }
+
     public double getAngelArc() {
         return angelArc;
     }
 
     public void setAngelArc(double angelArc) {
         this.angelArc = angelArc;
+        if (angelArc > Math.PI / 2 && angelArc < Math.PI * 3 / 2) {
+            spriteBitmaps = leftBank;
+        } else {
+            spriteBitmaps = rightBank;
+        }
+//        if (!banking) {
+//            currentFrame = 0;
+//            totalFrames = totalBankFrame;
+//        }
+//        if (needSetBanking) {
+//            banking = true;
+//            needSetBanking = false;
+//        }
     }
 
     public RectF getBoundRectF() {

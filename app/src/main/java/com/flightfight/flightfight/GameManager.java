@@ -51,7 +51,9 @@ public class GameManager {
     }
 
     public void setPlayerActive(boolean active) {
-        happyFish.setActive(active);
+        if (happyFish.isActive() != active) {
+            happyFish.setActive(active);
+        }
     }
 
     public void setPlayerDestination(float x, float y) {
@@ -67,11 +69,13 @@ public class GameManager {
     }
 
     private void initHappyFish() {
-        Bitmap source = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player_test);
-        happyFish = new GamePlayerSprite(context, source, 5, 5);
+        Bitmap source = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1);
+        Bitmap left = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left);
+        Bitmap right = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right);
+        happyFish = new GamePlayerSprite(context, source, left, right, 12);
         happyFish.setSpeed(10 * density);
         happyFish.setActive(false);
-        happyFish.setRatio(0.1f * density);
+        happyFish.setRatio(0.5f * density);
         happyFish.setAngelArc(0);
         float px = (ScreenWidth - happyFish.getWidth()) / 2;
         float py = (ScreenHeight - happyFish.getHeight()) / 2;
