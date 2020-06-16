@@ -17,6 +17,6 @@ public class Utils {
     }
 
     public boolean rectCollide(RectF rect1, RectF rect2) {
-        return rect1.intersect(rect2);
+        return rect1.intersects(rect2.left, rect2.top, rect2.right, rect2.bottom);
     }
 }
