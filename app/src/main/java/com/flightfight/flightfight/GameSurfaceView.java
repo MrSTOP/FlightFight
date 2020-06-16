@@ -61,13 +61,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                     synchronized (mHolder) {
                         game.updateAnimation();
                         game.updateHappyFish();
-                        game.updateBubblePos();
                         game.draw(surfCanvas);
                         controller.draw(surfCanvas);
                     }
                 } finally {
                     mHolder.unlockCanvasAndPost(surfCanvas);
-                    game.clearBubbles();
                 }
             }
             //取得更新结束的时间
@@ -93,7 +91,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             game.setPlayerActive(true);
         }
         if (controller.isFireTouched()) {
-            game.loadBubbles();
+//            game.loadBubbles();
         }
         game.setPlayerAngelArc(controller.getPlayerAngleArc());
         game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());

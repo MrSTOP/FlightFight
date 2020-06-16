@@ -2,14 +2,20 @@ package com.flightfight.flightfight.yankunwei;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
 
 import com.flightfight.flightfight.GameSprite;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class GamePlayerSprite extends GameSprite {
 
     public static final int HALF_DESTINATION_AREA_LENGTH = 15;
+    public static final int SHOOT_COOL_TICK = 5;
 
     private double angelArc;
     private float destinationX;
@@ -21,6 +27,14 @@ public class GamePlayerSprite extends GameSprite {
     private Bitmap[] rightBank;
     private Bitmap[] normalBitmap;
     private int totalBankFrame;
+    private List<GameSprite> playerBulletList;
+
+
+    /**
+     * 发射子弹冷却时间
+     */
+    private int coolTime;
+    private boolean canShoot;
 
 
     public GamePlayerSprite(Context context, Bitmap bitmap, Bitmap leftBankBitmap, Bitmap rightBankBitmap, int bankFrame) {
@@ -43,6 +57,8 @@ public class GamePlayerSprite extends GameSprite {
         this.currentFrame = 0;
         this.totalFrames = 1;
         this.spriteBitmaps = normalBitmap;
+        playerBulletList = new ArrayList<>();
+        this.canShoot = true;
     }
 
     @Deprecated
@@ -66,8 +82,31 @@ public class GamePlayerSprite extends GameSprite {
 //            angelArc = Utils.calculate2PointAngleArc(destinationX, destinationY, centerX, centerY);
 //            Log.d("PLAYER_MOVE", "PX: " + this.destinationArea.centerX() + "  PY: " + this.destinationArea.centerY() + "  DX: " + destinationX + "  DY: " + destinationY);
         }
+        coolTime--;
+        if (coolTime <=0) {
+            canShoot = true;
+        }
+        if (canShoot) {
+            shoot();
+            canShoot = false;
+            coolTime = SHOOT_COOL_TICK;
+        }
+        for (GameSprite bullet : getPlayerBulletListSafeForIteration()) {
+            bullet.move();
+        }
     }
 
+    private void shoot() {
+        playerBulletList.add(GameBulletFactory.getInstance().getPlayerBullet(GameBulletFactory.BULLET_PLAYER, this.boundRect));
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+        for (GameSprite bullet : getPlayerBulletListSafeForIteration()) {
+            bullet.draw(canvas);
+        }
+    }
 
     private boolean arriveDestination() {
         return destinationArea.contains(this.destinationX, this.destinationY);
@@ -136,10 +175,6 @@ public class GamePlayerSprite extends GameSprite {
 //        }
     }
 
-    public RectF getBoundRectF() {
-        return this.boundRect;
-    }
-
     public void serDestination(float destinationX, float destinationY) {
         this.destinationX = destinationX;
         this.destinationY = destinationY;
@@ -151,5 +186,23 @@ public class GamePlayerSprite extends GameSprite {
 
     public void setDestinationY(float destinationY) {
         this.destinationY = destinationY;
+    }
+
+    public void removeInvalidBullet(int screenWidth, int screenHeight) {
+        List<GameSprite> cloneBullet = getPlayerBulletListSafeForIteration();
+        Iterator<GameSprite> iterator = cloneBullet.iterator();
+        RectF windowRectF = new RectF(0, 0, screenWidth, screenHeight);
+        while (iterator.hasNext()) {
+            GameSprite bullet = iterator.next();
+            if (!windowRectF.intersect(bullet.getBoundRectF())) {
+                iterator.remove();
+            }
+        }
+        playerBulletList.clear();
+        playerBulletList.addAll(cloneBullet);
+    }
+
+    public List<GameSprite> getPlayerBulletListSafeForIteration() {
+        return new ArrayList<>(this.playerBulletList);
     }
 }

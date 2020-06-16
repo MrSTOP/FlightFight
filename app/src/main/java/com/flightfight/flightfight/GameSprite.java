@@ -243,6 +243,10 @@ public class GameSprite {
         this.flip = flip;
     }
 
+    public RectF getBoundRectF() {
+        return this.boundRect;
+    }
+
     public int getHp() {
         return hp;
     }
