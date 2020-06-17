@@ -4,11 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -27,7 +30,14 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private GameManager game;
     private GameControl controller;
     private Context context;
-
+    private int ScreenWidth;
+    private int ScreenHeight;
+    private Paint textPaint;
+    private Paint textPaintBack;
+    private Canvas mCanvas;
+    private Bitmap memBmp;
+    private BanButtonListener banButtonListener;
+    private Rect winAndFaildbtn;
     private final Object lock = new Object();
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -46,12 +56,37 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.context = context;
     }
 
+    public GameSurfaceView(Context context, AttributeSet attrs){
+        super(context,attrs);
+        this.context = context;
+        int[] attrsArray = new int[] {android.R.attr.background};
+        TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
+        //   Drawable background = ta.getDrawable(0);
+        Resources res = context.getApplicationContext().getResources();
+//        prizeBmp = ((BitmapDrawable)background).getBitmap();
+
+        //    coverBmp = BitmapFactory.decodeResource(res, R.drawable.scratch_area);
+        initView();
+        //      game = new GameManager(context, ScreenWidth, ScreenHeight);
+        //     controller = new GameControl(ScreenWidth, ScreenHeight);
+
+    }
+
     private void initView() {
         mHolder = getHolder();//获取SurfaceHolder 对象
         mHolder.addCallback(this);//注册Surface Holder 的回调方法
         setFocusable(true);
         setFocusableInTouchMode(true);
         this.setKeepScreenOn(true);
+    }
+
+    public void SetScreen(int ScreenWidth, int ScreenHeight){
+        this.ScreenWidth = ScreenWidth;
+        this.ScreenHeight = ScreenHeight;
+        game = new GameManager(context, ScreenWidth, ScreenHeight);
+        controller = new GameControl(ScreenWidth, ScreenHeight);
+        memBmp = Bitmap.createBitmap(ScreenWidth, ScreenHeight, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(memBmp);
     }
 
     @Override
@@ -132,24 +167,64 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
 
-   public void drawPause(Bitmap memBitmap, Canvas canvas, Bitmap nowBitmap, int ScreenWidth, int ScreenHeight){
-        Rect rect = new Rect();
-        rect.left = ScreenWidth/4;
-        rect.top = ScreenHeight/3;
-        rect.right = ScreenWidth*3/4;
-        rect.bottom = ScreenHeight/3*2;
+    public void drawStaus(Canvas mcanvas, int screenWidth, int screenHeight, int hp, int enemyCount){
+        textPaint = new Paint();
+        textPaint.setARGB(254, 220, 0, 0);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setFakeBoldText(true);
+        textPaint.setTextSize(40);
+        textPaintBack = new Paint();
+        textPaintBack.setARGB(125,0,125,200);
+        textPaintBack.setDither(true);
+        String hpText = "HP:";
+        String enemyText = "Enemy:" + enemyCount;
+        int hpWidth;
+        hpWidth = (int) textPaint.measureText(hpText);
+        Rect rect = new Rect(20+hpWidth,20,220+hpWidth,5+(int)(textPaint.descent()-textPaint.ascent()));
+        mcanvas.drawText(hpText, 50, 50, textPaint);
+        mcanvas.drawRect(rect,textPaintBack);
+        Rect hprect = new Rect(20+hpWidth,20,20+hp*2+hpWidth,5+(int)(textPaint.descent()-textPaint.ascent()));
+        textPaintBack.setARGB(254,224,125,200);
+        mcanvas.drawRect(hprect,textPaintBack);
 
-       Paint bckpaint = new Paint();
-       bckpaint.setARGB(125,0,125,200);
-       bckpaint.setDither(true);
+        mcanvas.drawText(enemyText, 100, 50+(int)(textPaint.descent()-textPaint.ascent()), textPaint);
+    }
 
-       Paint textPaint = new Paint();
-       textPaint.setARGB(254, 220, 0, 0);
-       textPaint.setTextAlign(Paint.Align.CENTER);
-       textPaint.setFakeBoldText(true);
-       textPaint.setTextSize(80);
+    public void drawFaildAndVictory(Canvas canvas, Bitmap faildBitmap) {
+        winAndFaildbtn = new Rect();
+        textPaint = new Paint();
+        textPaint.setARGB(254, 220, 0, 0);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setFakeBoldText(true);
+        textPaint.setTextSize(80);
+        Rect desRect = new Rect();
+        desRect.top = 0;
+        desRect.left = canvas.getWidth()/4;
+        desRect.right = canvas.getWidth()*3/4;
+        desRect.bottom = canvas.getHeight();
 
+        Rect srcRect = new Rect(faildBitmap.getWidth()/4,0,faildBitmap.getWidth()*3/4,faildBitmap.getHeight());
 
+        canvas.drawBitmap(faildBitmap,srcRect,desRect,textPaint);
 
-   }
+        Paint paint = new Paint();
+        paint.setARGB(20,50,50,50);
+        Rect bckRect = new Rect(ScreenWidth/4,0,ScreenWidth*3/4,ScreenHeight);
+        mCanvas.drawRect(bckRect,paint);
+        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
+        mCanvas.drawText("菜单",ScreenWidth/2-80, ScreenHeight-200, textPaint);
+        // winAndFaildbtn = textPaint.getTextBounds();
+        int width = (int) textPaint.measureText("菜单");
+        winAndFaildbtn.left = ScreenWidth/2-100;
+        winAndFaildbtn.right = winAndFaildbtn.left + width + 20;
+        winAndFaildbtn.top = ScreenHeight-210 - (int)(textPaint.descent()-textPaint.ascent());
+        winAndFaildbtn.bottom = ScreenHeight-190;
+    }
+
+    public void setBanButtonListener(BanButtonListener banButtonListener) {
+        this.banButtonListener = banButtonListener;
+    }
+    public interface BanButtonListener{
+        void banButtonListener();
+    }
 }

@@ -28,9 +28,11 @@ public class PauseFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private TextView quit;
+    private TextView continueBtn;
     private String mParam1;
     private String mParam2;
     private Activity mActivity;
+    private HideFragMent hide;
     public PauseFragment() {
         // Required empty public constructor
     }
@@ -68,9 +70,21 @@ public class PauseFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_pause, container, false);
         quit = view.findViewById(R.id.pause_bck_menu);
-        quit.setOnClickListener(v -> {
-            Intent intent = new Intent(mActivity, MainActivity.class);
-            startActivity(intent);
+        continueBtn = view.findViewById(R.id.pause_continue_game);
+        continueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                hide.setHitde();
+
+            }
+        });
+        quit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, MainActivity.class);
+                startActivity(intent);
+            }
         });
         return view;
     }
@@ -79,5 +93,14 @@ public class PauseFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         mActivity = (Activity)context;
+    }
+
+
+    public interface HideFragMent{
+        void setHitde();
+    }
+
+    public void setHide(HideFragMent hide) {
+        this.hide = hide;
     }
 }
