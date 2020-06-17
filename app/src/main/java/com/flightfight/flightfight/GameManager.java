@@ -57,9 +57,7 @@ public class GameManager {
     }
 
     public void setPlayerActive(boolean active) {
-        if (player.isActive() != active) {
             player.setActive(active);
-        }
     }
 
     public void setPlayerDestination(float x, float y) {
@@ -79,7 +77,7 @@ public class GameManager {
         Bitmap left = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left);
         Bitmap right = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right);
         player = new GamePlayerSprite(context, source, left, right, 12);
-        player.setSpeed(20 * density);
+        player.setSpeed(10 * density);
         player.setActive(false);
         player.setRatio(0.5f * density);
         player.setAngelArc(0);
@@ -115,7 +113,7 @@ public class GameManager {
         context.startService(load);
     }
 
-    public void setAchieveData() {
+    public void setAchieveData(GameControl controller) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         GameArchive gameAchieve = gson.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
         List<GameSprite> enemyList = gameAchieve.getEnemyList();
@@ -130,6 +128,7 @@ public class GameManager {
         newPlayer.setPlayerBulletList(initializedPlayerBulletList);
         newPlayer.initBySaved(player);
         gameAchieve.setPlayer(player);
+        controller.setPlayerRect(newPlayer.getBoundRectF());
         this.player = newPlayer;
     }
 

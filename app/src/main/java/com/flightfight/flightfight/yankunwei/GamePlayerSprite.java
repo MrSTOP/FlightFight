@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import android.util.Log;
 
 import com.flightfight.flightfight.GameSprite;
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ public class GamePlayerSprite extends GameSprite {
     public static final int HALF_DESTINATION_AREA_LENGTH = 20;
     public static final int SHOOT_COOL_TICK = 5;
 
-    @Expose
     private double angelArc;
     private float destinationX;
     private float destinationY;
@@ -97,10 +97,12 @@ public class GamePlayerSprite extends GameSprite {
 //            Log.d("PLAYER_MOVE", "SX: " + getXSpeed() + "  SY: " + getYSpeed() + "  Angle:" + (angelArc * 180 / Math.PI));
 //            angelArc = Utils.calculate2PointAngleArc(destinationX, destinationY, centerX, centerY);
 //            Log.d("PLAYER_MOVE", "PX: " + this.destinationArea.centerX() + "  PY: " + this.destinationArea.centerY() + "  DX: " + destinationX + "  DY: " + destinationY);
+//            Log.d("PLAYER_MOVE", "PLX: " + this.x + "  PLY: " + this.y);
             } else {
                 spriteBitmaps = normalBitmap;
                 totalFrames = 1;
                 currentFrame = 0;
+                active = false;
             }
         }
         coolTime--;
@@ -167,11 +169,15 @@ public class GamePlayerSprite extends GameSprite {
 
     @Override
     public void setActive(boolean active) {
+        if (this.active == active) {
+            return;
+        }
         super.setActive(active);
 //        this.needSetBanking = active;
 
         currentFrame = 0;
         totalFrames = totalBankFrame;
+        System.out.println("ACT:" + totalBankFrame + "::" + (spriteBitmaps == leftBank || spriteBitmaps == rightBank));
         if (!active) {
             spriteBitmaps = normalBitmap;
             totalFrames = 1;
@@ -204,11 +210,12 @@ public class GamePlayerSprite extends GameSprite {
 
     public void setAngelArc(double angelArc) {
         this.angelArc = angelArc;
-        if (angelArc > Math.PI / 2 && angelArc < Math.PI * 3 / 2) {
+        if (angelArc > Math.PI / 2 && angelArc <= Math.PI * 3 / 2) {
             spriteBitmaps = leftBank;
         } else {
             spriteBitmaps = rightBank;
         }
+//        System.out.println("ARC:" + currentFrame + "::" + lastBank + "\t" + ());
 //        if (!banking) {
 //            currentFrame = 0;
 //            totalFrames = totalBankFrame;
@@ -236,7 +243,7 @@ public class GamePlayerSprite extends GameSprite {
         List<GameSprite> cloneBullet = getPlayerBulletListSafeForIteration();
         Iterator<GameSprite> iterator = cloneBullet.iterator();
         RectF windowRectF = new RectF(0, 0, this.screenWidth, this.screenHeight);
-        System.out.println(windowRectF.toShortString());
+//        System.out.println(windowRectF.toShortString());
         while (iterator.hasNext()) {
             GameSprite bullet = iterator.next();
             if (!Utils.rectCollide(windowRectF, bullet.getBoundRectF())) {

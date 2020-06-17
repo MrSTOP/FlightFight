@@ -29,7 +29,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            game.setAchieveData();
+            game.setAchieveData(controller);
         }
     };
 
@@ -107,6 +107,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         controller.getTouch(event);
+
+        game.setPlayerAngelArc(controller.getPlayerAngleArc());
+        game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
+
         if (controller.isNoTouched() || !controller.isPlayerTouched()) {
             game.setPlayerActive(false);
         }
@@ -119,8 +123,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             }
 //            game.loadBubbles();
         }
-        game.setPlayerAngelArc(controller.getPlayerAngleArc());
-        game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
+//        System.out.println("DX: " + controller.getPlayerDestinationX() + "DY: " + controller.getPlayerDestinationY());
         return true;
     }
 }
