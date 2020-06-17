@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 
+import com.flightfight.flightfight.DebugConst;
 import com.flightfight.flightfight.GameSprite;
 import com.google.gson.annotations.Expose;
 
@@ -159,6 +160,11 @@ public class GamePlayerSprite extends GameSprite {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        if (DebugConst.DEBUG_DRAW_SPRITE_BOUND_RECT) {
+            for (RectF rect : collideBoxes) {
+                canvas.drawRect(rect, DebugConst.boundPaint);
+            }
+        }
         for (GameSprite bullet : getPlayerBulletListSafeForIteration()) {
             bullet.draw(canvas);
         }
@@ -203,6 +209,7 @@ public class GamePlayerSprite extends GameSprite {
             return;
         }
         super.setActive(active);
+        updateCollideBoxes();
 //        this.needSetBanking = active;
 
         currentFrame = 0;
@@ -261,10 +268,19 @@ public class GamePlayerSprite extends GameSprite {
                 boundRect.left + PLAYER_COLLIDE_BOX2_H_OFFSET * this.width,
                 boundRect.top + PLAYER_COLLIDE_BOX2_V_OFFSET * this.height,
                 PLAYER_COLLIDE_BOX2_WIDTH * this.width, PLAYER_COLLIDE_BOX2_HEIGHT * this.height);
-        Utils.setRectF(collideBoxes[2],
-                boundRect.left + PLAYER_COLLIDE_BOX3_H_OFFSET * this.width,
-                boundRect.top + PLAYER_COLLIDE_BOX3_V_OFFSET * this.height,
-                PLAYER_COLLIDE_BOX3_WIDTH * this.width, PLAYER_COLLIDE_BOX3_HEIGHT * this.height);
+        if (active) {
+            Utils.setRectF(collideBoxes[2],
+                    boundRect.left + PLAYER_COLLIDE_BOX2_H_OFFSET * this.width,
+                    boundRect.top + PLAYER_COLLIDE_BOX3_V_OFFSET * this.height,
+                    PLAYER_COLLIDE_BOX2_WIDTH * this.width, PLAYER_COLLIDE_BOX3_HEIGHT * this.height);
+            System.out.println("BANK");
+        } else {
+            Utils.setRectF(collideBoxes[2],
+                    boundRect.left + PLAYER_COLLIDE_BOX3_H_OFFSET * this.width,
+                    boundRect.top + PLAYER_COLLIDE_BOX3_V_OFFSET * this.height,
+                    PLAYER_COLLIDE_BOX3_WIDTH * this.width, PLAYER_COLLIDE_BOX3_HEIGHT * this.height);
+            System.out.println("NORMAL");
+        }
     }
 
     public RectF[] getCollideBoxes() {

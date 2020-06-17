@@ -177,7 +177,7 @@ public class GameManager {
             GameSprite playerBullet = playerBulletIterator.next();
             for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
-                    enemy.decreaseLife();
+                    enemy.decreaseHP();
                 }
             }
         }
