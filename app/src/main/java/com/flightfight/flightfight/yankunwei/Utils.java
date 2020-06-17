@@ -34,6 +34,22 @@ public class Utils {
         return rect1.intersects(rect2.left, rect2.top, rect2.right, rect2.bottom);
     }
 
+    public static boolean collideWithPlayer(RectF[] playerBounds, RectF target) {
+        for (RectF bound : playerBounds) {
+            if (rectCollide(bound, target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void setRectF(RectF rectF, float left, float top, float width, float height) {
+        rectF.left = left;
+        rectF.top = top;
+        rectF.right = rectF.left + width;
+        rectF.bottom = rectF.top + height;
+    }
+
     public static void initGameSprite(Context context, List<GameSprite> dest, List<GameSprite> src, int type) {
         GameSprite newGameSprite = null;
         for (GameSprite gameSprite : src) {

@@ -171,6 +171,7 @@ public class GameManager {
         List<GameSprite> playerBulletList = player.getPlayerBulletListSafeForIteration();
         List<GameSprite> enemyBulletList = npcControl.getBulletsList();
         List<GameNpc> enemyList = npcControl.getNpcList();
+        ////////////////////////////////////玩家子弹命中敌人检测//////////////////////////////////
         Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
         while (playerBulletIterator.hasNext()) {
             GameSprite playerBullet = playerBulletIterator.next();
@@ -180,18 +181,20 @@ public class GameManager {
                 }
             }
         }
+        ////////////////////////////////////敌人子弹命中玩家检测/////////////////////////////////
         Iterator<GameSprite> enemyBulletIterator = enemyBulletList.iterator();
         while (enemyBulletIterator.hasNext()) {
             GameSprite enemyBullet = enemyBulletIterator.next();
-            if (Utils.rectCollide(enemyBullet.getBoundRectF(), player.getBoundRectF())) {
+            if (Utils.collideWithPlayer(player.getCollideBoxes(), enemyBullet.getBoundRectF())) {
                 player.decreaseHP();
                 enemyBulletIterator.remove();
             }
         }
+        ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
         Iterator<GameNpc> enemyIterator = enemyList.iterator();
         while (enemyIterator.hasNext()) {
             GameNpc npc = enemyIterator.next();
-            if (Utils.rectCollide(npc.getBoundRectF(), player.getBoundRectF())) {
+            if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
                 player.setHp(0);
                 npc.setActive(false);
             }
