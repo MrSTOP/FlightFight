@@ -20,11 +20,16 @@ public class LeaderBoardDAO {
 
     public boolean insertPlayerRecord(PlayerRecord playerRecord) {
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("Time", playerRecord.getTime());
-        values.put("Score", playerRecord.getScore());
-        values.put("PlayerName", playerRecord.getPlayerName());
-        return database.insert(DBHelper.TABLE_LEADER_BOARD, null, values) != -1;
+        try {
+            ContentValues values = new ContentValues();
+            values.put("Time", playerRecord.getTime());
+            values.put("Score", playerRecord.getScore());
+            values.put("PlayerName", playerRecord.getPlayerName());
+            boolean result = database.insert(DBHelper.TABLE_LEADER_BOARD, null, values) != -1;
+            return result;
+        }finally {
+            database.close();
+        }
     }
 
     public List<PlayerRecord> getAllPlayerRecord() {
