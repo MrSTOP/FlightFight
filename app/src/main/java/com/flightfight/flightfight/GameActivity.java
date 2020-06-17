@@ -34,34 +34,35 @@ public class GameActivity extends AppCompatActivity {
         int screenHeight = outMetrics.heightPixels;
         boolean isAbout = getIntent().getBooleanExtra("About",false);
         gameSurfaceView = findViewById(R.id.scratch_view);
-        button = findViewById(R.id.nextBt);
+       // button = findViewById(R.id.nextBt);
         gameSurfaceView.SetScreen(screenWidth, screenHeight);
 
         gameSurfaceView.setVisibility(View.VISIBLE);
         fragment = new PauseFragment();
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_PAUSE);
-
-                if(!fragment.isAdded()){
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
-                    transaction.add(R.id.pause_content, fragment);
-                    transaction.show(fragment);
-                    transaction.commit();
-                }else {
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    FragmentTransaction transaction = fragmentManager.beginTransaction();
-                    transaction.show(fragment);
-                    transaction.commit();
-                }
-
-            }
-        });
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_PAUSE);
+//
+//                if(!fragment.isAdded()){
+//                    FragmentManager fragmentManager = getSupportFragmentManager();
+//                    FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
+//                    transaction.add(R.id.pause_content, fragment);
+//                    transaction.show(fragment);
+//                    transaction.commit();
+//                }else {
+//                    FragmentManager fragmentManager = getSupportFragmentManager();
+//                    FragmentTransaction transaction = fragmentManager.beginTransaction();
+//                    transaction.show(fragment);
+//                    transaction.commit();
+//                }
+//
+//            }
+//        });
 
         fragment.setHide(() -> {
+
             gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_START);
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
@@ -73,6 +74,23 @@ public class GameActivity extends AppCompatActivity {
         });
 
         gameSurfaceView.setBanButtonListener(() -> button.setEnabled(false));
+
+        gameSurfaceView.setPauseButtonListener(()->{
+            gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_PAUSE);
+
+            if(!fragment.isAdded()){
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
+                transaction.add(R.id.pause_content, fragment);
+                transaction.show(fragment);
+                transaction.commit();
+            }else {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.show(fragment);
+                transaction.commit();
+            }
+        });
         //   GameSurfaceView gameView = new GameSurfaceView(this, screenWidth, screenHeight, isAbout);
         //   setContentView(gameView);
     }
