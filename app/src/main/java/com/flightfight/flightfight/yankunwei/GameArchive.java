@@ -1,16 +1,27 @@
 package com.flightfight.flightfight.yankunwei;
 
 import com.flightfight.flightfight.GameSprite;
+import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class GameArchive {
+public class GameArchive implements Serializable {
+    @Expose
     private Date gameDate;
-    private List<GameSprite> enemyList;
-    private GameSprite player;
-    private List<GameSprite> enemyBulletList;
-    private List<GameSprite> playerBulletList;
+    @Expose
+    private ArrayList<GameSprite> enemyList;
+    @Expose
+    private GamePlayerSprite player;
+    @Expose
+    private ArrayList<GameSprite> enemyBulletList;
+
+    public GameArchive() {
+        this.enemyList = new ArrayList<>();
+        this.enemyBulletList = new ArrayList<>();
+    }
 
     public Date getGameDate() {
         return gameDate;
@@ -25,15 +36,8 @@ public class GameArchive {
     }
 
     public void setEnemyList(List<GameSprite> enemyList) {
-        this.enemyList = enemyList;
-    }
-
-    public GameSprite getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(GameSprite player) {
-        this.player = player;
+        this.enemyList.clear();
+        this.enemyList.addAll(enemyList);
     }
 
     public List<GameSprite> getEnemyBulletList() {
@@ -41,14 +45,15 @@ public class GameArchive {
     }
 
     public void setEnemyBulletList(List<GameSprite> enemyBulletList) {
-        this.enemyBulletList = enemyBulletList;
+        this.enemyBulletList.clear();
+        this.enemyBulletList.addAll(enemyBulletList);
     }
 
-    public List<GameSprite> getPlayerBulletList() {
-        return playerBulletList;
+    public GamePlayerSprite getPlayer() {
+        return player;
     }
 
-    public void setPlayerBulletList(List<GameSprite> playerBulletList) {
-        this.playerBulletList = playerBulletList;
+    public void setPlayer(GamePlayerSprite player) {
+        this.player = player;
     }
 }

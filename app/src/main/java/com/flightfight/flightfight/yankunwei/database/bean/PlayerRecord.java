@@ -1,6 +1,7 @@
 package com.flightfight.flightfight.yankunwei.database.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class PlayerRecord implements Serializable {
 
@@ -33,6 +34,10 @@ public class PlayerRecord implements Serializable {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public Date getDate() {
+        return new Date(this.time);
     }
 
     public int getScore() {

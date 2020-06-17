@@ -1,6 +1,9 @@
-package com.flightfight.flightfight;
+﻿package com.flightfight.flightfight;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,18 +13,37 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import com.flightfight.flightfight.yankunwei.GameArchive;
+import com.flightfight.flightfight.yankunwei.GameSaveService;
+import com.flightfight.flightfight.yankunwei.Utils;
+import com.flightfight.flightfight.yankunwei.ValueContainer;
+
+import java.util.Date;
+
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static int TIME_IN_FRAME = 24;
     private SurfaceHolder mHolder;
     private boolean isRunning;//控制绘画线程的标志位
     private GameManager game;
     private GameControl controller;
+    private Context context;
+
+    private final Object lock = new Object();
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            game.setAchieveData(controller);
+        }
+    };
 
     public GameSurfaceView(Context context, int ScreenWidth, int ScreenHeight) {
         super(context);
         initView();
         game = new GameManager(context, ScreenWidth, ScreenHeight);
         controller = new GameControl(ScreenWidth, ScreenHeight);
+        controller.setPlayerRect(game.getPlayerRectF());
+        this.context = context;
     }
 
     private void initView() {
@@ -34,6 +56,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        context.registerReceiver(receiver, new IntentFilter(GameSaveService.SERVICE_RESPONSE_LOAD_GAME_ACHIEVE));
         isRunning = true;
         new Thread(this).start();
     }
@@ -45,6 +68,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         isRunning = false;
+        context.unregisterReceiver(receiver);
     }
 
     @Override
@@ -60,15 +84,15 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             if (surfCanvas != null) {
                 try {
                     synchronized (mHolder) {
-                        game.updateAnimation();
-                        game.updateHappyFish();
-                        game.updateBubblePos();
-                        game.draw(surfCanvas);
-                        controller.draw(surfCanvas);
+                        synchronized (lock) {
+                            game.updateAnimation();
+                            game.updateHappyFish();
+                            game.draw(surfCanvas);
+                            controller.draw(surfCanvas);
+                        }
                     }
                 } finally {
                     mHolder.unlockCanvasAndPost(surfCanvas);
-                    game.clearBubbles();
                 }
             }
             //取得更新结束的时间
@@ -87,16 +111,23 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         controller.getTouch(event);
-        if (controller.isNoTouched() || !controller.isJoyTouched()) {
+
+        game.setPlayerAngelArc(controller.getPlayerAngleArc());
+        game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
+
+        if (controller.isNoTouched() || !controller.isPlayerTouched()) {
             game.setPlayerActive(false);
         }
-        if (controller.isJoyTouched()) {
+        if (controller.isPlayerTouched()) {
             game.setPlayerActive(true);
         }
         if (controller.isFireTouched()) {
-            game.loadBubbles();
+            synchronized (lock) {
+                game.load();
+            }
+//            game.loadBubbles();
         }
-        game.setPlayerDir(controller.getCurrentDir());
+//        System.out.println("DX: " + controller.getPlayerDestinationX() + "DY: " + controller.getPlayerDestinationY());
         return true;
     }
 
