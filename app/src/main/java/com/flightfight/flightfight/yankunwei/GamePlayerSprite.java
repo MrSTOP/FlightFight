@@ -76,7 +76,7 @@ public class GamePlayerSprite extends GameSprite {
         throw new UnsupportedOperationException("Do not use this constructor");
     }
 
-    public void setScreenSize(int screenWidth, int  screenHeight) {
+    public void setScreenSize(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
     }
@@ -105,6 +105,18 @@ public class GamePlayerSprite extends GameSprite {
                 active = false;
             }
         }
+        if (x <= 0 - getWidth()) {
+            setX(0 - getWidth());
+        }
+        if (x >= screenWidth - getWidth()) {
+            setX(screenWidth - getWidth());
+        }
+        if (y <= 0 - getHeight()) {
+            setY(0 - getHeight());
+        }
+        if (y >= screenHeight - getHeight()) {
+            setY(screenHeight - getHeight());
+        }
         coolTime--;
         if (coolTime <= 0) {
             canShoot = true;
@@ -120,6 +132,7 @@ public class GamePlayerSprite extends GameSprite {
         for (GameSprite bullet : getPlayerBulletListSafeForIteration()) {
             bullet.move();
         }
+//        Log.d("PLAYER", "PX: " + x + " SW: " + screenWidth + " SW1: " + (screenWidth - getWidth() / 4) + " PY: " + y + " SH: " + screenHeight + " SH1: " + (screenHeight - getHeight() / 4));
     }
 
     private void shoot() {
