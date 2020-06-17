@@ -1,4 +1,4 @@
-﻿package com.flightfight.flightfight;
+package com.flightfight.flightfight;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
