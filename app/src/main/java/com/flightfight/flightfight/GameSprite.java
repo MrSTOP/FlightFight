@@ -274,7 +274,9 @@ public class GameSprite implements Serializable {
         this.hp = hp;
         if (this.hp <= 0) {
             this.decreaseLife();
-            this.hp = maxHP;
+            if (this.life > 0) {
+                this.hp = maxHP;
+            }
         }
     }
 

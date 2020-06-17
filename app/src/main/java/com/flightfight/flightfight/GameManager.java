@@ -171,31 +171,33 @@ public class GameManager {
         List<GameSprite> playerBulletList = player.getPlayerBulletListSafeForIteration();
         List<GameSprite> enemyBulletList = npcControl.getBulletsList();
         List<GameNpc> enemyList = npcControl.getNpcList();
-//        Iterator<GameSprite>
-        for (GameSprite playerBullet : playerBulletList) {
-            for (GameSprite enemy : enemyList) {
+        ////////////////////////////////////玩家子弹命中敌人检测//////////////////////////////////
+        Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
+        while (playerBulletIterator.hasNext()) {
+            GameSprite playerBullet = playerBulletIterator.next();
+            for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
                     enemy.decreaseLife();
-                    System.out.println("P_HP: " + player.getHp());
-                    System.out.println("P_LIFE: " + player.getLife());
                 }
             }
         }
+        ////////////////////////////////////敌人子弹命中玩家检测/////////////////////////////////
         Iterator<GameSprite> enemyBulletIterator = enemyBulletList.iterator();
         while (enemyBulletIterator.hasNext()) {
             GameSprite enemyBullet = enemyBulletIterator.next();
-            if (Utils.rectCollide(enemyBullet.getBoundRectF(), player.getBoundRectF())) {
+            if (Utils.collideWithPlayer(player.getCollideBoxes(), enemyBullet.getBoundRectF())) {
                 player.decreaseHP();
                 enemyBulletIterator.remove();
             }
         }
-        for (GameSprite enemy : enemyList) {
-            if (Utils.rectCollide(enemy.getBoundRectF(), player.getBoundRectF())) {
+        ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
+        Iterator<GameNpc> enemyIterator = enemyList.iterator();
+        while (enemyIterator.hasNext()) {
+            GameNpc npc = enemyIterator.next();
+            if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
                 player.setHp(0);
+                npc.setActive(false);
             }
         }
-        player.setHp(0);
-        player.setLife(0);
-        System.out.println("P_LIFE: " + player.getLife());
     }
 }

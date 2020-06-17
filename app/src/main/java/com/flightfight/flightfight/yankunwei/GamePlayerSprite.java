@@ -4,10 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.flightfight.flightfight.GameSprite;
-import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
@@ -18,6 +16,21 @@ public class GamePlayerSprite extends GameSprite {
 
     public static final int HALF_DESTINATION_AREA_LENGTH = 20;
     public static final int SHOOT_COOL_TICK = 5;
+
+
+    private static final float PLAYER_COLLIDE_BOX1_H_OFFSET = 30.0F / 78.0F;
+    private static final float PLAYER_COLLIDE_BOX1_V_OFFSET = 0.0F / 88.0F;
+    private static final float PLAYER_COLLIDE_BOX1_WIDTH = 18.0F / 78.0F;
+    private static final float PLAYER_COLLIDE_BOX1_HEIGHT = 42.0F / 88.0F;
+    private static final float PLAYER_COLLIDE_BOX2_H_OFFSET = 16.0F / 78.0F;
+    private static final float PLAYER_COLLIDE_BOX2_V_OFFSET = 42.0F / 88.0F;
+    private static final float PLAYER_COLLIDE_BOX2_WIDTH = 46.0F / 78.0F;
+    private static final float PLAYER_COLLIDE_BOX2_HEIGHT = 17.0F / 88.0F;
+    private static final float PLAYER_COLLIDE_BOX3_H_OFFSET = 0.0F / 78.0F;
+    private static final float PLAYER_COLLIDE_BOX3_V_OFFSET = 59.0F / 88.0F;
+    private static final float PLAYER_COLLIDE_BOX3_WIDTH = 78.0F / 78.0F;
+    private static final float PLAYER_COLLIDE_BOX3_HEIGHT = 29.0F / 88.0F;
+
 
     private double angelArc;
     private float destinationX;
@@ -31,6 +44,8 @@ public class GamePlayerSprite extends GameSprite {
     private int totalBankFrame;
     @Expose
     private List<GameSprite> playerBulletList;
+    @Expose
+    protected RectF[] collideBoxes;
 
 
     /**
@@ -68,6 +83,8 @@ public class GamePlayerSprite extends GameSprite {
         this.spriteBitmaps = normalBitmap;
         playerBulletList = new ArrayList<>();
         this.canShoot = true;
+        collideBoxes = new RectF[]{new RectF(), new RectF(), new RectF()};
+        updateCollideBoxes();
     }
 
     @Deprecated
@@ -215,6 +232,43 @@ public class GamePlayerSprite extends GameSprite {
         } else {
             throw new IllegalArgumentException("gameSprite is not GamePlayerSprite\'s instance");
         }
+    }
+
+    @Override
+    public void setRatio(float ratio) {
+        super.setRatio(ratio);
+        updateCollideBoxes();
+    }
+
+    @Override
+    public void setX(float x) {
+        super.setX(x);
+        updateCollideBoxes();
+    }
+
+    @Override
+    public void setY(float y) {
+        super.setY(y);
+        updateCollideBoxes();
+    }
+
+    private void updateCollideBoxes() {
+        Utils.setRectF(collideBoxes[0],
+                boundRect.left + PLAYER_COLLIDE_BOX1_H_OFFSET * this.width,
+                boundRect.top + PLAYER_COLLIDE_BOX1_V_OFFSET * this.height,
+                PLAYER_COLLIDE_BOX1_WIDTH * this.width, PLAYER_COLLIDE_BOX1_HEIGHT * this.height);
+        Utils.setRectF(collideBoxes[1],
+                boundRect.left + PLAYER_COLLIDE_BOX2_H_OFFSET * this.width,
+                boundRect.top + PLAYER_COLLIDE_BOX2_V_OFFSET * this.height,
+                PLAYER_COLLIDE_BOX2_WIDTH * this.width, PLAYER_COLLIDE_BOX2_HEIGHT * this.height);
+        Utils.setRectF(collideBoxes[2],
+                boundRect.left + PLAYER_COLLIDE_BOX3_H_OFFSET * this.width,
+                boundRect.top + PLAYER_COLLIDE_BOX3_V_OFFSET * this.height,
+                PLAYER_COLLIDE_BOX3_WIDTH * this.width, PLAYER_COLLIDE_BOX3_HEIGHT * this.height);
+    }
+
+    public RectF[] getCollideBoxes() {
+        return collideBoxes;
     }
 
     public double getAngelArc() {
