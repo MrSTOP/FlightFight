@@ -105,14 +105,14 @@ public class GamePlayerSprite extends GameSprite {
                 active = false;
             }
         }
-        if (x <= 0 - getWidth()) {
-            setX(0 - getWidth());
+        if (x <= 0/* - getWidth()*/) {
+            setX(0/* - getWidth()*/);
         }
         if (x >= screenWidth - getWidth()) {
             setX(screenWidth - getWidth());
         }
-        if (y <= 0 - getHeight()) {
-            setY(0 - getHeight());
+        if (y <= 0/* - getHeight()*/) {
+            setY(0/* - getHeight()*/);
         }
         if (y >= screenHeight - getHeight()) {
             setY(screenHeight - getHeight());
