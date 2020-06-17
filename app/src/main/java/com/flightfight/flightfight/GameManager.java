@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.flightfight.flightfight.ZhuJintao.GameNpc;
+import com.flightfight.flightfight.ZhuJintao.GameNpcControl;
 import com.flightfight.flightfight.yankunwei.GameArchive;
 import com.flightfight.flightfight.yankunwei.GameBulletFactory;
 import com.flightfight.flightfight.yankunwei.GamePlayerSprite;
@@ -21,6 +22,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -31,6 +33,7 @@ public class GameManager {
     private Random rand;
     private GameSprite[] bubbles;
     private GamePlayerSprite player;
+    private GameNpcControl npcControl;
     private Bitmap backBmp;
     private long bubbleStartTime;
     private float density;
@@ -51,6 +54,8 @@ public class GameManager {
         rand = new Random(System.currentTimeMillis());
         GameBulletFactory.getInstance().initFactory(context, density);
         initHappyFish();
+        npcControl = new GameNpcControl(context, ScreenWidth, ScreenHeight);
+        npcControl.LoadNpc();
     }
 
     public void setPlayerAngelArc(double angle) {
@@ -100,7 +105,10 @@ public class GameManager {
         destRect.bottom = canvas.getHeight();
         paint.setDither(true);
         canvas.drawBitmap(backBmp, srcRect, destRect, paint);
+        bulletLogic();
         player.draw(canvas);
+        npcControl.GameNpcAllManager(canvas);
+        npcControl.draw(canvas);
     }
 
     public void updateHappyFish() {
@@ -157,5 +165,37 @@ public class GameManager {
             save.putExtra(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME, gameArchive.getGameDate().getTime());
             context.startService(save);
             System.out.println("BROAD");
+    }
+
+    private void bulletLogic() {
+        List<GameSprite> playerBulletList = player.getPlayerBulletListSafeForIteration();
+        List<GameSprite> enemyBulletList = npcControl.getBulletsList();
+        List<GameNpc> enemyList = npcControl.getNpcList();
+//        Iterator<GameSprite>
+        for (GameSprite playerBullet : playerBulletList) {
+            for (GameSprite enemy : enemyList) {
+                if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
+                    enemy.decreaseLife();
+                    System.out.println("P_HP: " + player.getHp());
+                    System.out.println("P_LIFE: " + player.getLife());
+                }
+            }
+        }
+        Iterator<GameSprite> enemyBulletIterator = enemyBulletList.iterator();
+        while (enemyBulletIterator.hasNext()) {
+            GameSprite enemyBullet = enemyBulletIterator.next();
+            if (Utils.rectCollide(enemyBullet.getBoundRectF(), player.getBoundRectF())) {
+                player.decreaseHP();
+                enemyBulletIterator.remove();
+            }
+        }
+        for (GameSprite enemy : enemyList) {
+            if (Utils.rectCollide(enemy.getBoundRectF(), player.getBoundRectF())) {
+                player.setHp(0);
+            }
+        }
+        player.setHp(0);
+        player.setLife(0);
+        System.out.println("P_LIFE: " + player.getLife());
     }
 }

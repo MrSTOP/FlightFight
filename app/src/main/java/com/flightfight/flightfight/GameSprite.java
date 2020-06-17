@@ -18,6 +18,8 @@ public class GameSprite implements Serializable {
     public static final int RIGHT = 1;
     public static final int DOWN = 2;
     public static final int UP = 3;
+    public static final int DEFAULT_SPRITE_MAX_HP = 100;
+    public static final int DEFAULT_SPRITE_MAX_LIFE = 3;
 
 
     protected Bitmap[] spriteBitmaps;         //Sprite位图（有动画的大于1，无动画的为1）
@@ -49,6 +51,8 @@ public class GameSprite implements Serializable {
     protected boolean flip;                   //是否水平翻转
     @Expose
     protected int hp;                         //血量
+    @Expose
+    protected int maxHP = DEFAULT_SPRITE_MAX_HP;
     @Expose
     protected int life;                       //生命数
 
@@ -104,6 +108,8 @@ public class GameSprite implements Serializable {
         boundRect.right = boundRect.left + width;
         boundRect.top = y;
         boundRect.bottom = boundRect.top + height;
+        this.hp = maxHP;
+        this.life = DEFAULT_SPRITE_MAX_LIFE;
     }
 
     public void move() {
@@ -266,6 +272,22 @@ public class GameSprite implements Serializable {
 
     public void setHp(int hp) {
         this.hp = hp;
+        if (this.hp <= 0) {
+            this.decreaseLife();
+            this.hp = maxHP;
+        }
+    }
+
+    public void decreaseHP(int descHP) {
+        this.setHp(this.getHp() - descHP);
+    }
+
+    public void decreaseHP() {
+        this.setHp(this.getHp() - 10);
+    }
+
+    public void decreaseLife() {
+        this.life--;
     }
 
     public int getLife() {
