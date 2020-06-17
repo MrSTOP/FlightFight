@@ -1,9 +1,7 @@
 package com.flightfight.flightfight;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -31,7 +29,7 @@ public class GameManager {
     private Context context;
     private Random rand;
     private GameSprite[] bubbles;
-    private GamePlayerSprite happyFish;
+    private GamePlayerSprite player;
     private Bitmap backBmp;
     private long bubbleStartTime;
     private float density;
@@ -55,45 +53,45 @@ public class GameManager {
     }
 
     public void setPlayerAngelArc(double angle) {
-        happyFish.setAngelArc(angle);
+        player.setAngelArc(angle);
     }
 
     public void setPlayerActive(boolean active) {
-        if (happyFish.isActive() != active) {
-            happyFish.setActive(active);
+        if (player.isActive() != active) {
+            player.setActive(active);
         }
     }
 
     public void setPlayerDestination(float x, float y) {
-        happyFish.serDestination(x, y);
+        player.serDestination(x, y);
     }
 
     public void setPlayerFlip(boolean flip) {
-        happyFish.setFlip(flip);
+        player.setFlip(flip);
     }
 
     public void updateAnimation() {
-        happyFish.loopFrame();
+        player.loopFrame();
     }
 
     private void initHappyFish() {
         Bitmap source = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1);
         Bitmap left = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left);
         Bitmap right = BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right);
-        happyFish = new GamePlayerSprite(context, source, left, right, 12);
-        happyFish.setSpeed(20 * density);
-        happyFish.setActive(false);
-        happyFish.setRatio(0.5f * density);
-        happyFish.setAngelArc(0);
-        happyFish.setScreenSize(ScreenWidth, ScreenHeight);
-        float px = (ScreenWidth - happyFish.getWidth()) / 2;
-        float py = (ScreenHeight - happyFish.getHeight()) / 2;
-        happyFish.setX(px);
-        happyFish.setY(py);
+        player = new GamePlayerSprite(context, source, left, right, 12);
+        player.setSpeed(20 * density);
+        player.setActive(false);
+        player.setRatio(0.5f * density);
+        player.setAngelArc(0);
+        player.setScreenSize(ScreenWidth, ScreenHeight);
+        float px = (ScreenWidth - player.getWidth()) / 2;
+        float py = (ScreenHeight - player.getHeight()) / 2;
+        player.setX(px);
+        player.setY(py);
     }
 
     public RectF getPlayerRectF() {
-        return happyFish.getBoundRectF();
+        return player.getBoundRectF();
     }
 
     public void draw(Canvas canvas) {
@@ -103,11 +101,11 @@ public class GameManager {
         destRect.bottom = canvas.getHeight();
         paint.setDither(true);
         canvas.drawBitmap(backBmp, srcRect, destRect, paint);
-        happyFish.draw(canvas);
+        player.draw(canvas);
     }
 
     public void updateHappyFish() {
-        happyFish.move();
+        player.move();
     }
 
     public void load() {
@@ -132,14 +130,14 @@ public class GameManager {
         newPlayer.setPlayerBulletList(initializedPlayerBulletList);
         newPlayer.initBySaved(player);
         gameAchieve.setPlayer(player);
-        this.happyFish = newPlayer;
+        this.player = newPlayer;
     }
 
     public void save() {
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             GameArchive gameArchive = new GameArchive();
             gameArchive.setGameDate(new Date(0));
-            gameArchive.setPlayer(happyFish);
+            gameArchive.setPlayer(player);
             String str = gson.toJson(gameArchive);
             Intent save = new Intent(context, GameSaveService.class);
             save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);
