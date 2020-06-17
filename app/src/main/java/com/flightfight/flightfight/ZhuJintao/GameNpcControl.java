@@ -200,7 +200,7 @@ public class GameNpcControl {
             //将原始的playerMissles进行克隆，每次只绘制克隆的
             cloneNpcList.addAll(npcList);
             for (GameNpc tempNpc : cloneNpcList) {
-                tempNpc.setAlpha(100);
+                tempNpc.setAlpha(255);
                 tempNpc.draw(canvas);
             }
             //绘制完毕，清空克隆的内容
