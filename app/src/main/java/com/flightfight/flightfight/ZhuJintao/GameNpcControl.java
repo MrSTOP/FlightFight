@@ -26,8 +26,8 @@ public class GameNpcControl {
     private int NpcCur = 0;                 //当前已有（包括死亡）NPC数量
     private int intervalTime = 300;         //间隔时间
 
-    public List<GameNpc> npcList = null;
-    public List<GameNpc> cloneNpcList = null;
+    public List<GameNpc> npcList = new ArrayList<>();;
+    public List<GameNpc> cloneNpcList =  new ArrayList<>();;
 
     //子弹类直接使用Sprite类
     public List<GameSprite> bulletsList = null;
