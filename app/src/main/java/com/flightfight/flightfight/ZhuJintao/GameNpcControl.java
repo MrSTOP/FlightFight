@@ -170,7 +170,7 @@ public class GameNpcControl {
             curTempBullet.setX(px);
             curTempBullet.setY(py);
 
-            Log.d("Bullet", "Bullet X:" + curTempBullet.getX() + " Y:" + curTempBullet.getY() + "Bullet W:" + curTempBullet.getWidth() + " H:" + curTempBullet.getHeight());
+//            Log.d("Bullet", "Bullet X:" + curTempBullet.getX() + " Y:" + curTempBullet.getY() + "Bullet W:" + curTempBullet.getWidth() + " H:" + curTempBullet.getHeight());
             bulletsList.add(curTempBullet);
             curCtrlNpc.setFireStartTime(System.currentTimeMillis());
         }
@@ -184,7 +184,7 @@ public class GameNpcControl {
             //cloneBulletsList.addAll(npcList);
             for (GameSprite tempBullet : cloneBulletsList) {
                 tempBullet.move();
-                Log.d("Bullet", "Bullet X:" + tempBullet.getX() + " Y:" + tempBullet.getY() + "Move:Bullet W:" + tempBullet.getWidth() + " H:" + tempBullet.getHeight());
+//                Log.d("Bullet", "Bullet X:" + tempBullet.getX() + " Y:" + tempBullet.getY() + "Move:Bullet W:" + tempBullet.getWidth() + " H:" + tempBullet.getHeight());
             }
             cloneBulletsList.clear();
         }
