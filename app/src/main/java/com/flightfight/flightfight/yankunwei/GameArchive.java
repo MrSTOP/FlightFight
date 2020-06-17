@@ -8,9 +8,8 @@ import java.util.List;
 public class GameArchive {
     private Date gameDate;
     private List<GameSprite> enemyList;
-    private GameSprite player;
+    private GamePlayerSprite player;
     private List<GameSprite> enemyBulletList;
-    private List<GameSprite> playerBulletList;
 
     public Date getGameDate() {
         return gameDate;
@@ -28,14 +27,6 @@ public class GameArchive {
         this.enemyList = enemyList;
     }
 
-    public GameSprite getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(GameSprite player) {
-        this.player = player;
-    }
-
     public List<GameSprite> getEnemyBulletList() {
         return enemyBulletList;
     }
@@ -44,11 +35,11 @@ public class GameArchive {
         this.enemyBulletList = enemyBulletList;
     }
 
-    public List<GameSprite> getPlayerBulletList() {
-        return playerBulletList;
+    public GamePlayerSprite getPlayer() {
+        return player;
     }
 
-    public void setPlayerBulletList(List<GameSprite> playerBulletList) {
-        this.playerBulletList = playerBulletList;
+    public void setPlayer(GamePlayerSprite player) {
+        this.player = player;
     }
 }
