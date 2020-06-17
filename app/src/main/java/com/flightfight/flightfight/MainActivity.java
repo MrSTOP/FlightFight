@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         startGame.setOnClickListener(v->{
+
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
         });

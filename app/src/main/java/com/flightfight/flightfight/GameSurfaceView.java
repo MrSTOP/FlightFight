@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -39,8 +40,14 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private Bitmap memBmp;
     private BanButtonListener banButtonListener;
     private Rect winAndFaildbtn;
+    private Rect pauseRect;
     private GameState gameState;
+    private PauseButtonListener pauseButtonListener;
 
+    private Drawable pauseButtonDrawable;
+
+    private Bitmap pauseBitmap;
+    private boolean readyDrawFaild = false;
     private final Object lock = new Object();
 
     public GameState getGameState() {
@@ -90,6 +97,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         setFocusableInTouchMode(true);
         paintback = new Paint();
         this.setKeepScreenOn(true);
+        setGameState(GameState.GAME_START);
+      //  pauseBitmap = new Bitmap();
+        Resources resources = context.getApplicationContext().getResources();
+        pauseBitmap = BitmapFactory.decodeResource(resources, R.mipmap.bullet1);
+        pauseButtonDrawable = context.getApplicationContext().getResources().getDrawable(R.drawable.ic_pause_black_24dp);
     }
 
     public void SetScreen(int ScreenWidth, int ScreenHeight){
@@ -100,6 +112,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         controller.setPlayerRect(game.getPlayerRectF());
         memBmp = Bitmap.createBitmap(ScreenWidth, ScreenHeight, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(memBmp);
+
     }
 
     @Override
@@ -132,7 +145,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             if (surfCanvas != null) {
                 try {
                     synchronized (mHolder) {
-                        if(gameState != GameState.GAME_PAUSE)
+                        if(gameState == GameState.GAME_START && game.isPlayerDead())
                         {
 
                                 game.updateAnimation();
@@ -140,8 +153,14 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                                 game.draw(mCanvas);
                                 controller.draw(mCanvas);
 
+                                drawStaus(mCanvas, ScreenWidth, ScreenHeight, game.getPlayerHp(), 100);
+                                pauseRect = drawPauseBtn(mCanvas);
                         }
-
+                        if(!game.isPlayerDead() && !readyDrawFaild){
+                            Resources resources = context.getApplicationContext().getResources();
+                            Bitmap bmp = BitmapFactory.decodeResource(resources, R.mipmap.enemy1_2);
+                            drawFaildAndVictory(mCanvas, bmp);
+                        }
                     }
 
                     Rect currentSrcRect = new Rect();
@@ -176,25 +195,44 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        controller.getTouch(event);
+        if(gameState == GameState.GAME_START && !readyDrawFaild){
+            controller.getTouch(event);
 
-        game.setPlayerAngelArc(controller.getPlayerAngleArc());
-        game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
+            game.setPlayerAngelArc(controller.getPlayerAngleArc());
+            game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
 
-        if (controller.isNoTouched() || !controller.isPlayerTouched()) {
-            game.setPlayerActive(false);
-        }
-        if (controller.isPlayerTouched()) {
-            game.setPlayerActive(true);
-        }
-        if (controller.isFireTouched()) {
-            synchronized (lock) {
-                game.load();
+            if (controller.isNoTouched() || !controller.isPlayerTouched()) {
+                game.setPlayerActive(false);
             }
+            if (controller.isPlayerTouched()) {
+                game.setPlayerActive(true);
+            }
+            if (controller.isFireTouched()) {
+                synchronized (lock) {
+                    game.load();
+                }
 //            game.loadBubbles();
+            }
+
+            if(event.getX() >= pauseRect.left && event.getX() <= pauseRect.right && event.getY() >= pauseRect.top && event.getY() <= pauseRect.bottom){
+                pauseButtonListener.pauseListener();
+            }
+
         }
+
 //        System.out.println("DX: " + controller.getPlayerDestinationX() + "DY: " + controller.getPlayerDestinationY());
+
+        if(readyDrawFaild){
+            banButtonListener.banButtonListener();
+            if(event.getX() >= winAndFaildbtn.left && event.getX() <= winAndFaildbtn.right && event.getY() >= winAndFaildbtn.top && event.getY() <= winAndFaildbtn.bottom){
+                Intent intent = new Intent(context,MainActivity.class);
+                context.startActivity(intent);
+            }
+
+        }
         return true;
+
+
     }
 
 
@@ -250,13 +288,41 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         winAndFaildbtn.right = winAndFaildbtn.left + width + 20;
         winAndFaildbtn.top = ScreenHeight-210 - (int)(textPaint.descent()-textPaint.ascent());
         winAndFaildbtn.bottom = ScreenHeight-190;
+
+        readyDrawFaild = true;
     }
 
+    public Rect drawPauseBtn(Canvas mCanvas){
+        Rect desRect = new Rect();
+        desRect.top = 10;
+        desRect.left =ScreenWidth - pauseBitmap.getWidth();
+        desRect.right = ScreenWidth;
+        desRect.bottom = pauseBitmap.getHeight();
+
+
+        Rect srcRect = new Rect(0,0,pauseBitmap.getWidth(),pauseBitmap.getHeight());
+
+        pauseButtonDrawable.setBounds(desRect);
+        pauseButtonDrawable.draw(mCanvas);
+        //mCanvas.drawBitmap(pauseBitmap,srcRect,desRect,paintback);
+
+        return desRect;
+
+
+    }
     public void setBanButtonListener(BanButtonListener banButtonListener) {
         this.banButtonListener = banButtonListener;
     }
     public interface BanButtonListener{
         void banButtonListener();
+    }
+
+
+    public interface PauseButtonListener{
+        void pauseListener();
+    }
+    public void setPauseButtonListener(PauseButtonListener pauseButtonListener) {
+        this.pauseButtonListener = pauseButtonListener;
     }
 
     public enum GameState{GAME_START, GAME_PAUSE, GAME_ABOUT}
