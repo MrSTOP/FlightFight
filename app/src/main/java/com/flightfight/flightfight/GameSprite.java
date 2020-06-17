@@ -7,9 +7,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
+import com.google.gson.annotations.Expose;
+
+import java.io.Serializable;
+
 import static com.flightfight.flightfight.DebugConst.DEBUG_DRAW_SPRITE_BOUND_RECT;
 
-public class GameSprite {
+public class GameSprite implements Serializable {
     public static final int LEFT = 0;
     public static final int RIGHT = 1;
     public static final int DOWN = 2;
@@ -25,20 +29,30 @@ public class GameSprite {
     /**
      * Sprite的x坐标，请使用Set方法设置值
      */
+    @Expose
     protected float x;
     /**
      * Sprite的y坐标，请使用Set方法设置值
      */
+    @Expose
     protected float y;
+    @Expose
     protected int dir;                        //Sprite方向
+    @Expose
     protected float speed;                    //Sprite当前行走方向
     protected boolean active;                 //Sprite是否可动
+    @Expose
     protected float ratio;                    //图像缩小比例（小于1缩小，大于1放大）
+    @Expose
     protected int alpha;                      //透明度
+    @Expose
     protected boolean flip;                   //是否水平翻转
+    @Expose
     protected int hp;                         //血量
+    @Expose
     protected int life;                       //生命数
 
+    @Expose
     protected RectF boundRect;
 
     public GameSprite(Context context, Bitmap rowBitmap) {
@@ -168,7 +182,6 @@ public class GameSprite {
         return width;
     }
 
-
     public float getHeight() {
         return height;
     }
@@ -261,5 +274,17 @@ public class GameSprite {
 
     public void setLife(int life) {
         this.life = life;
+    }
+
+    public void initBySaved(GameSprite gameSprite) {
+        this.setX(gameSprite.x);
+        this.setY(gameSprite.y);
+        this.setSpeed(gameSprite.speed);
+        this.setRatio(gameSprite.ratio);
+        this.setAlpha(gameSprite.alpha);
+        this.setFlip(gameSprite.flip);
+        this.setHp(gameSprite.hp);
+        this.setLife(gameSprite.life);
+        this.setDir(gameSprite.dir);
     }
 }

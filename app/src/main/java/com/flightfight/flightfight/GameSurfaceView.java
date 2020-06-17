@@ -1,12 +1,24 @@
-package com.flightfight.flightfight;
+﻿package com.flightfight.flightfight;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import com.flightfight.flightfight.yankunwei.GameArchive;
+import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
+import com.flightfight.flightfight.yankunwei.ValueContainer;
+
+import java.util.Date;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static int TIME_IN_FRAME = 24;
@@ -14,6 +26,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private boolean isRunning;//控制绘画线程的标志位
     private GameManager game;
     private GameControl controller;
+    private Context context;
+
+    private final Object lock = new Object();
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            game.setAchieveData(controller);
+        }
+    };
 
     public GameSurfaceView(Context context, int ScreenWidth, int ScreenHeight) {
         super(context);
@@ -21,6 +43,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         game = new GameManager(context, ScreenWidth, ScreenHeight);
         controller = new GameControl(ScreenWidth, ScreenHeight);
         controller.setPlayerRect(game.getPlayerRectF());
+        this.context = context;
     }
 
     private void initView() {
@@ -33,6 +56,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        context.registerReceiver(receiver, new IntentFilter(GameSaveService.SERVICE_RESPONSE_LOAD_GAME_ACHIEVE));
         isRunning = true;
         new Thread(this).start();
     }
@@ -44,6 +68,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         isRunning = false;
+        context.unregisterReceiver(receiver);
     }
 
     @Override
@@ -59,10 +84,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             if (surfCanvas != null) {
                 try {
                     synchronized (mHolder) {
-                        game.updateAnimation();
-                        game.updateHappyFish();
-                        game.draw(surfCanvas);
-                        controller.draw(surfCanvas);
+                        synchronized (lock) {
+                            game.updateAnimation();
+                            game.updateHappyFish();
+                            game.draw(surfCanvas);
+                            controller.draw(surfCanvas);
+                        }
                     }
                 } finally {
                     mHolder.unlockCanvasAndPost(surfCanvas);
@@ -84,6 +111,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         controller.getTouch(event);
+
+        game.setPlayerAngelArc(controller.getPlayerAngleArc());
+        game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
+
         if (controller.isNoTouched() || !controller.isPlayerTouched()) {
             game.setPlayerActive(false);
         }
@@ -91,10 +122,34 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             game.setPlayerActive(true);
         }
         if (controller.isFireTouched()) {
+            synchronized (lock) {
+                game.load();
+            }
 //            game.loadBubbles();
         }
-        game.setPlayerAngelArc(controller.getPlayerAngleArc());
-        game.setPlayerDestination(controller.getPlayerDestinationX(), controller.getPlayerDestinationY());
+//        System.out.println("DX: " + controller.getPlayerDestinationX() + "DY: " + controller.getPlayerDestinationY());
         return true;
     }
+
+
+   public void drawPause(Bitmap memBitmap, Canvas canvas, Bitmap nowBitmap, int ScreenWidth, int ScreenHeight){
+        Rect rect = new Rect();
+        rect.left = ScreenWidth/4;
+        rect.top = ScreenHeight/3;
+        rect.right = ScreenWidth*3/4;
+        rect.bottom = ScreenHeight/3*2;
+
+       Paint bckpaint = new Paint();
+       bckpaint.setARGB(125,0,125,200);
+       bckpaint.setDither(true);
+
+       Paint textPaint = new Paint();
+       textPaint.setARGB(254, 220, 0, 0);
+       textPaint.setTextAlign(Paint.Align.CENTER);
+       textPaint.setFakeBoldText(true);
+       textPaint.setTextSize(80);
+
+
+
+   }
 }
