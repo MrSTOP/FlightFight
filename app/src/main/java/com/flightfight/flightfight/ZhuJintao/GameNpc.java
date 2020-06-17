@@ -200,6 +200,11 @@ public class GameNpc extends GameSprite {
                 source.getWidth(), source.getHeight(), matrix, true);
     }
 
+    @Override
+    public void decreaseHP() {
+        this.setHp(this.getHp() - 1);
+    }
+
     public long getFireStartTime() {
         return fireStartTime;
     }
