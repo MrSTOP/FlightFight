@@ -1,14 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".yzc.PauseFragment">
+    tools:context=".yzc.PauseFragment"
+    android:background="@mipmap/background"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:text="@string/pause"
+        android:textSize="30sp"
+        android:textColor="#FFFFFF"
+        android:textAlignment="center"
 
-</FrameLayout>
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:id="@+id/pause_continue_game"
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:textSize="25sp"
+        android:textColor="#FFFFFF"
+        android:text="@string/continue_game"
+        android:textAlignment="center"
+        android:background="@mipmap/menu"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        />
+    <TextView
+        android:id="@+id/pause_save_game"
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:textSize="25sp"
+        android:textColor="#FFFFFF"
+        android:text="@string/save_game"
+        android:textAlignment="center"
+        android:background="@mipmap/menu"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        />
+    <TextView
+        android:id="@+id/pause_bck_menu"
+        android:layout_width="250dp"
+        android:layout_height="70dp"
+        android:textSize="25sp"
+        android:textColor="#FFFFFF"
+        android:text="@string/quit"
+        android:textAlignment="center"
+        android:background="@mipmap/menu"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        />
+</LinearLayout>

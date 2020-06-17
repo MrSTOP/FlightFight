@@ -1,7 +1,11 @@
 package com.flightfight.flightfight;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -95,4 +99,26 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         game.setPlayerDir(controller.getCurrentDir());
         return true;
     }
+
+
+   public void drawPause(Bitmap memBitmap, Canvas canvas, Bitmap nowBitmap, int ScreenWidth, int ScreenHeight){
+        Rect rect = new Rect();
+        rect.left = ScreenWidth/4;
+        rect.top = ScreenHeight/3;
+        rect.right = ScreenWidth*3/4;
+        rect.bottom = ScreenHeight/3*2;
+
+       Paint bckpaint = new Paint();
+       bckpaint.setARGB(125,0,125,200);
+       bckpaint.setDither(true);
+
+       Paint textPaint = new Paint();
+       textPaint.setARGB(254, 220, 0, 0);
+       textPaint.setTextAlign(Paint.Align.CENTER);
+       textPaint.setFakeBoldText(true);
+       textPaint.setTextSize(80);
+
+
+
+   }
 }

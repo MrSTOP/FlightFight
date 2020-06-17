@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoadGameActivity">
+    tools:context=".LoadGameActivity"
+    android:orientation="vertical"
+    android:background="@mipmap/startback"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:text="@string/load_game"
+        android:textSize="40dp"
+        android:textColor="#FFFFFF"
+        android:textAlignment="center"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"/>
+    <ListView
+        android:id="@+id/load_game_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/load_bck_btn"
+        android:text="@string/back_game"
+        android:textSize="30sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:layout_weight="0.5"
+        android:layout_marginBottom="20dp"/>
+</LinearLayout>

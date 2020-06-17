@@ -1,13 +1,19 @@
 package com.flightfight.flightfight.yzc;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
 
 /**
@@ -16,15 +22,15 @@ import com.flightfight.flightfight.R;
  * create an instance of this fragment.
  */
 public class PauseFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    private TextView quit;
     private String mParam1;
     private String mParam2;
-
+    private Activity mActivity;
     public PauseFragment() {
         // Required empty public constructor
     }
@@ -59,7 +65,19 @@ public class PauseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pause, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_pause, container, false);
+        quit = view.findViewById(R.id.pause_bck_menu);
+        quit.setOnClickListener(v -> {
+            Intent intent = new Intent(mActivity, MainActivity.class);
+            startActivity(intent);
+        });
+        return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = (Activity)context;
     }
 }
