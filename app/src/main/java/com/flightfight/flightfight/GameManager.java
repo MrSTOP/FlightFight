@@ -111,6 +111,14 @@ public class GameManager {
         return player.getLife() <= 0 && player.getHp() <= 0;
     }
 
+    public int getPlayerHp() {
+        return player.getHp();
+    }
+
+    public int getPlayerLife() {
+        return player.getLife();
+    }
+
     public void load() {
         Intent load = new Intent(context, GameSaveService.class);
         load.setAction(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE);
