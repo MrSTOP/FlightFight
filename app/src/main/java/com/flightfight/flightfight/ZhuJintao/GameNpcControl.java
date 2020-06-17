@@ -245,4 +245,20 @@ public class GameNpcControl {
     public void setIntervalTime(int intervalTime) {
         this.intervalTime = intervalTime;
     }
+
+    public List<GameNpc> getNpcList() {
+        return npcList;
+    }
+
+    public void setNpcList(List<GameNpc> npcList) {
+        this.npcList = npcList;
+    }
+
+    public List<GameSprite> getBulletsList() {
+        return bulletsList;
+    }
+
+    public void setBulletsList(List<GameSprite> bulletsList) {
+        this.bulletsList = bulletsList;
+    }
 }
