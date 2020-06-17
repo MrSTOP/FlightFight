@@ -125,71 +125,6 @@ public class GameNpc extends GameSprite {
         }
     }
 
-/*    //NPC移动逻辑重写
-    @Override
-    public void move() {
-        if (this.isActive() == true) {
-            Random random = new Random(System.currentTimeMillis());
-            int r = random.nextInt(3);          //0:垂直；1：左下；2：右下；
-            switch (r){
-                case 0:
-                {
-                    switch (this.getDir()) {
-                        case LEFT:
-                            this.setX(this.getX() - (float) this.getSpeed());
-                            break;
-                        case DOWN:
-                            this.setY(this.getY() + (float) (this.getSpeed()));
-                            break;
-                        case RIGHT:
-                            this.setX(this.getX() + (float) this.getSpeed());
-                            break;
-                        case UP:
-                            this.setY(this.getY() - (float) (this.getSpeed()));
-                            break;
-                    }
-                }
-                case 1:
-                {
-                    switch (this.getDir()) {
-                        case LEFT:
-                            this.setX(this.getX() - (float) this.getSpeed());
-                            break;
-                        case DOWN:
-                            this.setY(this.getY() + (float) (this.getSpeed()) * (float) Math.sin(Math.PI/2));
-                            this.setX(this.getX() - (float) this.getSpeed() * (float) Math.sin(Math.PI/2));
-                            break;
-                        case RIGHT:
-                            this.setX(this.getX() + (float) this.getSpeed());
-                            break;
-                        case UP:
-                            this.setY(this.getY() - (float) (this.getSpeed()));
-                            break;
-                    }
-                }
-                case 2:
-                {
-                    switch (this.getDir()) {
-                        case LEFT:
-                            this.setX(this.getX() - (float) this.getSpeed());
-                            break;
-                        case DOWN:
-                            this.setY(this.getY() + (float) (this.getSpeed()) * (float) Math.sin(Math.PI/2));
-                            this.setX(this.getX() + (float) this.getSpeed() * (float) Math.sin(Math.PI/2));
-                            break;
-                        case RIGHT:
-                            this.setX(this.getX() + (float) this.getSpeed());
-                            break;
-                        case UP:
-                            this.setY(this.getY() - (float) (this.getSpeed()));
-                            break;
-                    }
-                }
-            }
-
-        }
-    }*/
-
     //垂直翻转位图函数
     public Bitmap getRotateBitmap(Bitmap source) {
         Matrix matrix = new Matrix();
@@ -203,6 +138,10 @@ public class GameNpc extends GameSprite {
     @Override
     public void decreaseHP() {
         this.setHp(this.getHp() - 1);
+        if(this.getHp() <= 0)
+        {
+            this.setActive(false);
+        }
     }
 
     public long getFireStartTime() {
