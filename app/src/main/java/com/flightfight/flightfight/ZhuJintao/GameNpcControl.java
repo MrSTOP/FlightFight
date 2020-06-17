@@ -24,7 +24,8 @@ public class GameNpcControl {
 
     private int NpcSum = 100;               //NPC总数
     private int NpcCur = 0;                 //当前已有（包括死亡）NPC数量
-    private int intervalTime = 300;         //间隔时间
+    private int intervalTime = 800;         //间隔时间
+    private int bulletIntervalTime = 4000;  //子弹间隔时间
 
     private List<GameNpc> npcList = new ArrayList<>();;
     private List<GameNpc> cloneNpcList =  new ArrayList<>();;
@@ -154,7 +155,7 @@ public class GameNpcControl {
             bulletsList = new ArrayList<>();
         }
 
-        if (curCtrlNpc.getFireCurTime() - curCtrlNpc.getFireStartTime() > getIntervalTime() * 5) {
+        if (curCtrlNpc.getFireCurTime() - curCtrlNpc.getFireStartTime() > getBulletIntervalTime()) {
             Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet3);
             //子弹需要翻转
             Bitmap trueBmp = curCtrlNpc.getRotateBitmap(bmp);
@@ -166,7 +167,7 @@ public class GameNpcControl {
             curTempBullet.setActive(true);
             curTempBullet.setRatio(0.4f * density);
             float px = curCtrlNpc.getX() + ((float) curCtrlNpc.getWidth() / 3) - curTempBullet.getWidth();
-            float py = curCtrlNpc.getY() + curTempBullet.getHeight();
+            float py = curCtrlNpc.getY() + curTempBullet.getHeight() / 2;
             curTempBullet.setX(px);
             curTempBullet.setY(py);
 
@@ -244,6 +245,14 @@ public class GameNpcControl {
 
     public void setIntervalTime(int intervalTime) {
         this.intervalTime = intervalTime;
+    }
+
+    public int getBulletIntervalTime() {
+        return bulletIntervalTime;
+    }
+
+    public void setBulletIntervalTime(int bulletIntervalTime) {
+        this.bulletIntervalTime = bulletIntervalTime;
     }
 
     public List<GameNpc> getNpcList() {
