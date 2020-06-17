@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.flightfight.flightfight.ZhuJintao.GameNpc;
 import com.flightfight.flightfight.yankunwei.GameArchive;
 import com.flightfight.flightfight.yankunwei.GameBulletFactory;
 import com.flightfight.flightfight.yankunwei.GamePlayerSprite;
@@ -106,6 +107,10 @@ public class GameManager {
         player.move();
     }
 
+    public boolean isPlayerDead() {
+        return player.getLife() <= 0 && player.getHp() <= 0;
+    }
+
     public void load() {
         Intent load = new Intent(context, GameSaveService.class);
         load.setAction(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE);
@@ -116,7 +121,7 @@ public class GameManager {
     public void setAchieveData(GameControl controller) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         GameArchive gameAchieve = gson.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
-        List<GameSprite> enemyList = gameAchieve.getEnemyList();
+        List<GameNpc> enemyList = gameAchieve.getEnemyList();
         List<GameSprite> initializedEnemyList = new ArrayList<>();
         List<GameSprite> initializedPlayerBulletList = new ArrayList<>();
         GamePlayerSprite player = gameAchieve.getPlayer();
