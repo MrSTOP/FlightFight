@@ -68,6 +68,8 @@ public class GamePlayerSprite extends GameSprite {
         this.spriteBitmaps = normalBitmap;
         playerBulletList = new ArrayList<>();
         this.canShoot = true;
+        this.hp = 100;
+        this.life = 3;
     }
 
     @Deprecated

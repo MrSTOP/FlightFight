@@ -26,12 +26,12 @@ public class GameNpcControl {
     private int NpcCur = 0;                 //当前已有（包括死亡）NPC数量
     private int intervalTime = 300;         //间隔时间
 
-    public List<GameNpc> npcList = null;
-    public List<GameNpc> cloneNpcList = null;
+    private List<GameNpc> npcList = new ArrayList<>();;
+    private List<GameNpc> cloneNpcList =  new ArrayList<>();;
 
     //子弹类直接使用Sprite类
-    public List<GameSprite> bulletsList = null;
-    public List<GameSprite> cloneBulletsList = null;
+    private List<GameSprite> bulletsList = new ArrayList<>();
+    private List<GameSprite> cloneBulletsList = new ArrayList<>();
 
     public GameNpcControl(Context context, int screenWidth, int screenHeight) {
         ScreenWidth = screenWidth;
