@@ -1,12 +1,20 @@
 package com.flightfight.flightfight;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import com.flightfight.flightfight.yankunwei.GameArchive;
+import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
+import com.flightfight.flightfight.yankunwei.ValueContainer;
+
+import java.util.Date;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static int TIME_IN_FRAME = 24;
@@ -14,6 +22,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private boolean isRunning;//控制绘画线程的标志位
     private GameManager game;
     private GameControl controller;
+    private Context context;
+
+    private final Object lock = new Object();
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            game.setAchieveData();
+        }
+    };
 
     public GameSurfaceView(Context context, int ScreenWidth, int ScreenHeight) {
         super(context);
@@ -21,6 +39,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         game = new GameManager(context, ScreenWidth, ScreenHeight);
         controller = new GameControl(ScreenWidth, ScreenHeight);
         controller.setPlayerRect(game.getPlayerRectF());
+        this.context = context;
     }
 
     private void initView() {
@@ -33,6 +52,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        context.registerReceiver(receiver, new IntentFilter(GameSaveService.SERVICE_RESPONSE_LOAD_GAME_ACHIEVE));
         isRunning = true;
         new Thread(this).start();
     }
@@ -44,6 +64,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         isRunning = false;
+        context.unregisterReceiver(receiver);
     }
 
     @Override
@@ -59,10 +80,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             if (surfCanvas != null) {
                 try {
                     synchronized (mHolder) {
-                        game.updateAnimation();
-                        game.updateHappyFish();
-                        game.draw(surfCanvas);
-                        controller.draw(surfCanvas);
+                        synchronized (lock) {
+                            game.updateAnimation();
+                            game.updateHappyFish();
+                            game.draw(surfCanvas);
+                            controller.draw(surfCanvas);
+                        }
                     }
                 } finally {
                     mHolder.unlockCanvasAndPost(surfCanvas);
@@ -91,6 +114,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             game.setPlayerActive(true);
         }
         if (controller.isFireTouched()) {
+            synchronized (lock) {
+                game.load();
+            }
 //            game.loadBubbles();
         }
         game.setPlayerAngelArc(controller.getPlayerAngleArc());

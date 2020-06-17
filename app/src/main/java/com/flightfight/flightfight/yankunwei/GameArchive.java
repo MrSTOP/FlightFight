@@ -1,6 +1,7 @@
 package com.flightfight.flightfight.yankunwei;
 
 import com.flightfight.flightfight.GameSprite;
+import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,9 +9,13 @@ import java.util.Date;
 import java.util.List;
 
 public class GameArchive implements Serializable {
+    @Expose
     private Date gameDate;
+    @Expose
     private ArrayList<GameSprite> enemyList;
+    @Expose
     private GamePlayerSprite player;
+    @Expose
     private ArrayList<GameSprite> enemyBulletList;
 
     public GameArchive() {

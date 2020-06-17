@@ -5,15 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.flightfight.flightfight.GameSprite;
+import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.yankunwei.database.LeaderBoardDAO;
 import com.flightfight.flightfight.yankunwei.database.bean.PlayerRecord;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,9 +33,11 @@ public class GameSaveService extends Service {
     public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state";
 
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG = "playerRecord";
-    public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG = "gameAchieve";
+    public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME = "gameAchieveTime";
+    public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG = "gameTime";
     public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG = "achieveTimes";
     public static final String SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG = "playerRecords";
+
 
 //    class GameSaveServiceBinder extends Binder {
 //        public GameSaveService getService() {
@@ -73,15 +79,13 @@ public class GameSaveService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (Objects.equals(intent.getAction(), SERVICE_ACTION_SAVE_PLAYER_RECORD)) {
-            Log.d("SERVICE", "SaveRecord");
             savePlayerRecord(intent);
         } else if (Objects.equals(intent.getAction(), SERVICE_ACTION_LOAD_ALL_PLAYER_RECORD)) {
             getLeaderBoard();
         } else if (Objects.equals(intent.getAction(), SERVICE_ACTION_SAVE_GAME_ACHIEVE)) {
-            GameArchive gameArchive = (GameArchive) intent.getSerializableExtra(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG);
-            saveGameAchieve(gameArchive);
+            saveGameAchieve(intent);
         } else if (Objects.equals(intent.getAction(), SERVICE_ACTION_LOAD_GAME_ACHIEVE)) {
-            loadGameAchieve(intent.getLongExtra("gameTime", 0));
+            loadGameAchieve(intent);
         } else if (Objects.equals(intent.getAction(), SERVICE_ACTION_GET_ALL_GAME_ACHIEVE)) {
             getAllGameAchieve();
         }
@@ -117,9 +121,6 @@ public class GameSaveService extends Service {
         Intent resultIntent = new Intent(SERVICE_RESPONSE_SAVE_PLAYER_RECORD);
         resultIntent.putExtra("result", result);
         sendBroadcast(resultIntent);
-        GameArchive gameArchive = new GameArchive();
-        gameArchive.setGameDate(new Date(System.currentTimeMillis()));
-        saveGameAchieve(gameArchive);
     }
 
     private void getLeaderBoard() {
@@ -130,21 +131,31 @@ public class GameSaveService extends Service {
         sendBroadcast(records);
     }
 
-    private void saveGameAchieve(GameArchive gameArchive) {
-        Gson gson = new Gson();
-        String gameAchieveJson = gson.toJson(gameArchive);
+    private void saveGameAchieve(Intent intent) {
+        String gameArchiveJson = ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA;
+        ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA = null;
+        long time = intent.getLongExtra(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME, -1);
+        if (gameArchiveJson == null) {
+            throw new IllegalArgumentException("\"SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA\"  can not be null");
+        }
+        if (time == -1) {
+            throw new IllegalArgumentException(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME + " not exist");
+        }
         SharedPreferences.Editor editor = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE).edit();
-        editor.putString(String.valueOf(gameArchive.getGameDate().getTime()), gameAchieveJson);
+        editor.putString(String.valueOf(time), gameArchiveJson);
+        System.out.println(time + " @ " + gameArchiveJson);
         editor.apply();
     }
 
-    private void loadGameAchieve(long time) {
-        Gson gson = new Gson();
+    private void loadGameAchieve(Intent intent) {
+        long time = intent.getLongExtra(SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, -1);
+        if (time == -1) {
+            throw new IllegalArgumentException(SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG + " not exist");
+        }
         SharedPreferences sharedPreferences = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE);
         String gameAchieveJson = sharedPreferences.getString(String.valueOf(time), "");
-        GameArchive gameArchive = gson.fromJson(gameAchieveJson, GameArchive.class);
-        Intent gameAchieve = new Intent(SERVICE_RESPONSE_LOAD_GAME_ACHIEVE);
-        gameAchieve.putExtra("gameAchieve", gameAchieve);
-        sendBroadcast(gameAchieve);
+        ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA = gameAchieveJson;
+        Intent gameAchieveIntent = new Intent(SERVICE_RESPONSE_LOAD_GAME_ACHIEVE);
+        sendBroadcast(gameAchieveIntent);
     }
 }

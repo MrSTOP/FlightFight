@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import android.util.Log;
 
 import com.flightfight.flightfight.GameSprite;
+import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ public class GamePlayerSprite extends GameSprite {
     public static final int HALF_DESTINATION_AREA_LENGTH = 20;
     public static final int SHOOT_COOL_TICK = 5;
 
+    @Expose
     private double angelArc;
     private float destinationX;
     private float destinationY;
@@ -27,14 +29,21 @@ public class GamePlayerSprite extends GameSprite {
     private Bitmap[] rightBank;
     private Bitmap[] normalBitmap;
     private int totalBankFrame;
+    @Expose
     private List<GameSprite> playerBulletList;
 
 
     /**
      * 发射子弹冷却时间
      */
+    @Expose
     private int coolTime;
+    @Expose
     private boolean canShoot;
+    @Expose
+    private int screenWidth;
+    @Expose
+    private int screenHeight;
 
 
     public GamePlayerSprite(Context context, Bitmap bitmap, Bitmap leftBankBitmap, Bitmap rightBankBitmap, int bankFrame) {
@@ -67,6 +76,11 @@ public class GamePlayerSprite extends GameSprite {
         throw new UnsupportedOperationException("Do not use this constructor");
     }
 
+    public void setScreenSize(int screenWidth, int  screenHeight) {
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
+    }
+
     @Override
     public void move() {
         if (this.active) {
@@ -97,6 +111,9 @@ public class GamePlayerSprite extends GameSprite {
             shoot();
             canShoot = false;
             coolTime = SHOOT_COOL_TICK;
+        }
+        if (playerBulletList.size() > 30) {
+            removeInvalidBullet();
         }
         for (GameSprite bullet : getPlayerBulletListSafeForIteration()) {
             bullet.move();
@@ -161,6 +178,26 @@ public class GamePlayerSprite extends GameSprite {
         }
     }
 
+    @Override
+    public void initBySaved(GameSprite gameSprite) {
+        try {
+            super.initBySaved(gameSprite);
+        } catch (UnsupportedOperationException e) {
+        }
+        if (gameSprite instanceof GamePlayerSprite) {
+            GamePlayerSprite playerSprite = (GamePlayerSprite) gameSprite;
+            this.setAngelArc(playerSprite.getAngelArc());
+            this.spriteBitmaps = this.normalBitmap;
+            this.totalFrames = 1;
+            this.currentFrame = 0;
+            this.active = false;
+            this.screenWidth = playerSprite.screenWidth;
+            this.screenHeight = playerSprite.screenHeight;
+        } else {
+            throw new IllegalArgumentException("gameSprite is not GamePlayerSprite\'s instance");
+        }
+    }
+
     public double getAngelArc() {
         return angelArc;
     }
@@ -195,18 +232,23 @@ public class GamePlayerSprite extends GameSprite {
         this.destinationY = destinationY;
     }
 
-    public void removeInvalidBullet(int screenWidth, int screenHeight) {
+    public void removeInvalidBullet() {
         List<GameSprite> cloneBullet = getPlayerBulletListSafeForIteration();
         Iterator<GameSprite> iterator = cloneBullet.iterator();
-        RectF windowRectF = new RectF(0, 0, screenWidth, screenHeight);
+        RectF windowRectF = new RectF(0, 0, this.screenWidth, this.screenHeight);
+        System.out.println(windowRectF.toShortString());
         while (iterator.hasNext()) {
             GameSprite bullet = iterator.next();
-            if (!windowRectF.intersect(bullet.getBoundRectF())) {
+            if (!Utils.rectCollide(windowRectF, bullet.getBoundRectF())) {
                 iterator.remove();
             }
         }
         playerBulletList.clear();
         playerBulletList.addAll(cloneBullet);
+    }
+
+    public void setPlayerBulletList(List<GameSprite> bulletList) {
+        this.playerBulletList = bulletList;
     }
 
     public List<GameSprite> getPlayerBulletListSafeForIteration() {
