@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -21,7 +22,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -41,6 +42,9 @@ public class GameActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_PAUSE);
+
                 if(!fragment.isAdded()){
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
@@ -57,25 +61,18 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        fragment.setHide(new PauseFragment.HideFragMent() {
-            @Override
-            public void setHitde() {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
-                //    transaction.add(R.id.pause_content, fragment);
-                transaction.hide(fragment);
-                transaction.commit();
-                // getFragmentManager().popBackStack();
-                //  getFragmentManager().executePendingTransactions();
-            }
+        fragment.setHide(() -> {
+            gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_START);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
+            //    transaction.add(R.id.pause_content, fragment);
+            transaction.hide(fragment);
+            transaction.commit();
+            // getFragmentManager().popBackStack();
+            //  getFragmentManager().executePendingTransactions();
         });
 
-        gameSurfaceView.setBanButtonListener(new GameSurfaceView.BanButtonListener() {
-            @Override
-            public void banButtonListener() {
-                button.setEnabled(false);
-            }
-        });
+        gameSurfaceView.setBanButtonListener(() -> button.setEnabled(false));
         //   GameSurfaceView gameView = new GameSurfaceView(this, screenWidth, screenHeight, isAbout);
         //   setContentView(gameView);
     }

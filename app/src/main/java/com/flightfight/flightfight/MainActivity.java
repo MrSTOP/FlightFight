@@ -1,9 +1,12 @@
 package com.flightfight.flightfight;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,14 +28,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         musicControl = findViewById(R.id.music_control);
         startGame = findViewById(R.id.main_start_game);
         aboutGame = findViewById(R.id.main_about_game);
         loadGame = findViewById(R.id.main_load_game);
         quitGame = findViewById(R.id.main_quit_game);
-        pause = findViewById(R.id.pause);
 
         musicControl.setOnClickListener(v -> {
 
@@ -57,13 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        pause.setOnClickListener(v -> {
-            PauseFragment fragment = new PauseFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();   // 开启一个事务
-            transaction.replace(R.id.pause_content, fragment);
-            transaction.commit();
-        });
+
     }
 
     public void showExitAlert() {

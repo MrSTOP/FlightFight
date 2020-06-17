@@ -71,20 +71,10 @@ public class PauseFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pause, container, false);
         quit = view.findViewById(R.id.pause_bck_menu);
         continueBtn = view.findViewById(R.id.pause_continue_game);
-        continueBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                hide.setHitde();
-
-            }
-        });
-        quit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mActivity, MainActivity.class);
-                startActivity(intent);
-            }
+        continueBtn.setOnClickListener(v -> hide.setHitde());
+        quit.setOnClickListener(v -> {
+            Intent intent = new Intent(mActivity, MainActivity.class);
+            startActivity(intent);
         });
         return view;
     }

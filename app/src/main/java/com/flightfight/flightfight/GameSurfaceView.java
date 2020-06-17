@@ -34,11 +34,22 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private int ScreenHeight;
     private Paint textPaint;
     private Paint textPaintBack;
+    private Paint paintback;
     private Canvas mCanvas;
     private Bitmap memBmp;
     private BanButtonListener banButtonListener;
     private Rect winAndFaildbtn;
+    private GameState gameState;
+
     private final Object lock = new Object();
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -59,8 +70,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public GameSurfaceView(Context context, AttributeSet attrs){
         super(context,attrs);
         this.context = context;
-        int[] attrsArray = new int[] {android.R.attr.background};
-        TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
+  //      int[] attrsArray = new int[] {android.R.attr.background};
+     //   TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
         //   Drawable background = ta.getDrawable(0);
         Resources res = context.getApplicationContext().getResources();
 //        prizeBmp = ((BitmapDrawable)background).getBitmap();
@@ -77,6 +88,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         mHolder.addCallback(this);//注册Surface Holder 的回调方法
         setFocusable(true);
         setFocusableInTouchMode(true);
+        paintback = new Paint();
         this.setKeepScreenOn(true);
     }
 
@@ -85,6 +97,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.ScreenHeight = ScreenHeight;
         game = new GameManager(context, ScreenWidth, ScreenHeight);
         controller = new GameControl(ScreenWidth, ScreenHeight);
+        controller.setPlayerRect(game.getPlayerRectF());
         memBmp = Bitmap.createBitmap(ScreenWidth, ScreenHeight, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(memBmp);
     }
@@ -119,13 +132,31 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             if (surfCanvas != null) {
                 try {
                     synchronized (mHolder) {
-                        synchronized (lock) {
-                            game.updateAnimation();
-                            game.updateHappyFish();
-                            game.draw(surfCanvas);
-                            controller.draw(surfCanvas);
+                        if(gameState != GameState.GAME_PAUSE)
+                        {
+
+                                game.updateAnimation();
+                                game.updateHappyFish();
+                                game.draw(mCanvas);
+                                controller.draw(mCanvas);
+
                         }
+
                     }
+
+                    Rect currentSrcRect = new Rect();
+                    currentSrcRect.left = 0;
+                    currentSrcRect.top = 0;
+                    currentSrcRect.right = memBmp.getWidth();
+                    currentSrcRect.bottom = memBmp.getHeight();
+
+
+                    Rect desRect = new Rect();
+                    desRect.left = 0;
+                    desRect.top = 0;
+                    desRect.right = mCanvas.getWidth();
+                    desRect.bottom = mCanvas.getHeight();
+                    surfCanvas.drawBitmap(memBmp,currentSrcRect,desRect, paintback);
                 } finally {
                     mHolder.unlockCanvasAndPost(surfCanvas);
                 }
@@ -227,4 +258,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public interface BanButtonListener{
         void banButtonListener();
     }
+
+    public enum GameState{GAME_START, GAME_PAUSE, GAME_ABOUT}
+
+
 }
