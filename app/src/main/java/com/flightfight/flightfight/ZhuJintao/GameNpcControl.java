@@ -23,15 +23,15 @@ public class GameNpcControl {
     private float density;
 
     private int NpcSum = 10;               //NPC总数
-    private int NpcCur = 0;                 //当前已有（包括死亡）NPC数量
+    private int NpcCur = 0;                 //当前已有（死亡）NPC数量
     private int intervalTime = 800;         //间隔时间
     private int bulletIntervalTime = 4000;  //子弹间隔时间
 
     private List<GameNpc> npcList = new ArrayList<>();
     private List<GameNpc> cloneNpcList = new ArrayList<>();
 
-    private static boolean BOSS_ACTIVE = false;
-    private static boolean BOSS_DEAD = false;
+    private boolean BOSS_ACTIVE = false;
+    private boolean BOSS_DEAD = false;
 
     //子弹类直接使用Sprite类
     private List<GameSprite> bulletsList = new ArrayList<>();
@@ -96,8 +96,6 @@ public class GameNpcControl {
 
                     //Log.d("NPC", "NPC X:" + curTemNpc.getX() + " Y:" + curTemNpc.getY() + "NPC W:" + curTemNpc.getWidth() + " H:" + curTemNpc.getHeight());
                     npcList.add(curTemNpc);
-                    int i = getNpcCur() + 1;
-                    setNpcCur(i);
                     npcStartTime = System.currentTimeMillis();
                 }
             }
@@ -133,12 +131,10 @@ public class GameNpcControl {
             curTemNpc.setY(py);
 
             npcList.add(curTemNpc);
-            int i = getNpcCur() + 1;
-            setNpcCur(i);
             npcStartTime = System.currentTimeMillis();
             setBossActive(true);
         }
-        //Log.d("Number:", "curNpc:" + this.getNpcCur() + "--sumNpc:" + this.getNpcSum() + "--npcList.size():" + npcList.size());
+        //Log.d("Number:", "curNpc:" + this.getNpcCur() + "--sumNpc:" + this.getNpcSum());
     }
 
     public void updateNpcPos() {
@@ -181,15 +177,14 @@ public class GameNpcControl {
             while (it.hasNext()) {
                 GameNpc tempNpc = it.next();
                 if (tempNpc.getY() > ScreenHeight + tempNpc.getHeight() || !tempNpc.isActive()) {
-                    if (tempNpc.isActive() && !this.isBossActive()) {
-                        int i = this.getNpcCur() - 1;
+                    if (!tempNpc.isActive()) {
+                        int i = this.getNpcCur() + 1;
                         this.setNpcCur(i);
+                        playBoomAnimate(tempNpc.getX(), tempNpc.getY());
                     }
-                    if (tempNpc.getNpcType() == GameNpc.isBoss)
-                    {
+                    if (tempNpc.getNpcType() == GameNpc.isBoss) {
                         setBossDead(true);
                     }
-                    playBoomAnimate(tempNpc.getX(), tempNpc.getY());
                     tempNpc.releaseBitmap();
                     it.remove();
                 }
@@ -216,8 +211,6 @@ public class GameNpcControl {
             bulletsList.addAll(cloneBulletsList);
             cloneBulletsList.clear();
         }
-
-//        Log.d("BossDead", "isBossDead():" + isBossDead());
     }
 
     public void playBoomAnimate(float x, float y) {
@@ -242,11 +235,12 @@ public class GameNpcControl {
         if (boomList != null) {
             //清除爆炸图片
             //将原始的npcList进行克隆，每次只绘制克隆的
-            cloneBoomList = new ArrayList<>(npcList);
+            cloneBoomList = new ArrayList<>(boomList);
             Iterator<GameSprite> it = cloneBoomList.iterator();
             while (it.hasNext()) {
                 GameSprite tempBoom = it.next();
-                if ((tempBoom.getCurrentFrame() >= tempBoom.getTotalFrames()) || !tempBoom.isActive()) {
+                Log.d("boomFrame:", "tempBoom.getCurrentFrame():" + tempBoom.getCurrentFrame() + "tempBoom.getTotalFrames():" + tempBoom.getTotalFrames());
+                if ((tempBoom.getCurrentFrame() >= tempBoom.getTotalFrames() - 2) || !tempBoom.isActive()) {
                     tempBoom.releaseBitmap();
                     it.remove();
                 }
@@ -331,7 +325,7 @@ public class GameNpcControl {
             cloneBulletsList.clear();
         }
 
-        //绘制子弹Bullet
+        //绘制爆炸
         if (cloneBoomList != null) {
             if (cloneBoomList == null) {
                 cloneBoomList = new ArrayList<>();
@@ -341,10 +335,20 @@ public class GameNpcControl {
             for (GameSprite tempBoom : cloneBoomList) {
                 tempBoom.setAlpha(255);
                 tempBoom.draw(canvas);
+                tempBoom.loopFrame();
             }
             //绘制完毕，清空克隆的内容
             cloneBoomList.clear();
         }
+    }
+
+    public int spareNpc(){
+        int i = getNpcSum() - getNpcCur();
+        if (i <= 0)
+        {
+            return 0;
+        }
+        else return i;
     }
 
     public int getNpcSum() {
@@ -395,19 +399,19 @@ public class GameNpcControl {
         this.bulletsList = bulletsList;
     }
 
-    public static boolean isBossActive() {
+    public boolean isBossActive() {
         return BOSS_ACTIVE;
     }
 
-    public static void setBossActive(boolean bossActive) {
+    public void setBossActive(boolean bossActive) {
         BOSS_ACTIVE = bossActive;
     }
 
-    public static boolean isBossDead() {
+    public boolean isBossDead() {
         return BOSS_DEAD;
     }
 
-    public static void setBossDead(boolean bossDead) {
+    public void setBossDead(boolean bossDead) {
         BOSS_DEAD = bossDead;
     }
 }
