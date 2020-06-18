@@ -5,19 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.IBinder;
 
-import com.flightfight.flightfight.GameSprite;
-import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.yankunwei.database.LeaderBoardDAO;
 import com.flightfight.flightfight.yankunwei.database.bean.PlayerRecord;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,7 +30,6 @@ public class GameSaveService extends Service {
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG = "playerRecord";
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME = "gameAchieveTime";
     public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG = "gameTime";
-    public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG = "achieveTimes";
     public static final String SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG = "playerRecords";
 
 
@@ -101,13 +95,14 @@ public class GameSaveService extends Service {
     private void getAllGameAchieve() {
         SharedPreferences sharedPreferences = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE);
         Map<String, ?> allGameAchieve = sharedPreferences.getAll();
-        ArrayList<Date> dates = new ArrayList<>(allGameAchieve.size());
+        ArrayList<Date> dateList = new ArrayList<>(allGameAchieve.size());
         for (Map.Entry<String, ?> entry : allGameAchieve.entrySet()) {
             Date date = new Date(Long.parseLong(entry.getKey()));
-            dates.add(date);
+            dateList.add(date);
         }
+        Gson gson = new Gson();
         Intent gameAchieveDates = new Intent(SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE);
-        gameAchieveDates.putExtra(SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG, gameAchieveDates);
+        ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA = gson.toJson(dateList);
         sendBroadcast(gameAchieveDates);
     }
 
@@ -153,8 +148,7 @@ public class GameSaveService extends Service {
             throw new IllegalArgumentException(SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG + " not exist");
         }
         SharedPreferences sharedPreferences = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE);
-        String gameAchieveJson = sharedPreferences.getString(String.valueOf(time), "");
-        ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA = gameAchieveJson;
+        ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA = sharedPreferences.getString(String.valueOf(time), "");
         Intent gameAchieveIntent = new Intent(SERVICE_RESPONSE_LOAD_GAME_ACHIEVE);
         sendBroadcast(gameAchieveIntent);
     }
