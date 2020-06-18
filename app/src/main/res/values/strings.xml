@@ -10,8 +10,10 @@
     <string name="pause">暂停</string>
     <string name="finish_game">恭喜！通关</string>
     <string name="restart_game">重新开始</string>
-
+    <string name="game_info">  app名称:飞机大战\n版本:V1.0\n本游戏由三人开发而成,通关条件为击杀所有敌人飞机或者击杀boss。子弹自动发射，只需要控制好飞机躲避子弹即可</string>
     <string name="game_name">飞机大战V1.0</string>
+    <string name="yzc_info">姓名:严子超 学号:8002117042\n班级:软件工程1701\n负责app的菜单显示，及时状态，主界面设计，通过过关设置。暂停等设计</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

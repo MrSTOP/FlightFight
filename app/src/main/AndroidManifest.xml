@@ -4,14 +4,14 @@
 
     <application
         android:allowBackup="true"
+        android:configChanges="orientation|keyboardHidden"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/FullTheme"
-        android:configChanges="orientation|keyboardHidden"
-        >
-        <activity android:name=".GameActivity"></activity>
+        android:theme="@style/FullTheme">
+        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".GameActivity" />
         <activity android:name=".LoadGameActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
