@@ -31,6 +31,7 @@ public class GameNpcControl {
     private List<GameNpc> cloneNpcList = new ArrayList<>();
 
     private static boolean BOSS_ACTIVE = false;
+    private static boolean BOSS_DEAD = false;
 
     //子弹类直接使用Sprite类
     private List<GameSprite> bulletsList = new ArrayList<>();
@@ -184,6 +185,10 @@ public class GameNpcControl {
                         int i = this.getNpcCur() - 1;
                         this.setNpcCur(i);
                     }
+                    if (tempNpc.getNpcType() == GameNpc.isBoss)
+                    {
+                        setBossDead(true);
+                    }
                     playBoomAnimate(tempNpc.getX(), tempNpc.getY());
                     tempNpc.releaseBitmap();
                     it.remove();
@@ -211,17 +216,22 @@ public class GameNpcControl {
             bulletsList.addAll(cloneBulletsList);
             cloneBulletsList.clear();
         }
+
+        Log.d("BossDead", "isBossDead():" + isBossDead());
     }
 
     public void playBoomAnimate(float x, float y) {
+        if (boomList == null) {
+            boomList = new ArrayList<>();
+        }
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.explosion2);
-        GameSprite curTemBoom = new GameSprite(context, bmp, 6, 1);
+        GameSprite curTemBoom = new GameSprite(context, bmp, 6, 6);
         curTemBoom.setSpeed(3 * density);
         curTemBoom.setDir(GameSprite.DOWN);
         curTemBoom.setHp(1);
         curTemBoom.setLife(1);
         curTemBoom.setActive(true);
-        curTemBoom.setRatio(1.0f * density);
+        curTemBoom.setRatio(0.15f * density);
         curTemBoom.setX(x);
         curTemBoom.setY(y);
 
@@ -241,7 +251,7 @@ public class GameNpcControl {
                     it.remove();
                 }
             }
-            Log.d("boomList", "boomList.size():" + boomList.size());
+            //Log.d("boomList", "boomList.size():" + boomList.size());
             boomList.clear();
             boomList.addAll(cloneBoomList);
             cloneBoomList.clear();
@@ -391,5 +401,13 @@ public class GameNpcControl {
 
     public static void setBossActive(boolean bossActive) {
         BOSS_ACTIVE = bossActive;
+    }
+
+    public static boolean isBossDead() {
+        return BOSS_DEAD;
+    }
+
+    public static void setBossDead(boolean bossDead) {
+        BOSS_DEAD = bossDead;
     }
 }
