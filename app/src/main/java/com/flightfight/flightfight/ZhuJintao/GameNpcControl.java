@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
@@ -59,7 +60,7 @@ public class GameNpcControl {
         }
         long npcLoadTime = System.currentTimeMillis();
 
-        if (getNpcCur() <= getNpcSum()) {
+        if (getNpcCur() < getNpcSum()) {
             if (npcList.size() < 10) {
                 if (npcLoadTime - npcStartTime > getIntervalTime()) {
                     Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1);
@@ -90,14 +91,14 @@ public class GameNpcControl {
 
                     //Log.d("NPC", "NPC X:" + curTemNpc.getX() + " Y:" + curTemNpc.getY() + "NPC W:" + curTemNpc.getWidth() + " H:" + curTemNpc.getHeight());
                     npcList.add(curTemNpc);
-                    int i = getNpcCur();
-                    setNpcCur(i++);
+                    int i = getNpcCur() + 1;
+                    setNpcCur(i);
                     npcStartTime = System.currentTimeMillis();
                 }
             }
         }
 
-        if (getNpcCur() > getNpcSum() && !this.isBossActive()) {
+        if (getNpcCur() >= getNpcSum() && !this.isBossActive()) {
             Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
             //Boss图片需要翻转
             Bitmap trueBmp = GameNpc.getRotateBitmap(bmp);
@@ -129,11 +130,12 @@ public class GameNpcControl {
 
             //Log.d("NPC", "NPC X:" + curTemNpc.getX() + " Y:" + curTemNpc.getY() + "NPC W:" + curTemNpc.getWidth() + " H:" + curTemNpc.getHeight());
             npcList.add(curTemNpc);
-            int i = getNpcCur();
-            setNpcCur(i++);
+            int i = getNpcCur() + 1;
+            setNpcCur(i);
             npcStartTime = System.currentTimeMillis();
             this.setBossActive(true);
         }
+        Log.d("Number:","curNpc:" + this.getNpcCur() + "---sumNpc:" + this.getNpcSum());
     }
 
     public void updateNpcPos() {
@@ -178,7 +180,8 @@ public class GameNpcControl {
                 if (tempNpc.getY() > ScreenHeight + tempNpc.getHeight() || !tempNpc.isActive()) {
                     if (!tempNpc.isActive())
                     {
-                        this.setNpcCur(this.getNpcCur() + 1);
+                        //该处无需增加，因为生成时已增加
+                        //this.setNpcCur(this.getNpcCur() - 1);
                     }
                     tempNpc.releaseBitmap();
                     it.remove();
