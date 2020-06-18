@@ -232,7 +232,7 @@ public class GameNpc extends GameSprite {
                             this.setX(0);
                         }
                         if (this.getY() <= 0) {
-                            this.setDir(LEFTUP);
+                            this.setDir(LEFTDOWN);
                             this.setY(0);
                         }
                         break;
