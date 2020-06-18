@@ -149,6 +149,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             if (surfCanvas != null) {
                 try {
                     synchronized (mHolder) {
+                        if (game.isPlayerDead()) {
+                            gameState = GameState.GAME_FAILD;
+                        }
                         if (gameState == GameState.GAME_START) {
 
                             game.updateAnimation();
@@ -275,6 +278,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 
     public void drawGameGoing(Canvas mcanvas, int screenWidth, int screenHeight, int round) {
+        Bitmap bitmap = game.getCurrentBackgroundByLevel();
         if (frameTime == -1) {
             frameTime = System.currentTimeMillis();
         }
@@ -285,12 +289,14 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         textPaintBack.setARGB(125, 0, 125, 200);
         textPaintBack.setDither(true);
         String hpText = "Round:" + round;
+        mcanvas.drawBitmap(bitmap, null, new RectF(0, 0, screenWidth, screenHeight), paintback);
         mcanvas.drawText(hpText, screenWidth / 2, screenHeight / 2, textPaint);
 
         long frameEndTime = System.currentTimeMillis();
 
         if (frameEndTime - frameTime > 2000) {
             gameState = GameState.GAME_START;
+            frameTime = -1;
         }
 
     }

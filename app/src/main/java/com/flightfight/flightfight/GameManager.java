@@ -32,6 +32,7 @@ public class GameManager {
     private GameSprite[] bubbles;
     private GamePlayerSprite player;
     private GameNpcControl npcControl;
+    private Bitmap currentBackground;
     private Bitmap backBmp;
     private Bitmap backBmp2;
     private Bitmap backBmp3;
@@ -43,8 +44,6 @@ public class GameManager {
     private RectF windowRectF;
 
     Rect srcRect;
-    Rect srcRect2;
-    Rect srcRect3;
     Rect destRect;
     Paint paint;
 
@@ -59,8 +58,6 @@ public class GameManager {
         backBmp2 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background2);
         backBmp3 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background3);
         this.srcRect = new Rect(0, 0, backBmp.getWidth(), backBmp.getHeight());
-        this.srcRect2 = new Rect(0, 0, backBmp2.getWidth(), backBmp2.getHeight());
-        this.srcRect3 = new Rect(0, 0, backBmp3.getWidth(), backBmp3.getHeight());
         this.destRect = new Rect();
         this.paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         this.gameLevel = 1;
@@ -80,7 +77,24 @@ public class GameManager {
         if (temp != null) {
             this.player.setSavedScore(temp);
         }
-        npcControl.startNewRound();
+        npcControl.startNewRound(gameLevel);
+        currentBackground = getCurrentBackgroundByLevel();
+    }
+
+    public Bitmap getCurrentBackgroundByLevel() {
+        return this.getCurrentBackgroundByLevel(this.gameLevel);
+    }
+    public Bitmap getCurrentBackgroundByLevel(int gameLevel) {
+        switch (gameLevel) {
+            case 1:
+                return backBmp;
+            case 2:
+                return backBmp2;
+            case 3:
+                return backBmp3;
+            default:
+                return backBmp;
+        }
     }
 
     public void setPlayerAngelArc(double angle) {
@@ -129,13 +143,7 @@ public class GameManager {
         destRect.top = 0;
         destRect.bottom = canvas.getHeight();
         paint.setDither(true);
-        if (gameLevel == 1) {
-            canvas.drawBitmap(backBmp, srcRect, destRect, paint);
-        } else if (gameLevel == 2) {
-            canvas.drawBitmap(backBmp2, srcRect2, destRect, paint);
-        } else if (gameLevel == 3) {
-            canvas.drawBitmap(backBmp3, srcRect3, destRect, paint);
-        }
+        canvas.drawBitmap(currentBackground, null, destRect, paint);
         bulletLogic();
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
@@ -143,6 +151,7 @@ public class GameManager {
         if (npcControl.isBossDead() && !gameLevelChanged) {
             gameLevel++;
             gameLevelChanged = true;
+            currentBackground = getCurrentBackgroundByLevel();
         }
     }
 
@@ -255,7 +264,7 @@ public class GameManager {
                 player.increaseKilledEnemy();
             }
         }
-//        System.out.println("SCORE:" + player.getScore());
+//        System.out.println("LIFE:" + player.getLife() + " HP:" + player.getHp());
     }
 
     public int getGameLevel() {
