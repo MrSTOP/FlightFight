@@ -38,6 +38,7 @@ public class GameMusicManager {
             e.printStackTrace();
         }
         ready = true;
+        setMute(mute);
     }
 
     private void checkReady() {
@@ -47,6 +48,7 @@ public class GameMusicManager {
     }
 
     private void loadSoundEffect(Context context) {
+        release();
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
             AssetFileDescriptor assetFileDescriptor = context.getApplicationContext().getAssets().openFd("sounds/blast.wav");
@@ -59,7 +61,7 @@ public class GameMusicManager {
     }
 
     public void playBGM() {
-        playBGM(50);
+        playBGM(30);
     }
 
     public void playBGM(int volume) {
@@ -70,7 +72,7 @@ public class GameMusicManager {
 
     public void setBGMVolume(int volume) {
         checkReady();
-        bgmMediaPlayer.setVolume((float) volume /100.0F, (float) volume /100.0F);
+        bgmMediaPlayer.setVolume((float) volume / 100.0F, (float) volume / 100.0F);
     }
 
     public void pauseBGM() {
@@ -97,15 +99,25 @@ public class GameMusicManager {
     public void setMute(boolean mute) {
         checkReady();
         if (mute) {
+            bgmMediaPlayer.start();
+            bgmMediaPlayer.setVolume(0.0F, 0.0F);
             bgmMediaPlayer.pause();
             for (Map.Entry<String, MediaPlayer> musicEntry : soundNameMap.entrySet()) {
+                musicEntry.getValue().start();
+                musicEntry.getValue().setVolume(0.0F, 0.0F);
                 musicEntry.getValue().pause();
             }
+            System.out.println("MUTE");
         } else {
+            bgmMediaPlayer.start();
+            bgmMediaPlayer.setVolume(0.3F, 0.3F);
             bgmMediaPlayer.pause();
             for (Map.Entry<String, MediaPlayer> musicEntry : soundNameMap.entrySet()) {
+                musicEntry.getValue().start();
+                musicEntry.getValue().setVolume(1.0F, 1.0F);
                 musicEntry.getValue().pause();
             }
+            System.out.println("NAN MUTE");
         }
         this.mute = mute;
     }
@@ -134,14 +146,16 @@ public class GameMusicManager {
             throw new IllegalArgumentException("Sound type: " + soundType + " not exist");
         }
         mediaPlayer.seekTo(0);
-        mediaPlayer.setVolume( (float) leftVolume /100.0F, (float) rightVolume / 100.0F);
+        mediaPlayer.setVolume((float) leftVolume / 100.0F, (float) rightVolume / 100.0F);
         mediaPlayer.setLooping(loop);
         mediaPlayer.start();
     }
 
     public void release() {
-        bgmMediaPlayer.release();
-        bgmMediaPlayer = null;
+        if (bgmMediaPlayer != null) {
+            bgmMediaPlayer.release();
+            bgmMediaPlayer = null;
+        }
         for (Map.Entry<String, MediaPlayer> entry : soundNameMap.entrySet()) {
             entry.getValue().release();
         }

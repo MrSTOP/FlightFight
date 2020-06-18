@@ -20,6 +20,8 @@ public class GameArchive implements Serializable {
     private ArrayList<GameSprite> enemyBulletList;
     @Expose
     private int gameLevel;
+    @Expose
+    private int spareNPC;
 
     public GameArchive() {
         this.enemyList = new ArrayList<>();
@@ -66,5 +68,13 @@ public class GameArchive implements Serializable {
 
     public void setGameLevel(int gameLevel) {
         this.gameLevel = gameLevel;
+    }
+
+    public int getSpareNPC() {
+        return spareNPC;
+    }
+
+    public void setSpareNPC(int spareNPC) {
+        this.spareNPC = spareNPC;
     }
 }

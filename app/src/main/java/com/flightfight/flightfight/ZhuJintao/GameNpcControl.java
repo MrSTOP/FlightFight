@@ -249,7 +249,7 @@ public class GameNpcControl {
             boomList = new ArrayList<>();
         }
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.explosion2);
-        GameSprite curTemBoom = new GameSprite(context, bmp, 6, 6);
+        GameSprite curTemBoom = new GameSprite(context, bmp, 24, 24);
         curTemBoom.setSpeed(3 * density);
         curTemBoom.setDir(GameSprite.DOWN);
         curTemBoom.setHp(1);
@@ -270,7 +270,7 @@ public class GameNpcControl {
             Iterator<GameSprite> it = cloneBoomList.iterator();
             while (it.hasNext()) {
                 GameSprite tempBoom = it.next();
-                Log.d("boomFrame:", "tempBoom.getCurrentFrame():" + tempBoom.getCurrentFrame() + "tempBoom.getTotalFrames():" + tempBoom.getTotalFrames());
+//                Log.d("boomFrame:", "tempBoom.getCurrentFrame():" + tempBoom.getCurrentFrame() + "tempBoom.getTotalFrames():" + tempBoom.getTotalFrames());
                 if ((tempBoom.getCurrentFrame() >= tempBoom.getTotalFrames() - 2) || !tempBoom.isActive()) {
                     tempBoom.releaseBitmap();
                     it.remove();
