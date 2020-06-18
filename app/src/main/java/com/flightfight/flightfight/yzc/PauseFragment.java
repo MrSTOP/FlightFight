@@ -1,6 +1,7 @@
 package com.flightfight.flightfight.yzc;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +36,12 @@ public class PauseFragment extends Fragment {
     private String mParam2;
     private GameActivity mActivity;
     private HideFragMent hide;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
     public PauseFragment() {
         // Required empty public constructor
     }
@@ -79,6 +86,7 @@ public class PauseFragment extends Fragment {
         loadGame.setOnClickListener(v -> {
             if(mActivity.getGameSurfaceView() != null){
                 mActivity.getGameSurfaceView().saveGame();
+
             }
         });
 

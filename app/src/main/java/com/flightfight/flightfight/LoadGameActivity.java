@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -26,7 +28,16 @@ public class LoadGameActivity extends AppCompatActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.e("gameInfo", "onReceive: ");
            gameInfoList =  Utils.parseAllGameAchieveDate();
+            mlistAdapter = new SaveGameAdapter(LoadGameActivity.this, gameInfoList);
+            mListView = findViewById(R.id.load_game_list);
+            mListView.setOnItemClickListener((parent, view, position, id) -> {
+                //  Intent intent = new Intent(this, GameActivity.class);
+                //intent.pu
+
+                //  startActivity(intent);
+            });
         }
     };
 
@@ -35,7 +46,7 @@ public class LoadGameActivity extends AppCompatActivity {
         Intent readStore = new Intent(this, GameSaveService.class);
         readStore.setAction(GameSaveService.SERVICE_ACTION_GET_ALL_GAME_ACHIEVE);
         startService(readStore);
-
+        registerReceiver(broadcastReceiver,new IntentFilter(GameSaveService.SERVICE_ACTION_GET_ALL_GAME_ACHIEVE));
 
 
         super.onCreate(savedInstanceState);
@@ -43,14 +54,7 @@ public class LoadGameActivity extends AppCompatActivity {
         manageStore = findViewById(R.id.manage_game);
         bckBtn = findViewById(R.id.load_bck);
         //gameInfoList = ;
-        mlistAdapter = new SaveGameAdapter(LoadGameActivity.this, gameInfoList);
-        mListView = findViewById(R.id.load_game_list);
-        mListView.setOnItemClickListener((parent, view, position, id) -> {
-         //  Intent intent = new Intent(this, GameActivity.class);
-            //intent.pu
 
-          //  startActivity(intent);
-        });
 
 
 
@@ -61,6 +65,9 @@ public class LoadGameActivity extends AppCompatActivity {
         });
     }
 
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 }
