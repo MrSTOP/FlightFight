@@ -15,6 +15,8 @@ public class GameMusicManager {
     private Map<String, MediaPlayer> soundNameMap;
     private MediaPlayer bgmMediaPlayer;
     private static final GameMusicManager GAME_MUSIC_MANAGER = new GameMusicManager();
+    private boolean mute = false;
+    private boolean ready = false;
 
     public static synchronized GameMusicManager getInstance() {
         return GAME_MUSIC_MANAGER;
@@ -25,7 +27,6 @@ public class GameMusicManager {
     }
 
     public void init(Context context) {
-
         loadSoundEffect(context);
         bgmMediaPlayer = new MediaPlayer();
         try {
@@ -35,6 +36,13 @@ public class GameMusicManager {
             bgmMediaPlayer.setLooping(true);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        ready = true;
+    }
+
+    private void checkReady() {
+        if (!ready) {
+            throw new IllegalStateException("GameMusicManager not ready yet.");
         }
     }
 
@@ -55,19 +63,23 @@ public class GameMusicManager {
     }
 
     public void playBGM(int volume) {
+        checkReady();
         setBGMVolume(volume);
         bgmMediaPlayer.start();
     }
 
     public void setBGMVolume(int volume) {
+        checkReady();
         bgmMediaPlayer.setVolume((float) volume /100.0F, (float) volume /100.0F);
     }
 
     public void pauseBGM() {
+        checkReady();
         bgmMediaPlayer.pause();
     }
 
     public void playOrPauseBGM() {
+        checkReady();
         if (bgmMediaPlayer.isPlaying()) {
             bgmMediaPlayer.pause();
         } else {
@@ -76,9 +88,31 @@ public class GameMusicManager {
     }
 
     public void restartBGM() {
+        checkReady();
         bgmMediaPlayer.pause();
         bgmMediaPlayer.seekTo(0);
         bgmMediaPlayer.start();
+    }
+
+    public void setMute(boolean mute) {
+        checkReady();
+        if (mute) {
+            bgmMediaPlayer.pause();
+            for (Map.Entry<String, MediaPlayer> musicEntry : soundNameMap.entrySet()) {
+                musicEntry.getValue().pause();
+            }
+        } else {
+            bgmMediaPlayer.pause();
+            for (Map.Entry<String, MediaPlayer> musicEntry : soundNameMap.entrySet()) {
+                musicEntry.getValue().pause();
+            }
+        }
+        this.mute = mute;
+    }
+
+    public boolean isMute() {
+        checkReady();
+        return mute;
     }
 
     public void play(String soundType) {
@@ -94,6 +128,7 @@ public class GameMusicManager {
     }
 
     public void play(String soundType, int leftVolume, int rightVolume, boolean loop) {
+        checkReady();
         MediaPlayer mediaPlayer = soundNameMap.get(soundType);
         if (mediaPlayer == null) {
             throw new IllegalArgumentException("Sound type: " + soundType + " not exist");
@@ -106,9 +141,11 @@ public class GameMusicManager {
 
     public void release() {
         bgmMediaPlayer.release();
+        bgmMediaPlayer = null;
         for (Map.Entry<String, MediaPlayer> entry : soundNameMap.entrySet()) {
             entry.getValue().release();
         }
         soundNameMap.clear();
+        ready = false;
     }
 }

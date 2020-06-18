@@ -131,7 +131,7 @@ public class GameManager {
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
         npcControl.draw(canvas);
-        if (npcControl.getNpcCur() == npcControl.getNpcSum() + 3 && !gameLevelChanged) {
+        if (GameNpcControl.isBossDead() && !gameLevelChanged) {
             gameLevel++;
             gameLevelChanged = true;
         }
@@ -199,15 +199,15 @@ public class GameManager {
         Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
         while (playerBulletIterator.hasNext()) {
             GameSprite playerBullet = playerBulletIterator.next();
-
             for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
-                    playerBulletIterator.remove();
                     enemy.decreaseHP();
                     if (!enemy.isActive()) {
                         gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
                         player.increaseKilledEnemy();
                     }
+                    playerBulletIterator.remove();
+                    break;
                 }
             }
         }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
 import com.flightfight.flightfight.GameSprite;
+import com.google.gson.annotations.Expose;
 
 import java.util.Random;
 
@@ -23,6 +24,7 @@ public class GameNpc extends GameSprite {
     long fireCurTime;
 
     //npc类型
+    @Expose
     private int npcType = isNormal;
 
     //构造不带帧动画的Sprite

@@ -342,6 +342,15 @@ public class GameNpcControl {
         }
     }
 
+    public int spareNpc(){
+        int i = getNpcSum() - getNpcCur();
+        if (i <= 0)
+        {
+            return 0;
+        }
+        else return i;
+    }
+
     public int getNpcSum() {
         return NpcSum;
     }
