@@ -3,10 +3,12 @@ package com.flightfight.flightfight.yzc;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -86,7 +88,7 @@ public class PauseFragment extends Fragment {
         loadGame.setOnClickListener(v -> {
             if(mActivity.getGameSurfaceView() != null){
                 mActivity.getGameSurfaceView().saveGame();
-
+                showExitAlert();
             }
         });
 
@@ -111,5 +113,26 @@ public class PauseFragment extends Fragment {
 
     public void setHide(HideFragMent hide) {
         this.hide = hide;
+    }
+
+    public void showExitAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle("提示").setIcon(R.drawable.ic_launcher_foreground).setMessage("存档成功,点击确定返回")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(getContext(),MainActivity.class);
+                               // intent.putExtra(MainActivity.TAG_EXIT, true);
+                                startActivity(intent);
+                            }
+                        }
+                ).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 }

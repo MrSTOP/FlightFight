@@ -345,4 +345,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
     }
 
+    public GameManager getGame() {
+        return game;
+    }
 }
