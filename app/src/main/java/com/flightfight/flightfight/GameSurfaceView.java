@@ -208,7 +208,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             }
             if (controller.isFireTouched()) {
                 synchronized (lock) {
-                    game.load();
+                    game.load(0);
                 }
 //            game.loadBubbles();
             }
@@ -279,7 +279,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         paint.setARGB(20, 50, 50, 50);
         Rect bckRect = new Rect(ScreenWidth / 4, 0, ScreenWidth * 3 / 4, ScreenHeight);
         mCanvas.drawRect(bckRect, paint);
-        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
+//        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
         mCanvas.drawText("菜单", ScreenWidth / 2 - 80, ScreenHeight - 200, textPaint);
         // winAndFaildbtn = textPaint.getTextBounds();
         int width = (int) textPaint.measureText("菜单");
@@ -317,7 +317,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public interface BanButtonListener {
         void banButtonListener();
     }
-
 
     public interface PauseButtonListener {
         void pauseListener();

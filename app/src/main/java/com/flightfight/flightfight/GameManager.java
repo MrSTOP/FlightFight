@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -127,44 +128,66 @@ public class GameManager {
         return player.getLife();
     }
 
-    public void load() {
-        Intent load = new Intent(context, GameSaveService.class);
-        load.setAction(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE);
-        load.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, 0L);
-        context.startService(load);
+    public void save(){
+        save(0);
     }
 
-    public void setAchieveData(GameControl controller) {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        GameArchive gameAchieve = gson.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
-        List<GameNpc> enemyList = gameAchieve.getEnemyList();
-        List<GameSprite> initializedEnemyList = new ArrayList<>();
-        List<GameSprite> initializedPlayerBulletList = new ArrayList<>();
-        GamePlayerSprite player = gameAchieve.getPlayer();
-        GamePlayerSprite newPlayer = new GamePlayerSprite(context,
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1),
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left),
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right), 12);
-        Utils.initGameSprite(context, initializedPlayerBulletList, gameAchieve.getPlayer().getPlayerBulletListSafeForIteration(), Utils.GAME_ACHIEVE_PLAYER_BULLET);
-        newPlayer.setPlayerBulletList(initializedPlayerBulletList);
-        newPlayer.initBySaved(player);
-        gameAchieve.setPlayer(player);
-        controller.setPlayerRect(newPlayer.getBoundRectF());
-        this.player = newPlayer;
+    public void save(long time){
+        save(new Date(time));
     }
 
-    public void save() {
+    public void save(Date date) {
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             GameArchive gameArchive = new GameArchive();
-            gameArchive.setGameDate(new Date(0));
+            gameArchive.setGameDate(date);
             gameArchive.setPlayer(player);
+            gameArchive.setEnemyList(npcControl.getNpcList());
+            gameArchive.setEnemyBulletList(npcControl.getBulletsList());
             String str = gson.toJson(gameArchive);
             Intent save = new Intent(context, GameSaveService.class);
             save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);
             ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA = str;
             save.putExtra(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME, gameArchive.getGameDate().getTime());
             context.startService(save);
-            System.out.println("BROAD");
+    }
+
+    public void load(long time) {
+        load(new Date(time));
+    }
+
+    public void load(Date date) {
+        Intent load = new Intent(context, GameSaveService.class);
+        load.setAction(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE);
+        load.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, date.getTime());
+        context.startService(load);
+    }
+
+    public void setAchieveData(GameControl controller) {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        GameArchive gameAchieve = gson.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
+        List<GameSprite> enemyList = new ArrayList<>(gameAchieve.getEnemyList());
+        List<GameSprite> initializedEnemyList = new ArrayList<>();
+        List<GameSprite> initializedEnemyBulletList = new ArrayList<>();
+        List<GameSprite> initializedPlayerBulletList = new ArrayList<>();
+        List<GameNpc> initializedNpcList = new ArrayList<>();
+        GamePlayerSprite player = gameAchieve.getPlayer();
+        GamePlayerSprite newPlayer = new GamePlayerSprite(context,
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1),
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left),
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right), 12);
+        Utils.initGameSprite(context, initializedPlayerBulletList, gameAchieve.getPlayer().getPlayerBulletListSafeForIteration(), Utils.GAME_ACHIEVE_PLAYER_BULLET);
+        Utils.initGameSprite(context, initializedEnemyList, enemyList, Utils.GAME_ACHIEVE_ENEMY);
+        Utils.initGameSprite(context, initializedEnemyBulletList, gameAchieve.getEnemyBulletList(), Utils.GAME_ACHIEVE_ENEMY_BULLET);
+        Utils.castNpc(initializedNpcList, initializedEnemyList);
+        newPlayer.setPlayerBulletList(initializedPlayerBulletList);
+        newPlayer.initBySaved(player);
+        gameAchieve.setPlayer(player);
+        gameAchieve.setEnemyList(initializedNpcList);
+        gameAchieve.setEnemyBulletList(initializedEnemyBulletList);
+        controller.setPlayerRect(newPlayer.getBoundRectF());
+        this.player = newPlayer;
+        this.npcControl.setBulletsList(initializedEnemyBulletList);
+        this.npcControl.setNpcList(initializedNpcList);
     }
 
     private void bulletLogic() {

@@ -16,7 +16,7 @@ import java.util.List;
 public class GamePlayerSprite extends GameSprite {
 
     public static final int HALF_DESTINATION_AREA_LENGTH = 20;
-    public static final int SHOOT_COOL_TICK = 5;
+    public static final int SHOOT_COOL_TICK = 15;
 
 
     private static final float PLAYER_COLLIDE_BOX1_H_OFFSET = 30.0F / 78.0F;
@@ -273,13 +273,13 @@ public class GamePlayerSprite extends GameSprite {
                     boundRect.left + PLAYER_COLLIDE_BOX2_H_OFFSET * this.width,
                     boundRect.top + PLAYER_COLLIDE_BOX3_V_OFFSET * this.height,
                     PLAYER_COLLIDE_BOX2_WIDTH * this.width, PLAYER_COLLIDE_BOX3_HEIGHT * this.height);
-            System.out.println("BANK");
+//            System.out.println("BANK");
         } else {
             Utils.setRectF(collideBoxes[2],
                     boundRect.left + PLAYER_COLLIDE_BOX3_H_OFFSET * this.width,
                     boundRect.top + PLAYER_COLLIDE_BOX3_V_OFFSET * this.height,
                     PLAYER_COLLIDE_BOX3_WIDTH * this.width, PLAYER_COLLIDE_BOX3_HEIGHT * this.height);
-            System.out.println("NORMAL");
+//            System.out.println("NORMAL");
         }
     }
 

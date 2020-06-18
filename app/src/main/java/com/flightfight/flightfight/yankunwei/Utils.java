@@ -6,6 +6,7 @@ import android.graphics.RectF;
 
 import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
+import com.flightfight.flightfight.ZhuJintao.GameNpc;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -55,7 +56,11 @@ public class Utils {
         for (GameSprite gameSprite : src) {
             switch (type) {
                 case GAME_ACHIEVE_ENEMY:
-                    newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1));
+                    newGameSprite = new GameNpc(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1));
+                    newGameSprite.setActive(true);
+                    break;
+                case GAME_ACHIEVE_ENEMY_BULLET:
+                    newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet3), 2, 2);
                     break;
                 case GAME_ACHIEVE_PLAYER_BULLET:
                     newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet1), 2, 2);
@@ -66,6 +71,12 @@ public class Utils {
             }
             newGameSprite.initBySaved(gameSprite);
             dest.add(newGameSprite);
+        }
+    }
+
+    public static void castNpc(List<GameNpc> dest, List<GameSprite> src) {
+        for (GameSprite gameSprite : src) {
+            dest.add((GameNpc) gameSprite);
         }
     }
 }
