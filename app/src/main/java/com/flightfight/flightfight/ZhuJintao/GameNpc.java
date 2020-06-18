@@ -294,4 +294,14 @@ public class GameNpc extends GameSprite {
     public void setNpcType(int npcType) {
         this.npcType = npcType;
     }
+
+    @Override
+    public void initBySaved(GameSprite gameSprite) {
+        super.initBySaved(gameSprite);
+        if (gameSprite instanceof GameNpc) {
+            this.setNpcType(((GameNpc) gameSprite).npcType);
+        } else {
+            throw new IllegalArgumentException("类型转换失败！");
+        }
+    }
 }
