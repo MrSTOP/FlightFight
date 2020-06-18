@@ -8,8 +8,10 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -133,6 +135,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void run() {
+        int levelPassFrames = 0;
         while (isRunning) {
             Canvas surfCanvas;
             if (mHolder == null) {
@@ -154,6 +157,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                             drawStaus(mCanvas, ScreenWidth, ScreenHeight, game.getPlayerHp(), 100,100);
                             pauseRect = drawPauseBtn(mCanvas);
                         }
+
                        else if (gameState == GameState.GAME_FAILD && !readyDrawFaildAndWin) {
                             Resources resources = context.getApplicationContext().getResources();
                             Bitmap bmp = BitmapFactory.decodeResource(resources, R.drawable.failed);

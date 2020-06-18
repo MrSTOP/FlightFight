@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.util.Log;
 
 import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
@@ -21,7 +22,7 @@ public class GameNpcControl {
     private long npcStartTime;
     private float density;
 
-    private int NpcSum = 100;               //NPC总数
+    private int NpcSum = 10;               //NPC总数
     private int NpcCur = 0;                 //当前已有（包括死亡）NPC数量
     private int intervalTime = 800;         //间隔时间
     private int bulletIntervalTime = 4000;  //子弹间隔时间
@@ -59,7 +60,7 @@ public class GameNpcControl {
         }
         long npcLoadTime = System.currentTimeMillis();
 
-        if (getNpcCur() <= getNpcSum()) {
+        if (getNpcCur() < getNpcSum()) {
             if (npcList.size() < 10) {
                 if (npcLoadTime - npcStartTime > getIntervalTime()) {
                     Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1);
@@ -78,7 +79,7 @@ public class GameNpcControl {
                             curTemNpc.setDir(GameNpc.RIGHTDOWN);
                             break;
                     }
-                    curTemNpc.setHp(1);
+                    curTemNpc.setHp(2);
                     curTemNpc.setLife(1);
                     curTemNpc.setActive(true);
                     curTemNpc.setRatio(0.15f * density);
@@ -90,19 +91,20 @@ public class GameNpcControl {
 
                     //Log.d("NPC", "NPC X:" + curTemNpc.getX() + " Y:" + curTemNpc.getY() + "NPC W:" + curTemNpc.getWidth() + " H:" + curTemNpc.getHeight());
                     npcList.add(curTemNpc);
-                    int i = getNpcCur();
-                    setNpcCur(i++);
+                    int i = getNpcCur() + 1;
+                    setNpcCur(i);
                     npcStartTime = System.currentTimeMillis();
                 }
             }
         }
 
-        if (getNpcCur() > getNpcSum() && !this.isBossActive()) {
+        if (getNpcCur() >= getNpcSum() && !this.isBossActive()) {
             Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
             //Boss图片需要翻转
             Bitmap trueBmp = GameNpc.getRotateBitmap(bmp);
             GameNpc curTemNpc = new GameNpc(context, trueBmp, 1, 1);
             curTemNpc.setSpeed(3 * density);
+            curTemNpc.setNpcType(GameNpc.isBoss);
             int r = rand.nextInt(3);          //0:垂直；1：左下；2：右下；
             switch (r)
             {
@@ -116,10 +118,10 @@ public class GameNpcControl {
                     curTemNpc.setDir(GameNpc.RIGHTDOWN);
                     break;
             }
-            curTemNpc.setHp(10);
+            curTemNpc.setHp(20);
             curTemNpc.setLife(1);
             curTemNpc.setActive(true);
-            curTemNpc.setRatio(0.15f * density);
+            curTemNpc.setRatio(0.1f * density);
             curTemNpc.setFireStartTime(System.currentTimeMillis());         //设置开火计时
             float px = rand.nextInt((int) (ScreenWidth - curTemNpc.getWidth()));
             float py = (0 - curTemNpc.getHeight());
@@ -128,11 +130,12 @@ public class GameNpcControl {
 
             //Log.d("NPC", "NPC X:" + curTemNpc.getX() + " Y:" + curTemNpc.getY() + "NPC W:" + curTemNpc.getWidth() + " H:" + curTemNpc.getHeight());
             npcList.add(curTemNpc);
-            int i = getNpcCur();
-            setNpcCur(i++);
+            int i = getNpcCur() + 1;
+            setNpcCur(i);
             npcStartTime = System.currentTimeMillis();
             this.setBossActive(true);
         }
+        Log.d("Number:","curNpc:" + this.getNpcCur() + "---sumNpc:" + this.getNpcSum());
     }
 
     public void updateNpcPos() {
@@ -177,7 +180,8 @@ public class GameNpcControl {
                 if (tempNpc.getY() > ScreenHeight + tempNpc.getHeight() || !tempNpc.isActive()) {
                     if (!tempNpc.isActive())
                     {
-                        this.setNpcCur(this.getNpcSum() + 1);
+                        //该处无需增加，因为生成时已增加
+                        //this.setNpcCur(this.getNpcCur() - 1);
                     }
                     tempNpc.releaseBitmap();
                     it.remove();
