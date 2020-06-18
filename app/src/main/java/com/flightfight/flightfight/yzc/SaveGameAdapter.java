@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.yankunwei.GameAchieveInfo;
+import com.flightfight.flightfight.yankunwei.GameSaveService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -101,7 +102,8 @@ public class SaveGameAdapter extends BaseAdapter {
        holder.itemSaveGamePass.setText(String.valueOf(position));
 
         holder.button.setOnClickListener(v -> {
-            showExitAlert();
+
+            showExitAlert(position);
         });
         return convertView;
     }
@@ -115,13 +117,18 @@ public class SaveGameAdapter extends BaseAdapter {
     }
 
 
-    public void showExitAlert() {
+    public void showExitAlert(int pos) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("警告").setIcon(R.drawable.ic_launcher_foreground).setMessage("要删除吗？")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                Intent intent  = new Intent(context, GameSaveService.class);
+                                intent.setAction(GameSaveService.SERVICE_ACTION_DELETE_GAME_ACHIEVE);
+                                intent.putExtra(GameSaveService.SERVICE_ACTION_DELETE_GAME_ACHIEVE_ARG, getItem(pos).uuid);
+                                context.startService(intent);
+                                remove(pos);
+                               // notifyDataSetChanged();
                             }
                         }
                 ).setNegativeButton("取消", new DialogInterface.OnClickListener() {
