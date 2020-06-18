@@ -33,12 +33,16 @@ public class GameManager {
     private GamePlayerSprite player;
     private GameNpcControl npcControl;
     private Bitmap backBmp;
+    private Bitmap backBmp2;
+    private Bitmap backBmp3;
     private long bubbleStartTime;
     private float density;
     private int gameLevel;
     private boolean gameLevelChanged;
 
     Rect srcRect;
+    Rect srcRect2;
+    Rect srcRect3;
     Rect destRect;
     Paint paint;
 
@@ -48,7 +52,11 @@ public class GameManager {
         this.ScreenHeight = ScreenHeight;
         density = context.getResources().getDisplayMetrics().density;
         backBmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background);
+        backBmp2 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background2);
+        backBmp3 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background3);
         this.srcRect = new Rect(0, 0, backBmp.getWidth(), backBmp.getHeight());
+        this.srcRect2 = new Rect(0, 0, backBmp2.getWidth(), backBmp2.getHeight());
+        this.srcRect3 = new Rect(0, 0, backBmp3.getWidth(), backBmp3.getHeight());
         this.destRect = new Rect();
         this.paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         this.gameLevel = 1;
@@ -105,7 +113,13 @@ public class GameManager {
         destRect.top = 0;
         destRect.bottom = canvas.getHeight();
         paint.setDither(true);
-        canvas.drawBitmap(backBmp, srcRect, destRect, paint);
+        if (gameLevel == 1) {
+            canvas.drawBitmap(backBmp, srcRect, destRect, paint);
+        } else if (gameLevel == 2) {
+            canvas.drawBitmap(backBmp2, srcRect2, destRect, paint);
+        } else if (gameLevel == 3) {
+            canvas.drawBitmap(backBmp3, srcRect3, destRect, paint);
+        }
         bulletLogic();
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
