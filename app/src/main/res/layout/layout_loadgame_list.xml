@@ -3,6 +3,7 @@
     android:orientation="horizontal" android:layout_width="350dp"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
+    android:descendantFocusability="blocksDescendants"
     >
     <ImageView
         android:id="@+id/rand_icon"
@@ -34,4 +35,14 @@
             android:textSize="16sp"
             android:singleLine="true"/>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/item_game_delete_button"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="0.5"
+        android:text="@string/delete_store"
+        android:visibility="visible"
+        android:focusable = "false"
+        />
 </LinearLayout>

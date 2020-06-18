@@ -1,16 +1,23 @@
 package com.flightfight.flightfight.yzc;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -18,6 +25,7 @@ class ViewHolder{
     public ImageView itemIcon;
     public TextView itemSaveGameTime;
     public TextView itemSaveGamePass;
+    public Button button;
     public int defaultTextColor;
 
     View itemView;
@@ -31,14 +39,14 @@ class ViewHolder{
 }
 
 public class SaveGameAdapter extends BaseAdapter {
-    private List<Object> gameInfoList;
+    private List<Date> gameInfoList;
     private LayoutInflater layoutInflater;
     private Context context;
     private int currentPos = -1;
     private ViewHolder holder = null;
 
 
-    public SaveGameAdapter(Context context, List<Object> gameInfoList){
+    public SaveGameAdapter(Context context, List<Date> gameInfoList){
         this.gameInfoList = gameInfoList;
         this.context = context;
 
@@ -76,9 +84,13 @@ public class SaveGameAdapter extends BaseAdapter {
             holder = (ViewHolder)convertView.getTag();
         }
 
-      //  holder.itemIcon.setImageResource();
-    //    holder.itemSaveGameTime.setText(gameInfoList.get(position).getXXX());
-    //    holder.itemSaveGamePass.setText(gameInfoList.get(position).getXXX());
+       // holder.itemIcon.setImageResource();
+        holder.itemSaveGameTime.setText(position);
+       holder.itemSaveGamePass.setText((int) gameInfoList.get(position).getTime());
+
+        holder.button.setOnClickListener(v -> {
+            showExitAlert();
+        });
         return convertView;
     }
 
@@ -88,5 +100,25 @@ public class SaveGameAdapter extends BaseAdapter {
 
     public void refreshDataSet(){
         notifyDataSetChanged();
+    }
+
+
+    public void showExitAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("警告").setIcon(R.drawable.ic_launcher_foreground).setMessage("要删除吗？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }
+                ).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 }

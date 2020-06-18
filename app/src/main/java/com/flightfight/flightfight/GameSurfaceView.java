@@ -339,5 +339,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public enum GameState{GAME_START, GAME_PAUSE, GAME_ABOUT}
 
+    public void saveGame(){
+        if(game != null){
+            game.save();
+        }
+    }
 
 }

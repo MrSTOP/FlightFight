@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.flightfight.flightfight.GameActivity;
 import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
 
@@ -29,9 +30,10 @@ public class PauseFragment extends Fragment {
 
     private TextView quit;
     private TextView continueBtn;
+    private TextView loadGame;
     private String mParam1;
     private String mParam2;
-    private Activity mActivity;
+    private GameActivity mActivity;
     private HideFragMent hide;
     public PauseFragment() {
         // Required empty public constructor
@@ -72,8 +74,17 @@ public class PauseFragment extends Fragment {
         quit = view.findViewById(R.id.pause_bck_menu);
         continueBtn = view.findViewById(R.id.pause_continue_game);
         continueBtn.setOnClickListener(v -> hide.setHitde());
+        loadGame = view.findViewById(R.id.pause_save_game);
+
+        loadGame.setOnClickListener(v -> {
+            if(mActivity.getGameSurfaceView() != null){
+                mActivity.getGameSurfaceView().saveGame();
+            }
+        });
+
         quit.setOnClickListener(v -> {
-            Intent intent = new Intent(mActivity, MainActivity.class);
+            Intent intent = new Intent(mActivity,MainActivity.class);
+            //intent.putExtra(MainActivity.TAG_EXIT, true);
             startActivity(intent);
         });
         return view;
@@ -82,7 +93,7 @@ public class PauseFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mActivity = (Activity)context;
+        mActivity = (GameActivity) context;
     }
 
 
