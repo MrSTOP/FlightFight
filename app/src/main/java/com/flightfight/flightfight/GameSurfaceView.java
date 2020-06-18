@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,15 +13,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
-import com.flightfight.flightfight.yankunwei.GameArchive;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
-import com.flightfight.flightfight.yankunwei.Utils;
-import com.flightfight.flightfight.yankunwei.ValueContainer;
-
-import java.util.Date;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static int TIME_IN_FRAME = 24;
@@ -80,8 +74,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         //      int[] attrsArray = new int[] {android.R.attr.background};
         //   TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
         //   Drawable background = ta.getDrawable(0);
-        Resources res = context.getApplicationContext().getResources();
-//        prizeBmp = ((BitmapDrawable)background).getBitmap();
+        //        prizeBmp = ((BitmapDrawable)background).getBitmap();
 
         //    coverBmp = BitmapFactory.decodeResource(res, R.drawable.scratch_area);
         initView();
@@ -141,7 +134,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void run() {
         while (isRunning) {
-            Canvas surfCanvas = null;
+            Canvas surfCanvas;
             if (mHolder == null) {
                 return;
             }
@@ -281,7 +274,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         Rect bckRect = new Rect(ScreenWidth / 4, 0, ScreenWidth * 3 / 4, ScreenHeight);
         mCanvas.drawRect(bckRect, paint);
 //        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
-        mCanvas.drawText("菜单", ScreenWidth / 2 - 80, ScreenHeight - 200, textPaint);
+        mCanvas.drawText("菜单", (ScreenWidth >> 1) - 80, ScreenHeight - 200, textPaint);
         // winAndFaildbtn = textPaint.getTextBounds();
         int width = (int) textPaint.measureText("菜单");
         winAndFaildbtn.left = ScreenWidth / 2 - 100;
@@ -299,8 +292,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         desRect.right = ScreenWidth;
         desRect.bottom = pauseBitmap.getHeight();
 
-
-        Rect srcRect = new Rect(0, 0, pauseBitmap.getWidth(), pauseBitmap.getHeight());
 
         pauseButtonDrawable.setBounds(desRect);
         pauseButtonDrawable.draw(mCanvas);
