@@ -22,10 +22,13 @@ public class GameNpcControl {
     private long npcStartTime;
     private float density;
 
+    //关卡标志
+    private int nowRound = 1;
+
     private int NpcSum = 10;               //NPC总数
     private int NpcCur = 0;                 //当前已有（死亡）NPC数量
     private int intervalTime = 800;         //间隔时间
-    private int bulletIntervalTime = 4000;  //子弹间隔时间
+    private int bulletIntervalTime = 2000;  //子弹间隔时间
 
     private List<GameNpc> npcList = new ArrayList<>();
     private List<GameNpc> cloneNpcList = new ArrayList<>();
@@ -69,7 +72,21 @@ public class GameNpcControl {
         if (getNpcCur() < getNpcSum()) {
             if (npcList.size() < 10) {
                 if (npcLoadTime - npcStartTime > getIntervalTime()) {
-                    Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1);
+                    Bitmap bmp;
+                    switch (nowRound) {
+                        case 1:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1);
+                            break;
+                        case 2:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy2_1);
+                            break;
+                        case 3:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy3_1);
+                            break;
+                        default:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1);
+                            break;
+                    }
                     GameNpc curTemNpc = new GameNpc(context, bmp, 1, 1);
                     curTemNpc.setSpeed(3 * density);
                     int r = rand.nextInt(3);          //0:垂直；1：左下；2：右下；
@@ -84,7 +101,7 @@ public class GameNpcControl {
                             curTemNpc.setDir(GameNpc.RIGHTDOWN);
                             break;
                     }
-                    curTemNpc.setHp(2);
+                    curTemNpc.setHp(2+nowRound);
                     curTemNpc.setLife(1);
                     curTemNpc.setActive(true);
                     curTemNpc.setRatio(0.15f * density);
@@ -102,7 +119,21 @@ public class GameNpcControl {
         }
 
         if ((getNpcCur() >= getNpcSum()) && (!this.isBossActive()) && (npcList.size() == 0)) {
-            Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
+            Bitmap bmp;
+            switch (nowRound) {
+                case 1:
+                    bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
+                    break;
+                case 2:
+                    bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss2);
+                    break;
+                case 3:
+                    bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss3);
+                    break;
+                default:
+                    bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss4);
+                    break;
+            }
             //Boss图片需要翻转
             Bitmap trueBmp = GameNpc.getRotateBitmap(bmp);
             GameNpc curTemNpc = new GameNpc(context, trueBmp, 1, 1);
@@ -120,7 +151,7 @@ public class GameNpcControl {
                     curTemNpc.setDir(GameNpc.RIGHTDOWN);
                     break;
             }
-            curTemNpc.setHp(20);
+            curTemNpc.setHp(20*nowRound);
             curTemNpc.setLife(1);
             curTemNpc.setActive(true);
             curTemNpc.setRatio(0.1f * density);
@@ -343,7 +374,7 @@ public class GameNpcControl {
     }
 
     //开始新的一关
-    public void startNewRound() {
+    public void startNewRound(int round) {
         this.setNpcCur(0);
         this.setBossDead(false);
         this.setBossActive(false);
@@ -364,6 +395,9 @@ public class GameNpcControl {
         cloneBoomList.clear();
         boomList = new ArrayList<>();
         cloneBoomList = new ArrayList<>();
+
+        //设置当前关卡数
+        setNowRound(round);
     }
 
     public int spareNpc() {
@@ -435,5 +469,13 @@ public class GameNpcControl {
 
     public void setBossDead(boolean bossDead) {
         BOSS_DEAD = bossDead;
+    }
+
+    public int getNowRound() {
+        return nowRound;
+    }
+
+    public void setNowRound(int nowRound) {
+        this.nowRound = nowRound;
     }
 }
