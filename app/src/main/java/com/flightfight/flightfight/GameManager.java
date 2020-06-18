@@ -146,6 +146,7 @@ public class GameManager {
         gameArchive.setPlayer(player);
         gameArchive.setEnemyList(npcControl.getNpcList());
         gameArchive.setEnemyBulletList(npcControl.getBulletsList());
+        gameArchive.setGameLevel(gameLevel);
         String str = Utils.GSON.toJson(gameArchive);
         Intent save = new Intent(context, GameSaveService.class);
         save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);

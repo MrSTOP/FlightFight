@@ -18,6 +18,8 @@ public class GameArchive implements Serializable {
     private GamePlayerSprite player;
     @Expose
     private ArrayList<GameSprite> enemyBulletList;
+    @Expose
+    private int gameLevel;
 
     public GameArchive() {
         this.enemyList = new ArrayList<>();
@@ -56,5 +58,13 @@ public class GameArchive implements Serializable {
 
     public void setPlayer(GamePlayerSprite player) {
         this.player = player;
+    }
+
+    public int getGameLevel() {
+        return gameLevel;
+    }
+
+    public void setGameLevel(int gameLevel) {
+        this.gameLevel = gameLevel;
     }
 }
