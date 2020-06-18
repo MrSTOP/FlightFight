@@ -147,14 +147,10 @@ public class GameManager {
         context.startService(save);
     }
 
-    public void load(long time) {
-        load(new Date(time));
-    }
-
-    public void load(Date date) {
+    public void load(String uuid) {
         Intent load = new Intent(context, GameSaveService.class);
         load.setAction(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE);
-        load.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, date.getTime());
+        load.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, uuid);
         context.startService(load);
     }
 
