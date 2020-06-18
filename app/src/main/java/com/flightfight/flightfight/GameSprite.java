@@ -300,6 +300,22 @@ public class GameSprite implements Serializable {
         this.life = life;
     }
 
+    public int getTotalFrames() {
+        return totalFrames;
+    }
+
+    public void setTotalFrames(int totalFrames) {
+        this.totalFrames = totalFrames;
+    }
+
+    public int getCurrentFrame() {
+        return currentFrame;
+    }
+
+    public void setCurrentFrame(int currentFrame) {
+        this.currentFrame = currentFrame;
+    }
+
     public void initBySaved(GameSprite gameSprite) {
         this.setX(gameSprite.x);
         this.setY(gameSprite.y);
