@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
+import com.flightfight.flightfight.yankunwei.GameAchieveInfo;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -43,14 +44,14 @@ class ViewHolder{
 }
 
 public class SaveGameAdapter extends BaseAdapter {
-    private List<Date> gameInfoList;
+    private List<GameAchieveInfo> gameInfoList;
     private LayoutInflater layoutInflater;
     private Context context;
     private int currentPos = -1;
     private ViewHolder holder = null;
 
 
-    public SaveGameAdapter(Context context, List<Date> gameInfoList){
+    public SaveGameAdapter(Context context, List<GameAchieveInfo> gameInfoList){
         this.gameInfoList = gameInfoList;
         this.context = context;
 
@@ -68,7 +69,7 @@ public class SaveGameAdapter extends BaseAdapter {
     }
 
     @Override
-    public Date getItem(int position) {
+    public GameAchieveInfo getItem(int position) {
         return  gameInfoList.get(position);
     }
 
@@ -89,7 +90,7 @@ public class SaveGameAdapter extends BaseAdapter {
         }
         DateFormat df1 = DateFormat.getDateInstance(DateFormat.LONG, Locale.CHINA);
        // holder.itemIcon.setImageResource();
-        String date = df1.format(gameInfoList.get(position).getTime());
+        String date = df1.format(gameInfoList.get(position).date);
         holder.itemSaveGameTime.setText(date);
        holder.itemSaveGamePass.setText(String.valueOf(position));
 

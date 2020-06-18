@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.flightfight.flightfight.yankunwei.GameAchieveInfo;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
 import com.flightfight.flightfight.yzc.SaveGameAdapter;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class LoadGameActivity extends AppCompatActivity {
 
-    private List<Date> gameInfoList;
+    private List<GameAchieveInfo> gameInfoList;
     private SaveGameAdapter mlistAdapter;
     private ListView mListView;
     private Button manageStore;
@@ -35,7 +36,7 @@ public class LoadGameActivity extends AppCompatActivity {
             mListView.setAdapter(mlistAdapter);
             mListView.setOnItemClickListener((parent, view, position, id) -> {
                 Intent intent1 = new Intent(LoadGameActivity.this, GameActivity.class);
-                intent1.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, gameInfoList.get(position).getTime());
+                intent1.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, gameInfoList.get(position).uuid);
                 startActivity(intent1);
             });
         }

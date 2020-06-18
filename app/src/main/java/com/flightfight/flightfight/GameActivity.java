@@ -21,7 +21,7 @@ public class GameActivity extends AppCompatActivity {
     private GameSurfaceView gameSurfaceView;
     private Button button;
     private PauseFragment fragment;
-    private long date;
+    private String date;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,7 +31,7 @@ public class GameActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         );
-        date = getIntent().getLongExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, -1);
+        date = getIntent().getStringExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG);
 
 
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -43,7 +43,7 @@ public class GameActivity extends AppCompatActivity {
         gameSurfaceView = findViewById(R.id.scratch_view);
         gameSurfaceView.SetScreen(screenWidth, screenHeight);
         if(gameSurfaceView.getGame() != null){
-            if(date != -1){
+            if(date != null){
                 gameSurfaceView.getGame().load(date);
             }
 
