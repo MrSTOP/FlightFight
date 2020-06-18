@@ -21,7 +21,7 @@ public class GameNpcControl {
     private long npcStartTime;
     private float density;
 
-    private int NpcSum = 100;               //NPC总数
+    private int NpcSum = 10;               //NPC总数
     private int NpcCur = 0;                 //当前已有（包括死亡）NPC数量
     private int intervalTime = 800;         //间隔时间
     private int bulletIntervalTime = 4000;  //子弹间隔时间
@@ -117,7 +117,7 @@ public class GameNpcControl {
                     curTemNpc.setDir(GameNpc.RIGHTDOWN);
                     break;
             }
-            curTemNpc.setHp(10);
+            curTemNpc.setHp(20);
             curTemNpc.setLife(1);
             curTemNpc.setActive(true);
             curTemNpc.setRatio(0.1f * density);
@@ -178,7 +178,7 @@ public class GameNpcControl {
                 if (tempNpc.getY() > ScreenHeight + tempNpc.getHeight() || !tempNpc.isActive()) {
                     if (!tempNpc.isActive())
                     {
-                        this.setNpcCur(this.getNpcSum() + 1);
+                        this.setNpcCur(this.getNpcCur() + 1);
                     }
                     tempNpc.releaseBitmap();
                     it.remove();

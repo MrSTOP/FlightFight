@@ -227,6 +227,7 @@ public class GameNpc extends GameSprite {
                         break;
                     case LEFTUP:
                         if (this.getX() <= 0) {
+
                             this.setDir(RIGHTUP);
                             this.setX(0);
                         }
