@@ -35,6 +35,8 @@ public class GameManager {
     private Bitmap backBmp;
     private long bubbleStartTime;
     private float density;
+    private int gameLevel;
+    private boolean gameLevelChanged;
 
     Rect srcRect;
     Rect destRect;
@@ -49,6 +51,7 @@ public class GameManager {
         this.srcRect = new Rect(0, 0, backBmp.getWidth(), backBmp.getHeight());
         this.destRect = new Rect();
         this.paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        this.gameLevel = 1;
         rand = new Random(System.currentTimeMillis());
         GameBulletFactory.getInstance().initFactory(context, density);
         initHappyFish();
@@ -107,6 +110,10 @@ public class GameManager {
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
         npcControl.draw(canvas);
+        if (npcControl.getNpcCur() == npcControl.getNpcSum() + 3 && !gameLevelChanged) {
+            gameLevel++;
+            gameLevelChanged = true;
+        }
     }
 
     public void updateHappyFish() {
@@ -167,9 +174,12 @@ public class GameManager {
         List<GameSprite> enemyBulletList = npcControl.getBulletsList();
         List<GameNpc> enemyList = npcControl.getNpcList();
         ////////////////////////////////////玩家子弹命中敌人检测//////////////////////////////////
-        for (GameSprite playerBullet : playerBulletList) {
+        Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
+        while (playerBulletIterator.hasNext()) {
+            GameSprite playerBullet = playerBulletIterator.next();
             for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
+                    playerBulletIterator.remove();
                     enemy.decreaseHP();
                     if (!enemy.isActive()) {
                         player.increaseKilledEnemy();
@@ -177,6 +187,7 @@ public class GameManager {
                 }
             }
         }
+        player.setPlayerBulletList(playerBulletList);
         ////////////////////////////////////敌人子弹命中玩家检测/////////////////////////////////
         Iterator<GameSprite> enemyBulletIterator = enemyBulletList.iterator();
         while (enemyBulletIterator.hasNext()) {
@@ -194,6 +205,22 @@ public class GameManager {
                 player.increaseKilledEnemy();
             }
         }
-        System.out.println("SCORE:" + player.getScore());
+//        System.out.println("SCORE:" + player.getScore());
+    }
+
+    public int getGameLevel() {
+        return gameLevel;
+    }
+
+    public void setGameLevel(int gameLevel) {
+        this.gameLevel = gameLevel;
+    }
+
+    public boolean isGameLevelChanged() {
+        return gameLevelChanged;
+    }
+
+    public void setGameLevelChanged(boolean gameLevelChanged) {
+        this.gameLevelChanged = gameLevelChanged;
     }
 }
