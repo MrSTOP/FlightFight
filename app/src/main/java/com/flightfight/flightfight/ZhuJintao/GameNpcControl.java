@@ -306,6 +306,30 @@ public class GameNpcControl {
 
 //            Log.d("Bullet", "Bullet X:" + curTempBullet.getX() + " Y:" + curTempBullet.getY() + "Bullet W:" + curTempBullet.getWidth() + " H:" + curTempBullet.getHeight());
             bulletsList.add(curTempBullet);
+            if (curCtrlNpc.getNpcType() == GameNpc.isBoss)
+            {
+                for (int i = 0; i < nowRound; i++)
+                {
+                    bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet3);
+                    //子弹需要翻转
+                    trueBmp = curCtrlNpc.getRotateBitmap(bmp);
+                    curTempBullet = new GameSprite(context, trueBmp, 2, 2);
+                    curTempBullet.setSpeed(5 * density);
+                    curTempBullet.setDir(GameSprite.DOWN);
+                    curTempBullet.setHp(1);
+                    curTempBullet.setLife(1);
+                    curTempBullet.setActive(true);
+                    curTempBullet.setRatio(0.4f * density);
+                    px = curCtrlNpc.getX() + ((float) curCtrlNpc.getWidth() / 3) - curTempBullet.getWidth() + curTempBullet.getWidth() * i;
+                    py = curCtrlNpc.getY() + curTempBullet.getHeight() / 2;
+                    curTempBullet.setX(px);
+                    curTempBullet.setY(py);
+
+//            Log.d("Bullet", "Bullet X:" + curTempBullet.getX() + " Y:" + curTempBullet.getY() + "Bullet W:" + curTempBullet.getWidth() + " H:" + curTempBullet.getHeight());
+                    bulletsList.add(curTempBullet);
+                }
+            }
+
             curCtrlNpc.setFireStartTime(System.currentTimeMillis());
         }
 
@@ -398,6 +422,7 @@ public class GameNpcControl {
 
         //设置当前关卡数
         setNowRound(round);
+        setBulletIntervalTime(getBulletIntervalTime() / 2);
     }
 
     public int spareNpc() {
