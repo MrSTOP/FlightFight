@@ -199,15 +199,15 @@ public class GameManager {
         Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
         while (playerBulletIterator.hasNext()) {
             GameSprite playerBullet = playerBulletIterator.next();
-
             for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
-                    playerBulletIterator.remove();
                     enemy.decreaseHP();
                     if (!enemy.isActive()) {
                         gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
                         player.increaseKilledEnemy();
                     }
+                    playerBulletIterator.remove();
+                    break;
                 }
             }
         }
