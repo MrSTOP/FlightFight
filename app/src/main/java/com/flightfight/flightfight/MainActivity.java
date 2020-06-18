@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView quitGame;
     private ImageView musicControl;
     private ImageView pause;
-
+    private boolean isPlayMusic = true;
     public static final String TAG_EXIT = "exit";
 
     @Override
@@ -52,7 +52,13 @@ public class MainActivity extends AppCompatActivity {
         quitGame = findViewById(R.id.main_quit_game);
 
         musicControl.setOnClickListener(v -> {
-
+            if(isPlayMusic){
+                musicControl.setImageResource(R.drawable.ic_volume_off_black_24dp);
+                isPlayMusic = false;
+            }else {
+                musicControl.setImageResource(R.drawable.ic_volume_up_black_24dp);
+                isPlayMusic = true;
+            }
         });
 
         startGame.setOnClickListener(v->{

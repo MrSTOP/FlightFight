@@ -87,7 +87,7 @@ public class GameActivity extends AppCompatActivity {
             //  getFragmentManager().executePendingTransactions();
         });
 
-        gameSurfaceView.setBanButtonListener(() -> button.setEnabled(false));
+
 
         gameSurfaceView.setPauseButtonListener(()->{
             gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_PAUSE);
