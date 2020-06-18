@@ -225,7 +225,7 @@ public class GameNpcControl {
             boomList = new ArrayList<>();
         }
         Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.explosion2);
-        GameSprite curTemBoom = new GameSprite(context, bmp, 6, 6);
+        GameSprite curTemBoom = new GameSprite(context, bmp, 24, 24);
         curTemBoom.setSpeed(3 * density);
         curTemBoom.setDir(GameSprite.DOWN);
         curTemBoom.setHp(1);
