@@ -264,4 +264,12 @@ public class GameManager {
     public void setGameLevelChanged(boolean gameLevelChanged) {
         this.gameLevelChanged = gameLevelChanged;
     }
+
+    public int getGameScore() {
+        return player.getScore();
+    }
+
+    public int getEnemyCount() {
+        return npcControl.spareNpc();
+    }
 }

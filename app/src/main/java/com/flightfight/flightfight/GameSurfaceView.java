@@ -156,8 +156,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                             game.draw(mCanvas);
                             controller.draw(mCanvas);
 
-                            drawStaus(mCanvas, ScreenWidth, ScreenHeight, game.getPlayerHp(), 100,100);
+                            drawStaus(mCanvas, ScreenWidth, ScreenHeight, game.getPlayerHp(), game.getEnemyCount(), game.getGameScore());
                             pauseRect = drawPauseBtn(mCanvas);
+                            if (game.isGameLevelChanged()) {
+                                game.setGameLevelChanged(false);
+                                gameState = GameState.GAME_PAST;
+                            }
                         }
 
                        else if (gameState == GameState.GAME_FAILD && !readyDrawFaildAndWin) {
@@ -166,7 +170,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                             drawFaildAndVictory(mCanvas, bmp);
                         }
                        else if(gameState == GameState.GAME_PAST){
-                            drawGameGoing(mCanvas, ScreenWidth, ScreenHeight, 100);
+                            drawGameGoing(mCanvas, ScreenWidth, ScreenHeight, game.getGameLevel());
                         }
                        else if(gameState == GameState.GAME_WIN && !readyDrawFaildAndWin ){
                             Resources resources = context.getApplicationContext().getResources();
