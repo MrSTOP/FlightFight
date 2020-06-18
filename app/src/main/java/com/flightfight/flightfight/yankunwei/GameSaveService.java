@@ -14,21 +14,32 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class GameSaveService extends Service {
+    public static final String SHARED_PREFERENCES_NAME = "gameAchieves";
+
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD = GameSaveService.class.getPackage().getName() + ".action.save.player.record";
     public static final String SERVICE_RESPONSE_SAVE_PLAYER_RECORD = GameSaveService.class.getPackage().getName() + ".response.save.player.record";
     public static final String SERVICE_ACTION_LOAD_ALL_PLAYER_RECORD = GameSaveService.class.getPackage().getName() + ".action.load.player.record.all";
     public static final String SERVICE_RESPONSE_LOAD_ALL_PLAYER_RECORD = GameSaveService.class.getPackage().getName() + ".response.load.player.record.all";
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.save.game.state";
+    public static final String SERVICE_RESPONSE_SAVE_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.save.game.state";
     public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.load.game.state";
     public static final String SERVICE_RESPONSE_LOAD_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state";
+    public static final String SERVICE_ACTION_DELETE_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.delete.game.state";
+    public static final String SERVICE_RESPONSE_DELETE_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.delete.game.state";
     public static final String SERVICE_ACTION_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.load.game.state.all";
     public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state.all";
 
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG = "playerRecord";
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME = "gameAchieveTime";
+    public static final String SERVICE_RESPONSE_SAVE_GAME_ACHIEVE_ARG = "result";
     public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG = "gameTime";
+    public static final String SERVICE_ACTION_DELETE_GAME_ACHIEVE_ARG = "uuid";
+    public static final String SERVICE_RESPONSE_DELETE_GAME_ACHIEVE_ARG = "result";
+
+    public static final String SAVED_GAME_ACHIEVE_SUFFIX = "_ACHIEVE_TIME";
 
 
 //    class GameSaveServiceBinder extends Binder {
@@ -80,8 +91,21 @@ public class GameSaveService extends Service {
             loadGameAchieve(intent);
         } else if (Objects.equals(intent.getAction(), SERVICE_ACTION_GET_ALL_GAME_ACHIEVE)) {
             getAllGameAchieve();
+        } else if (Objects.equals(intent.getAction(), SERVICE_ACTION_DELETE_GAME_ACHIEVE)) {
+            deleteGameAchieve(intent);
         }
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void deleteGameAchieve(Intent intent) {
+        String uuid = intent.getStringExtra(SERVICE_ACTION_DELETE_GAME_ACHIEVE_ARG);
+        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
+        editor.remove(uuid);
+        editor.remove(uuid + SAVED_GAME_ACHIEVE_SUFFIX);
+        boolean result = editor.commit();
+        Intent deleteGameAchieve = new Intent(SERVICE_RESPONSE_DELETE_GAME_ACHIEVE);
+        deleteGameAchieve.putExtra(SERVICE_RESPONSE_DELETE_GAME_ACHIEVE_ARG, result);
+        sendBroadcast(deleteGameAchieve);
     }
 
     @Override
@@ -91,15 +115,19 @@ public class GameSaveService extends Service {
     }
 
     private void getAllGameAchieve() {
-        SharedPreferences sharedPreferences = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         Map<String, ?> allGameAchieve = sharedPreferences.getAll();
-        ArrayList<Date> dateList = new ArrayList<>(allGameAchieve.size());
+        ArrayList<GameAchieveInfo> gameAchieveInfoList = new ArrayList<>(allGameAchieve.size());
         for (Map.Entry<String, ?> entry : allGameAchieve.entrySet()) {
-            Date date = new Date(Long.parseLong(entry.getKey()));
-            dateList.add(date);
+            if (entry.getKey().endsWith(SAVED_GAME_ACHIEVE_SUFFIX)) {
+                GameAchieveInfo gameAchieveInfo = new GameAchieveInfo(
+                        entry.getKey().replace(SAVED_GAME_ACHIEVE_SUFFIX, ""),
+                        Long.parseLong(entry.getValue().toString()));
+                gameAchieveInfoList.add(gameAchieveInfo);
+            }
         }
         Intent gameAchieveDates = new Intent(SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE);
-        ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA = Utils.GSON.toJson(dateList);
+        ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA = Utils.GSON.toJson(gameAchieveInfoList);
         sendBroadcast(gameAchieveDates);
     }
 
@@ -127,27 +155,33 @@ public class GameSaveService extends Service {
         String gameArchiveJson = ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA;
         ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA = null;
         long time = intent.getLongExtra(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME, -1);
-        if (gameArchiveJson == null) {
-            throw new IllegalArgumentException("\"SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA\"  can not be null");
-        }
         if (time == -1) {
             throw new IllegalArgumentException(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME + " not exist");
         }
-        SharedPreferences.Editor editor = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE).edit();
-        editor.putString(String.valueOf(time), gameArchiveJson);
-        System.out.println(time + " @ " + gameArchiveJson);
-        editor.apply();
+        String uuidStr = UUID.randomUUID().toString();
+        if (gameArchiveJson == null) {
+            throw new IllegalArgumentException("\"SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA\"  can not be null");
+        }
+        SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
+        editor.putString(uuidStr, gameArchiveJson);
+        editor.putString(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX, String.valueOf(time));
+        System.out.println(uuidStr + " @ " + gameArchiveJson);
+        System.out.println(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX + " @ " + time);
+        boolean result = editor.commit();
+        Intent saveResult = new Intent(SERVICE_RESPONSE_SAVE_GAME_ACHIEVE);
+        saveResult.putExtra(SERVICE_RESPONSE_SAVE_GAME_ACHIEVE_ARG, result);
+        sendBroadcast(intent);
     }
 
     private void loadGameAchieve(Intent intent) {
-        long time = intent.getLongExtra(SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, -1);
-        if (time == -1) {
+        String uuid = intent.getStringExtra(SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG);
+        if (uuid == null) {
             throw new IllegalArgumentException("Game achieve ID:[" + SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG + "] can not be null");
         }
-        SharedPreferences sharedPreferences = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE);
-        ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA = sharedPreferences.getString(String.valueOf(time), null);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA = sharedPreferences.getString(uuid, null);
         if (ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA == null) {
-            throw new IllegalArgumentException("Game achieve ID:[" + time + "] not exist");
+            throw new IllegalArgumentException("Game achieve ID:[" + uuid + "] not exist");
         }
         Intent gameAchieveIntent = new Intent(SERVICE_RESPONSE_LOAD_GAME_ACHIEVE);
         sendBroadcast(gameAchieveIntent);

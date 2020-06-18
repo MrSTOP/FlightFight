@@ -29,7 +29,7 @@ public class LoadGameActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.e("gameInfo", "onReceive: ");
-           gameInfoList =  Utils.parseAllGameAchieveDate();
+           gameInfoList =  Utils.parseAllGameAchieveInfo();
             mlistAdapter = new SaveGameAdapter(LoadGameActivity.this, gameInfoList);
             mListView = findViewById(R.id.load_game_list);
             mListView.setAdapter(mlistAdapter);
