@@ -113,7 +113,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         controller.setPlayerRect(game.getPlayerRectF());
         memBmp = Bitmap.createBitmap(ScreenWidth, ScreenHeight, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(memBmp);
-
     }
 
     @Override
@@ -125,6 +124,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        this.game = new GameManager(context, width, height);
+        this.controller = new GameControl(ScreenWidth, ScreenHeight);
+        this.controller.setPlayerRect(game.getPlayerRectF());
     }
 
     @Override
