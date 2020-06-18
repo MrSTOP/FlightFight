@@ -151,7 +151,7 @@ public class GameNpcControl {
                     curTemNpc.setDir(GameNpc.RIGHTDOWN);
                     break;
             }
-            curTemNpc.setHp(20*nowRound);
+            curTemNpc.setHp(40*nowRound);
             curTemNpc.setLife(1);
             curTemNpc.setActive(true);
             curTemNpc.setRatio(0.1f * density);
@@ -211,7 +211,7 @@ public class GameNpcControl {
                     if (!tempNpc.isActive()) {
                         int i = this.getNpcCur() + 1;
                         this.setNpcCur(i);
-                        playBoomAnimate(tempNpc.getX(), tempNpc.getY());
+                        playBoomAnimate(tempNpc);
                     }
                     if (tempNpc.getNpcType() == GameNpc.isBoss) {
                         setBossDead(true);
@@ -244,7 +244,10 @@ public class GameNpcControl {
         }
     }
 
-    public void playBoomAnimate(float x, float y) {
+    //添加爆炸动画
+    public void playBoomAnimate(GameNpc gameNpc) {
+        float x = gameNpc.getX();
+        float y = gameNpc.getY();
         if (boomList == null) {
             boomList = new ArrayList<>();
         }
@@ -255,13 +258,19 @@ public class GameNpcControl {
         curTemBoom.setHp(1);
         curTemBoom.setLife(1);
         curTemBoom.setActive(true);
-        curTemBoom.setRatio(0.15f * density);
+        if (gameNpc.getNpcType() != GameNpc.isBoss)
+        {
+            curTemBoom.setRatio(0.15f * density);
+        } else {
+            curTemBoom.setRatio(0.3f * density);
+        }
         curTemBoom.setX(x);
         curTemBoom.setY(y);
 
         boomList.add(curTemBoom);
     }
 
+    //清除更新爆炸动画
     public void updateBoomAnimate() {
         if (boomList != null) {
             //清除爆炸图片
@@ -270,7 +279,7 @@ public class GameNpcControl {
             Iterator<GameSprite> it = cloneBoomList.iterator();
             while (it.hasNext()) {
                 GameSprite tempBoom = it.next();
-//                Log.d("boomFrame:", "tempBoom.getCurrentFrame():" + tempBoom.getCurrentFrame() + "tempBoom.getTotalFrames():" + tempBoom.getTotalFrames());
+                Log.d("boomFrame:", "tempBoom.getCurrentFrame():" + tempBoom.getCurrentFrame() + "tempBoom.getTotalFrames():" + tempBoom.getTotalFrames());
                 if ((tempBoom.getCurrentFrame() >= tempBoom.getTotalFrames() - 2) || !tempBoom.isActive()) {
                     tempBoom.releaseBitmap();
                     it.remove();
@@ -320,7 +329,7 @@ public class GameNpcControl {
                     curTempBullet.setLife(1);
                     curTempBullet.setActive(true);
                     curTempBullet.setRatio(0.4f * density);
-                    px = curCtrlNpc.getX() + ((float) curCtrlNpc.getWidth() / 3) - curTempBullet.getWidth() + curTempBullet.getWidth() * i;
+                    px = curCtrlNpc.getX() + ((float) curCtrlNpc.getWidth() / 3) - curTempBullet.getWidth() + curTempBullet.getWidth() * (i + 1);
                     py = curCtrlNpc.getY() + curTempBullet.getHeight() / 2;
                     curTempBullet.setX(px);
                     curTempBullet.setY(py);
@@ -422,7 +431,7 @@ public class GameNpcControl {
 
         //设置当前关卡数
         setNowRound(round);
-        setBulletIntervalTime(getBulletIntervalTime() / 2);
+        setBulletIntervalTime(getBulletIntervalTime() / 3 * 2);
     }
 
     public int spareNpc() {
