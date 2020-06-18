@@ -217,7 +217,7 @@ public class GameNpcControl {
             cloneBulletsList.clear();
         }
 
-        Log.d("BossDead", "isBossDead():" + isBossDead());
+//        Log.d("BossDead", "isBossDead():" + isBossDead());
     }
 
     public void playBoomAnimate(float x, float y) {
