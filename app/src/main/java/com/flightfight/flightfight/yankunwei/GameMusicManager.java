@@ -38,6 +38,7 @@ public class GameMusicManager {
             e.printStackTrace();
         }
         ready = true;
+        setMute(mute);
     }
 
     private void checkReady() {
@@ -60,7 +61,7 @@ public class GameMusicManager {
     }
 
     public void playBGM() {
-        playBGM(50);
+        playBGM(30);
     }
 
     public void playBGM(int volume) {
@@ -98,15 +99,25 @@ public class GameMusicManager {
     public void setMute(boolean mute) {
         checkReady();
         if (mute) {
+            bgmMediaPlayer.start();
+            bgmMediaPlayer.setVolume(0.0F, 0.0F);
             bgmMediaPlayer.pause();
             for (Map.Entry<String, MediaPlayer> musicEntry : soundNameMap.entrySet()) {
+                musicEntry.getValue().start();
+                musicEntry.getValue().setVolume(0.0F, 0.0F);
                 musicEntry.getValue().pause();
             }
+            System.out.println("MUTE");
         } else {
+            bgmMediaPlayer.start();
+            bgmMediaPlayer.setVolume(0.3F, 0.3F);
             bgmMediaPlayer.pause();
             for (Map.Entry<String, MediaPlayer> musicEntry : soundNameMap.entrySet()) {
+                musicEntry.getValue().start();
+                musicEntry.getValue().setVolume(1.0F, 1.0F);
                 musicEntry.getValue().pause();
             }
+            System.out.println("NAN MUTE");
         }
         this.mute = mute;
     }

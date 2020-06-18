@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.flightfight.flightfight.yankunwei.GameMusicManager;
 import com.flightfight.flightfight.yzc.PauseFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout splashLt;
     private ConstraintLayout main_layout;
-    private boolean isPlayMusic = true;
     public static final String TAG_EXIT = "exit";
 
     @Override
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        GameMusicManager.getInstance().init(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
@@ -89,12 +90,13 @@ public class MainActivity extends AppCompatActivity {
         quitGame = findViewById(R.id.main_quit_game);
 
         musicControl.setOnClickListener(v -> {
-            if(isPlayMusic){
+            GameMusicManager.getInstance().init(MainActivity.this);
+            if(!GameMusicManager.getInstance().isMute()){
                 musicControl.setImageResource(R.drawable.ic_volume_off_black_24dp);
-                isPlayMusic = false;
+                GameMusicManager.getInstance().setMute(true);
             }else {
                 musicControl.setImageResource(R.drawable.ic_volume_up_black_24dp);
-                isPlayMusic = true;
+                GameMusicManager.getInstance().setMute(false);
             }
         });
 
