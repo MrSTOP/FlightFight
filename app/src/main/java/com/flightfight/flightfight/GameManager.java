@@ -75,9 +75,12 @@ public class GameManager {
     }
 
     public void initGame() {
+        GamePlayerSprite temp = player;
         initHappyFish();
-        //TODO NPC初始化
-//        npcControl.
+        if (temp != null) {
+            this.player.setSavedScore(temp);
+        }
+        npcControl.startNewRound();
     }
 
     public void setPlayerAngelArc(double angle) {

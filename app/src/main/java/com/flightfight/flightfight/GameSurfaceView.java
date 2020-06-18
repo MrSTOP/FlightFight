@@ -162,18 +162,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                                 game.setGameLevelChanged(false);
                                 gameState = GameState.GAME_PAST;
                                 game.initGame();
+                                controller = new GameControl(ScreenWidth, ScreenHeight);
+                                controller.setPlayerRect(game.getPlayerRectF());
                             }
-                        }
-
-                       else if (gameState == GameState.GAME_FAILD && !readyDrawFaildAndWin) {
+                        } else if (gameState == GameState.GAME_FAILD && !readyDrawFaildAndWin) {
                             Resources resources = context.getApplicationContext().getResources();
                             Bitmap bmp = BitmapFactory.decodeResource(resources, R.drawable.failed);
                             drawFaildAndVictory(mCanvas, bmp);
-                        }
-                       else if(gameState == GameState.GAME_PAST){
+                        } else if (gameState == GameState.GAME_PAST) {
                             drawGameGoing(mCanvas, ScreenWidth, ScreenHeight, game.getGameLevel());
-                        }
-                       else if(gameState == GameState.GAME_WIN && !readyDrawFaildAndWin ){
+                        } else if (gameState == GameState.GAME_WIN && !readyDrawFaildAndWin) {
                             Resources resources = context.getApplicationContext().getResources();
                             Bitmap bmp = BitmapFactory.decodeResource(resources, R.drawable.win);
                             drawFaildAndVictory(mCanvas, bmp);
@@ -237,7 +235,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 //        System.out.println("DX: " + controller.getPlayerDestinationX() + "DY: " + controller.getPlayerDestinationY());
 
         if (readyDrawFaildAndWin) {
-           // banButtonListener.banButtonListener();
+            // banButtonListener.banButtonListener();
             if (event.getX() >= winAndFaildbtn.left && event.getX() <= winAndFaildbtn.right && event.getY() >= winAndFaildbtn.top && event.getY() <= winAndFaildbtn.bottom) {
                 readyDrawFaildAndWin = false;
                 Intent intent = new Intent(context, MainActivity.class);
@@ -268,8 +266,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         Rect hprect = new Rect(20 + hpWidth, 20, 20 + hp * 2 + hpWidth, 5 + (int) (textPaint.descent() - textPaint.ascent()));
         textPaintBack.setARGB(254, 224, 125, 200);
 
-        String scoreText = "分数: "+score;
-        mcanvas.drawText(scoreText, ScreenWidth/2, 50, textPaint);
+        String scoreText = "分数: " + score;
+        mcanvas.drawText(scoreText, ScreenWidth / 2, 50, textPaint);
         mcanvas.drawRect(hprect, textPaintBack);
 
         mcanvas.drawText(enemyText, 130, 50 + (int) (textPaint.descent() - textPaint.ascent()), textPaint);
@@ -277,7 +275,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 
     public void drawGameGoing(Canvas mcanvas, int screenWidth, int screenHeight, int round) {
-        if(frameTime == -1){
+        if (frameTime == -1) {
             frameTime = System.currentTimeMillis();
         }
 
@@ -287,11 +285,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         textPaintBack.setARGB(125, 0, 125, 200);
         textPaintBack.setDither(true);
         String hpText = "Round:" + round;
-        mcanvas.drawText(hpText, screenWidth/2, screenHeight/2, textPaint);
+        mcanvas.drawText(hpText, screenWidth / 2, screenHeight / 2, textPaint);
 
         long frameEndTime = System.currentTimeMillis();
 
-        if(frameEndTime - frameTime > 2000){
+        if (frameEndTime - frameTime > 2000) {
             gameState = GameState.GAME_START;
         }
 
@@ -304,10 +302,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         Paint paint = new Paint();
         Rect desRect = new Rect();
-        desRect.top = canvas.getHeight()/3;
+        desRect.top = canvas.getHeight() / 3;
         desRect.left = canvas.getWidth() / 4;
         desRect.right = canvas.getWidth() * 3 / 4;
-        desRect.bottom = canvas.getHeight()*2/3;
+        desRect.bottom = canvas.getHeight() * 2 / 3;
 
         Rect srcRect = new Rect(0, 0, faildBitmap.getWidth(), faildBitmap.getHeight());
 
@@ -315,11 +313,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         //Paint paint = new Paint();
         paint.setARGB(20, 50, 50, 50);
-        Rect bckRect = new Rect(0,0, ScreenWidth , ScreenHeight);
+        Rect bckRect = new Rect(0, 0, ScreenWidth, ScreenHeight);
         mCanvas.drawRect(bckRect, paint);
         String btn = "返回界面";
 //        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
-        mCanvas.drawText(btn, (ScreenWidth/2) - 150, ScreenHeight - 200, textPaint);
+        mCanvas.drawText(btn, (ScreenWidth / 2) - 150, ScreenHeight - 200, textPaint);
         // winAndFaildbtn = textPaint.getTextBounds();
         int width = (int) textPaint.measureText(btn);
         winAndFaildbtn.left = ScreenWidth / 2 - 100;
@@ -348,7 +346,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
 
-
     public interface PauseButtonListener {
         void pauseListener();
     }
@@ -357,14 +354,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.pauseButtonListener = pauseButtonListener;
     }
 
-  
-  
 
+    public enum GameState {GAME_START, GAME_PAUSE, GAME_ABOUT, GAME_PAST, GAME_WIN, GAME_FAILD}
 
-    public enum GameState{GAME_START, GAME_PAUSE, GAME_ABOUT, GAME_PAST, GAME_WIN, GAME_FAILD}
-
-    public void saveGame(){
-        if(game != null){
+    public void saveGame() {
+        if (game != null) {
             game.save();
         }
     }
