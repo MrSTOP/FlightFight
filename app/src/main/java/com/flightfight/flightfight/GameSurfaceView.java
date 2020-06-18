@@ -96,6 +96,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         setFocusable(true);
         setFocusableInTouchMode(true);
         paintback = new Paint();
+
+        textPaint = new Paint();
+        textPaint.setARGB(254, 220, 0, 0);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setFakeBoldText(true);
+        textPaint.setTextSize(80);
         this.setKeepScreenOn(true);
         setGameState(GameState.GAME_START);
         //  pauseBitmap = new Bitmap();
@@ -236,10 +242,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 
     public void drawStaus(Canvas mcanvas, int screenWidth, int screenHeight, int hp, int enemyCount) {
-        textPaint = new Paint();
-        textPaint.setARGB(254, 220, 0, 0);
+
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setFakeBoldText(true);
         textPaint.setTextSize(40);
         textPaintBack = new Paint();
         textPaintBack.setARGB(125, 0, 125, 200);
@@ -260,10 +264,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public void drawFaildAndVictory(Canvas canvas, Bitmap faildBitmap) {
         winAndFaildbtn = new Rect();
-        textPaint = new Paint();
-        textPaint.setARGB(254, 220, 0, 0);
         textPaint.setTextAlign(Paint.Align.LEFT);
-        textPaint.setFakeBoldText(true);
         textPaint.setTextSize(80);
         Rect desRect = new Rect();
         desRect.top = 0;
@@ -326,7 +327,26 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.pauseButtonListener = pauseButtonListener;
     }
 
-    public enum GameState {GAME_START, GAME_PAUSE, GAME_ABOUT}
+  
+  
+    private void drawAbout(Canvas canvas){
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextSize(60);
+        int xPos = (canvas.getWidth()/2);
+        int yPos = (int)((canvas.getHeight()/2) - (3*(textPaint.descent() - textPaint.ascent())/2));
+        Rect desRec = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+        canvas.drawRect(desRec, textPaintBack);
+        canvas.drawText("关于", xPos, yPos, textPaint);
+        yPos+=(int)(textPaint.descent() - textPaint.ascent());
+        canvas.drawText("App:飞机大战1.0", xPos, yPos, textPaint);
+        yPos+=(int)(textPaint.descent() - textPaint.ascent());
+        canvas.drawText("学号：8002117042", xPos, yPos, textPaint);
+        yPos+=(int)(textPaint.descent() - textPaint.ascent());
+        canvas.drawText("实验日期：2020-6-12", xPos, yPos, textPaint);
+    }
+
+
+    public enum GameState{GAME_START, GAME_PAUSE, GAME_ABOUT}
 
 
 }

@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         aboutGame.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
         });
 
         quitGame.setOnClickListener(v -> {
@@ -59,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         loadGame.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, LoadGameActivity.class);
+            startActivity(intent);
         });
 
 
