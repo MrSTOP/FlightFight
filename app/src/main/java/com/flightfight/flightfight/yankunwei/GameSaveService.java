@@ -9,7 +9,6 @@ import android.os.IBinder;
 
 import com.flightfight.flightfight.yankunwei.database.LeaderBoardDAO;
 import com.flightfight.flightfight.yankunwei.database.bean.PlayerRecord;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,9 +99,8 @@ public class GameSaveService extends Service {
             Date date = new Date(Long.parseLong(entry.getKey()));
             dateList.add(date);
         }
-        Gson gson = new Gson();
         Intent gameAchieveDates = new Intent(SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE);
-        ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA = gson.toJson(dateList);
+        ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA = Utils.GSON.toJson(dateList);
         sendBroadcast(gameAchieveDates);
     }
 

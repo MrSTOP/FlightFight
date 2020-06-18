@@ -8,14 +8,15 @@ import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.ZhuJintao.GameNpc;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
 
 public class Utils {
 
+    public static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public static final int GAME_ACHIEVE_ENEMY = 1;
     public static final int GAME_ACHIEVE_ENEMY_BULLET = 2;
@@ -84,7 +85,6 @@ public class Utils {
     }
 
     public static List<Date> parsePlayerRecord() {
-        Gson gson = new Gson();
-        return gson.fromJson(ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA, new TypeToken<List<Date>>(){}.getType());
+        return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA, new TypeToken<List<Date>>(){}.getType());
     }
 }

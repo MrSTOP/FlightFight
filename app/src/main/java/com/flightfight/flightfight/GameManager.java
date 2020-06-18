@@ -17,11 +17,8 @@ import com.flightfight.flightfight.yankunwei.GamePlayerSprite;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
 import com.flightfight.flightfight.yankunwei.ValueContainer;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -137,13 +134,12 @@ public class GameManager {
     }
 
     public void save(Date date) {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         GameArchive gameArchive = new GameArchive();
         gameArchive.setGameDate(date);
         gameArchive.setPlayer(player);
         gameArchive.setEnemyList(npcControl.getNpcList());
         gameArchive.setEnemyBulletList(npcControl.getBulletsList());
-        String str = gson.toJson(gameArchive);
+        String str = Utils.GSON.toJson(gameArchive);
         Intent save = new Intent(context, GameSaveService.class);
         save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);
         ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA = str;
@@ -163,8 +159,7 @@ public class GameManager {
     }
 
     public void setAchieveData(GameControl controller) {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        GameArchive gameAchieve = gson.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
+        GameArchive gameAchieve = Utils.GSON.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
         List<GameSprite> enemyList = new ArrayList<>(gameAchieve.getEnemyList());
         List<GameSprite> initializedEnemyList = new ArrayList<>();
         List<GameSprite> initializedEnemyBulletList = new ArrayList<>();
