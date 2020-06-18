@@ -13,6 +13,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -87,11 +89,14 @@ public class Utils {
     }
 
     public static List<GameAchieveInfo> parseAllGameAchieveInfo() {
-        return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA, new TypeToken<List<GameAchieveInfo>>(){}.getType());
+        List<GameAchieveInfo> gameAchieveInfoList = GSON.fromJson(ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA,
+                new TypeToken<List<GameAchieveInfo>>() {}.getType());
+        Collections.sort(gameAchieveInfoList, (o1, o2) -> o1.date.compareTo(o2.date));
+        return gameAchieveInfoList;
     }
 
     public static List<PlayerRecord> parsePlayerRecord() {
-        return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG_DATA, new TypeToken<List<PlayerRecord>>(){}.getType());
+        return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG_DATA, new TypeToken<List<PlayerRecord>>() {}.getType());
     }
 
     public static GameArchive parseGameAchieve(Context context) {
