@@ -25,10 +25,11 @@ public class GameMusicManager {
     }
 
     public void init(Context context) {
+
         loadSoundEffect(context);
         bgmMediaPlayer = new MediaPlayer();
         try {
-            AssetFileDescriptor assetFileDescriptor = context.getApplicationContext().getAssets().openFd("sounds/blast.wav");
+            AssetFileDescriptor assetFileDescriptor = context.getApplicationContext().getAssets().openFd("sounds/background_music.mp3");
             bgmMediaPlayer.setDataSource(assetFileDescriptor.getFileDescriptor(), assetFileDescriptor.getStartOffset(), assetFileDescriptor.getLength());
             bgmMediaPlayer.prepare();
             bgmMediaPlayer.setLooping(true);
@@ -50,7 +51,16 @@ public class GameMusicManager {
     }
 
     public void playBGM() {
+        playBGM(50);
+    }
+
+    public void playBGM(int volume) {
+        setBGMVolume(volume);
         bgmMediaPlayer.start();
+    }
+
+    public void setBGMVolume(int volume) {
+        bgmMediaPlayer.setVolume((float) volume /100.0F, (float) volume /100.0F);
     }
 
     public void pauseBGM() {
@@ -99,5 +109,6 @@ public class GameMusicManager {
         for (Map.Entry<String, MediaPlayer> entry : soundNameMap.entrySet()) {
             entry.getValue().release();
         }
+        soundNameMap.clear();
     }
 }

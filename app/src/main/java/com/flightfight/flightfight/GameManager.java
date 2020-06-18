@@ -68,6 +68,7 @@ public class GameManager {
         npcControl.LoadNpc();
         this.gameMusicManager = GameMusicManager.getInstance();
         this.gameMusicManager.init(context);
+        this.gameMusicManager.playBGM();
     }
 
     public void setPlayerAngelArc(double angle) {
