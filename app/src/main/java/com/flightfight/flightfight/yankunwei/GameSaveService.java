@@ -23,8 +23,8 @@ public class GameSaveService extends Service {
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.save.game.state";
     public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.load.game.state";
     public static final String SERVICE_RESPONSE_LOAD_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state";
-    public static final String SERVICE_ACTION_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.load.game.state";
-    public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state";
+    public static final String SERVICE_ACTION_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".action.load.game.state.all";
+    public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state.all";
 
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG = "playerRecord";
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME = "gameAchieveTime";
