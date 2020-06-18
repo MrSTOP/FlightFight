@@ -161,6 +161,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                             if (game.isGameLevelChanged()) {
                                 game.setGameLevelChanged(false);
                                 gameState = GameState.GAME_PAST;
+                                game.initGame();
                             }
                         }
 

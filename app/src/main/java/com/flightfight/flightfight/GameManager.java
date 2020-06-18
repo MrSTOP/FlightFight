@@ -68,10 +68,16 @@ public class GameManager {
         GameBulletFactory.getInstance().initFactory(context, density);
         initHappyFish();
         npcControl = new GameNpcControl(context, ScreenWidth, ScreenHeight);
-        npcControl.LoadNpc();
+        initGame();
         this.gameMusicManager = GameMusicManager.getInstance();
         this.gameMusicManager.init(context);
         this.gameMusicManager.playBGM();
+    }
+
+    public void initGame() {
+        initHappyFish();
+        //TODO NPC初始化
+//        npcControl.
     }
 
     public void setPlayerAngelArc(double angle) {
