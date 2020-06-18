@@ -1,11 +1,14 @@
 package com.flightfight.flightfight.yzc;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.flightfight.flightfight.GameActivity;
 import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
 
@@ -29,10 +33,17 @@ public class PauseFragment extends Fragment {
 
     private TextView quit;
     private TextView continueBtn;
+    private TextView loadGame;
     private String mParam1;
     private String mParam2;
-    private Activity mActivity;
+    private GameActivity mActivity;
     private HideFragMent hide;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
     public PauseFragment() {
         // Required empty public constructor
     }
@@ -72,8 +83,18 @@ public class PauseFragment extends Fragment {
         quit = view.findViewById(R.id.pause_bck_menu);
         continueBtn = view.findViewById(R.id.pause_continue_game);
         continueBtn.setOnClickListener(v -> hide.setHitde());
+        loadGame = view.findViewById(R.id.pause_save_game);
+
+        loadGame.setOnClickListener(v -> {
+            if(mActivity.getGameSurfaceView() != null){
+                mActivity.getGameSurfaceView().saveGame();
+                showExitAlert();
+            }
+        });
+
         quit.setOnClickListener(v -> {
-            Intent intent = new Intent(mActivity, MainActivity.class);
+            Intent intent = new Intent(mActivity,MainActivity.class);
+            //intent.putExtra(MainActivity.TAG_EXIT, true);
             startActivity(intent);
         });
         return view;
@@ -82,7 +103,7 @@ public class PauseFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mActivity = (Activity)context;
+        mActivity = (GameActivity) context;
     }
 
 
@@ -92,5 +113,26 @@ public class PauseFragment extends Fragment {
 
     public void setHide(HideFragMent hide) {
         this.hide = hide;
+    }
+
+    public void showExitAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle("提示").setIcon(R.drawable.ic_launcher_foreground).setMessage("存档成功,点击确定返回")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(getContext(),MainActivity.class);
+                               // intent.putExtra(MainActivity.TAG_EXIT, true);
+                                startActivity(intent);
+                            }
+                        }
+                ).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 }

@@ -25,6 +25,19 @@ public class MainActivity extends AppCompatActivity {
     private TextView quitGame;
     private ImageView musicControl;
     private ImageView pause;
+
+    public static final String TAG_EXIT = "exit";
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent != null) {
+            boolean isExit = intent.getBooleanExtra(TAG_EXIT, false);
+            if (isExit) {
+                this.finish();
+            }
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         aboutGame.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
         });
 
         quitGame.setOnClickListener(v -> {
@@ -59,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         loadGame.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, LoadGameActivity.class);
+            startActivity(intent);
         });
 
 
@@ -71,7 +86,9 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                System.exit(0);
+                                Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                                intent.putExtra(MainActivity.TAG_EXIT, true);
+                                startActivity(intent);
                             }
                         }
                 ).setNegativeButton("取消", new DialogInterface.OnClickListener() {

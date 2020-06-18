@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,15 +13,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
-import com.flightfight.flightfight.yankunwei.GameArchive;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
-import com.flightfight.flightfight.yankunwei.Utils;
-import com.flightfight.flightfight.yankunwei.ValueContainer;
-
-import java.util.Date;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static int TIME_IN_FRAME = 24;
@@ -80,8 +74,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         //      int[] attrsArray = new int[] {android.R.attr.background};
         //   TypedArray ta = context.obtainStyledAttributes(attrs, attrsArray);
         //   Drawable background = ta.getDrawable(0);
-        Resources res = context.getApplicationContext().getResources();
-//        prizeBmp = ((BitmapDrawable)background).getBitmap();
+        //        prizeBmp = ((BitmapDrawable)background).getBitmap();
 
         //    coverBmp = BitmapFactory.decodeResource(res, R.drawable.scratch_area);
         initView();
@@ -96,6 +89,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         setFocusable(true);
         setFocusableInTouchMode(true);
         paintback = new Paint();
+
+        textPaint = new Paint();
+        textPaint.setARGB(254, 220, 0, 0);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setFakeBoldText(true);
+        textPaint.setTextSize(80);
         this.setKeepScreenOn(true);
         setGameState(GameState.GAME_START);
         //  pauseBitmap = new Bitmap();
@@ -135,7 +134,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void run() {
         while (isRunning) {
-            Canvas surfCanvas = null;
+            Canvas surfCanvas;
             if (mHolder == null) {
                 return;
             }
@@ -207,9 +206,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 game.setPlayerActive(true);
             }
             if (controller.isFireTouched()) {
-                synchronized (lock) {
-                    game.load();
-                }
 //            game.loadBubbles();
             }
 
@@ -236,10 +232,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 
     public void drawStaus(Canvas mcanvas, int screenWidth, int screenHeight, int hp, int enemyCount) {
-        textPaint = new Paint();
-        textPaint.setARGB(254, 220, 0, 0);
+
         textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setFakeBoldText(true);
         textPaint.setTextSize(40);
         textPaintBack = new Paint();
         textPaintBack.setARGB(125, 0, 125, 200);
@@ -260,10 +254,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public void drawFaildAndVictory(Canvas canvas, Bitmap faildBitmap) {
         winAndFaildbtn = new Rect();
-        textPaint = new Paint();
-        textPaint.setARGB(254, 220, 0, 0);
         textPaint.setTextAlign(Paint.Align.LEFT);
-        textPaint.setFakeBoldText(true);
         textPaint.setTextSize(80);
         Rect desRect = new Rect();
         desRect.top = 0;
@@ -279,8 +270,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         paint.setARGB(20, 50, 50, 50);
         Rect bckRect = new Rect(ScreenWidth / 4, 0, ScreenWidth * 3 / 4, ScreenHeight);
         mCanvas.drawRect(bckRect, paint);
-        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
-        mCanvas.drawText("菜单", ScreenWidth / 2 - 80, ScreenHeight - 200, textPaint);
+//        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
+        mCanvas.drawText("菜单", (ScreenWidth >> 1) - 80, ScreenHeight - 200, textPaint);
         // winAndFaildbtn = textPaint.getTextBounds();
         int width = (int) textPaint.measureText("菜单");
         winAndFaildbtn.left = ScreenWidth / 2 - 100;
@@ -299,8 +290,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         desRect.bottom = pauseBitmap.getHeight();
 
 
-        Rect srcRect = new Rect(0, 0, pauseBitmap.getWidth(), pauseBitmap.getHeight());
-
         pauseButtonDrawable.setBounds(desRect);
         pauseButtonDrawable.draw(mCanvas);
         //mCanvas.drawBitmap(pauseBitmap,srcRect,desRect,paintback);
@@ -318,7 +307,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         void banButtonListener();
     }
 
-
     public interface PauseButtonListener {
         void pauseListener();
     }
@@ -327,7 +315,34 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.pauseButtonListener = pauseButtonListener;
     }
 
-    public enum GameState {GAME_START, GAME_PAUSE, GAME_ABOUT}
+  
+  
+    private void drawAbout(Canvas canvas){
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextSize(60);
+        int xPos = (canvas.getWidth()/2);
+        int yPos = (int)((canvas.getHeight()/2) - (3*(textPaint.descent() - textPaint.ascent())/2));
+        Rect desRec = new Rect(0, 0, canvas.getWidth(), canvas.getHeight());
+        canvas.drawRect(desRec, textPaintBack);
+        canvas.drawText("关于", xPos, yPos, textPaint);
+        yPos+=(int)(textPaint.descent() - textPaint.ascent());
+        canvas.drawText("App:飞机大战1.0", xPos, yPos, textPaint);
+        yPos+=(int)(textPaint.descent() - textPaint.ascent());
+        canvas.drawText("学号：8002117042", xPos, yPos, textPaint);
+        yPos+=(int)(textPaint.descent() - textPaint.ascent());
+        canvas.drawText("实验日期：2020-6-12", xPos, yPos, textPaint);
+    }
 
 
+    public enum GameState{GAME_START, GAME_PAUSE, GAME_ABOUT}
+
+    public void saveGame(){
+        if(game != null){
+            game.save();
+        }
+    }
+
+    public GameManager getGame() {
+        return game;
+    }
 }

@@ -6,12 +6,21 @@ import android.graphics.RectF;
 
 import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
+import com.flightfight.flightfight.ZhuJintao.GameNpc;
+import com.flightfight.flightfight.yankunwei.database.bean.PlayerRecord;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
 
+    public static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
     public static final int GAME_ACHIEVE_ENEMY = 1;
     public static final int GAME_ACHIEVE_ENEMY_BULLET = 2;
@@ -50,12 +59,16 @@ public class Utils {
         rectF.bottom = rectF.top + height;
     }
 
-    public static void initGameSprite(Context context, List<GameSprite> dest, List<GameSprite> src, int type) {
+    private static void initGameSprite(Context context, List<GameSprite> dest, List<GameSprite> src, int type) {
         GameSprite newGameSprite = null;
         for (GameSprite gameSprite : src) {
             switch (type) {
                 case GAME_ACHIEVE_ENEMY:
-                    newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1));
+                    newGameSprite = new GameNpc(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1));
+                    newGameSprite.setActive(true);
+                    break;
+                case GAME_ACHIEVE_ENEMY_BULLET:
+                    newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet3), 2, 2);
                     break;
                 case GAME_ACHIEVE_PLAYER_BULLET:
                     newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet1), 2, 2);
@@ -67,5 +80,46 @@ public class Utils {
             newGameSprite.initBySaved(gameSprite);
             dest.add(newGameSprite);
         }
+    }
+
+    private static void castNpc(List<GameNpc> dest, List<GameSprite> src) {
+        for (GameSprite gameSprite : src) {
+            dest.add((GameNpc) gameSprite);
+        }
+    }
+
+    public static List<GameAchieveInfo> parseAllGameAchieveInfo() {
+        List<GameAchieveInfo> gameAchieveInfoList = GSON.fromJson(ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA,
+                new TypeToken<List<GameAchieveInfo>>() {}.getType());
+        Collections.sort(gameAchieveInfoList, (o1, o2) -> o1.date.compareTo(o2.date));
+        return gameAchieveInfoList;
+    }
+
+    public static List<PlayerRecord> parsePlayerRecord() {
+        return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG_DATA, new TypeToken<List<PlayerRecord>>() {}.getType());
+    }
+
+    public static GameArchive parseGameAchieve(Context context) {
+        GameArchive gameAchieve = GSON.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
+        List<GameSprite> enemyList = new ArrayList<>(gameAchieve.getEnemyList());
+        List<GameSprite> initializedEnemyList = new ArrayList<>();
+        List<GameSprite> initializedEnemyBulletList = new ArrayList<>();
+        List<GameSprite> initializedPlayerBulletList = new ArrayList<>();
+        List<GameNpc> initializedNpcList = new ArrayList<>();
+        GamePlayerSprite player = gameAchieve.getPlayer();
+        GamePlayerSprite newPlayer = new GamePlayerSprite(context,
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1),
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left),
+                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right), 12);
+        initGameSprite(context, initializedPlayerBulletList, gameAchieve.getPlayer().getPlayerBulletListSafeForIteration(), Utils.GAME_ACHIEVE_PLAYER_BULLET);
+        initGameSprite(context, initializedEnemyList, enemyList, Utils.GAME_ACHIEVE_ENEMY);
+        initGameSprite(context, initializedEnemyBulletList, gameAchieve.getEnemyBulletList(), Utils.GAME_ACHIEVE_ENEMY_BULLET);
+        castNpc(initializedNpcList, initializedEnemyList);
+        newPlayer.setPlayerBulletList(initializedPlayerBulletList);
+        newPlayer.initBySaved(player);
+        gameAchieve.setPlayer(newPlayer);
+        gameAchieve.setEnemyList(initializedNpcList);
+        gameAchieve.setEnemyBulletList(initializedEnemyBulletList);
+        return gameAchieve;
     }
 }

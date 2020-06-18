@@ -17,8 +17,6 @@ import com.flightfight.flightfight.yankunwei.GamePlayerSprite;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
 import com.flightfight.flightfight.yankunwei.ValueContainer;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,7 +61,7 @@ public class GameManager {
     }
 
     public void setPlayerActive(boolean active) {
-            player.setActive(active);
+        player.setActive(active);
     }
 
     public void setPlayerDestination(float x, float y) {
@@ -127,44 +125,41 @@ public class GameManager {
         return player.getLife();
     }
 
-    public void load() {
+    public void save() {
+        save(System.currentTimeMillis());
+    }
+
+    public void save(long time) {
+        save(new Date(time));
+    }
+
+    public void save(Date date) {
+        GameArchive gameArchive = new GameArchive();
+        gameArchive.setGameDate(date);
+        gameArchive.setPlayer(player);
+        gameArchive.setEnemyList(npcControl.getNpcList());
+        gameArchive.setEnemyBulletList(npcControl.getBulletsList());
+        String str = Utils.GSON.toJson(gameArchive);
+        Intent save = new Intent(context, GameSaveService.class);
+        save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);
+        ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA = str;
+        save.putExtra(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME, gameArchive.getGameDate().getTime());
+        context.startService(save);
+    }
+
+    public void load(String uuid) {
         Intent load = new Intent(context, GameSaveService.class);
         load.setAction(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE);
-        load.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, 0L);
+        load.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, uuid);
         context.startService(load);
     }
 
     public void setAchieveData(GameControl controller) {
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        GameArchive gameAchieve = gson.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
-        List<GameNpc> enemyList = gameAchieve.getEnemyList();
-        List<GameSprite> initializedEnemyList = new ArrayList<>();
-        List<GameSprite> initializedPlayerBulletList = new ArrayList<>();
-        GamePlayerSprite player = gameAchieve.getPlayer();
-        GamePlayerSprite newPlayer = new GamePlayerSprite(context,
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1),
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left),
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right), 12);
-        Utils.initGameSprite(context, initializedPlayerBulletList, gameAchieve.getPlayer().getPlayerBulletListSafeForIteration(), Utils.GAME_ACHIEVE_PLAYER_BULLET);
-        newPlayer.setPlayerBulletList(initializedPlayerBulletList);
-        newPlayer.initBySaved(player);
-        gameAchieve.setPlayer(player);
-        controller.setPlayerRect(newPlayer.getBoundRectF());
-        this.player = newPlayer;
-    }
-
-    public void save() {
-            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-            GameArchive gameArchive = new GameArchive();
-            gameArchive.setGameDate(new Date(0));
-            gameArchive.setPlayer(player);
-            String str = gson.toJson(gameArchive);
-            Intent save = new Intent(context, GameSaveService.class);
-            save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);
-            ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA = str;
-            save.putExtra(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME, gameArchive.getGameDate().getTime());
-            context.startService(save);
-            System.out.println("BROAD");
+        GameArchive gameArchive = Utils.parseGameAchieve(context);
+        this.player = gameArchive.getPlayer();
+        controller.setPlayerRect(this.player.getBoundRectF());
+        this.npcControl.setBulletsList(gameArchive.getEnemyBulletList());
+        this.npcControl.setNpcList(gameArchive.getEnemyList());
     }
 
     private void bulletLogic() {
@@ -172,12 +167,13 @@ public class GameManager {
         List<GameSprite> enemyBulletList = npcControl.getBulletsList();
         List<GameNpc> enemyList = npcControl.getNpcList();
         ////////////////////////////////////玩家子弹命中敌人检测//////////////////////////////////
-        Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
-        while (playerBulletIterator.hasNext()) {
-            GameSprite playerBullet = playerBulletIterator.next();
+        for (GameSprite playerBullet : playerBulletList) {
             for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
-                    enemy.decreaseLife();
+                    enemy.decreaseHP();
+                    if (!enemy.isActive()) {
+                        player.increaseKilledEnemy();
+                    }
                 }
             }
         }
@@ -191,13 +187,13 @@ public class GameManager {
             }
         }
         ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
-        Iterator<GameNpc> enemyIterator = enemyList.iterator();
-        while (enemyIterator.hasNext()) {
-            GameNpc npc = enemyIterator.next();
+        for (GameNpc npc : enemyList) {
             if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
                 player.setHp(0);
                 npc.setActive(false);
+                player.increaseKilledEnemy();
             }
         }
+        System.out.println("SCORE:" + player.getScore());
     }
 }
