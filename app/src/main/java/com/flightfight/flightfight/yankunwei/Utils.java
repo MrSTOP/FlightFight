@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.ZhuJintao.GameNpc;
+import com.flightfight.flightfight.yankunwei.database.bean.PlayerRecord;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -87,6 +88,10 @@ public class Utils {
 
     public static List<Date> parseAllGameAchieveDate() {
         return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA, new TypeToken<List<Date>>(){}.getType());
+    }
+
+    public static List<PlayerRecord> parsePlayerRecord() {
+        return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG_DATA, new TypeToken<List<PlayerRecord>>(){}.getType());
     }
 
     public static GameArchive parseGameAchieve(Context context) {

@@ -29,7 +29,6 @@ public class GameSaveService extends Service {
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG = "playerRecord";
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME = "gameAchieveTime";
     public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG = "gameTime";
-    public static final String SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG = "playerRecords";
 
 
 //    class GameSaveServiceBinder extends Binder {
@@ -119,8 +118,8 @@ public class GameSaveService extends Service {
     private void getLeaderBoard() {
         LeaderBoardDAO leaderBoardDAO = new LeaderBoardDAO(this);
         ArrayList<PlayerRecord> playerRecords = new ArrayList<>(leaderBoardDAO.getAllPlayerRecord());
+        ValueContainer.SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG_DATA = Utils.GSON.toJson(playerRecords);
         Intent records = new Intent(SERVICE_RESPONSE_LOAD_ALL_PLAYER_RECORD);
-        records.putExtra(SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG, playerRecords);
         sendBroadcast(records);
     }
 
