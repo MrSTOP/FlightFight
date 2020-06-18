@@ -150,9 +150,6 @@ public class GamePlayerSprite extends GameSprite {
             canShoot = false;
             coolTime = SHOOT_COOL_TICK;
         }
-        if (playerBulletList.size() > 30) {
-            removeInvalidBullet();
-        }
         for (GameSprite bullet : getPlayerBulletListSafeForIteration()) {
             bullet.move();
         }
@@ -330,21 +327,6 @@ public class GamePlayerSprite extends GameSprite {
 
     public void setDestinationY(float destinationY) {
         this.destinationY = destinationY;
-    }
-
-    public void removeInvalidBullet() {
-        List<GameSprite> cloneBullet = getPlayerBulletListSafeForIteration();
-        Iterator<GameSprite> iterator = cloneBullet.iterator();
-        RectF windowRectF = new RectF(0, 0, this.screenWidth, this.screenHeight);
-//        System.out.println(windowRectF.toShortString());
-        while (iterator.hasNext()) {
-            GameSprite bullet = iterator.next();
-            if (!Utils.rectCollide(windowRectF, bullet.getBoundRectF())) {
-                iterator.remove();
-            }
-        }
-        playerBulletList.clear();
-        playerBulletList.addAll(cloneBullet);
     }
 
     public void setPlayerBulletList(List<GameSprite> bulletList) {

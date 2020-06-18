@@ -13,12 +13,12 @@ import com.flightfight.flightfight.ZhuJintao.GameNpc;
 import com.flightfight.flightfight.ZhuJintao.GameNpcControl;
 import com.flightfight.flightfight.yankunwei.GameArchive;
 import com.flightfight.flightfight.yankunwei.GameBulletFactory;
+import com.flightfight.flightfight.yankunwei.GameMusicManager;
 import com.flightfight.flightfight.yankunwei.GamePlayerSprite;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
 import com.flightfight.flightfight.yankunwei.ValueContainer;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +39,8 @@ public class GameManager {
     private float density;
     private int gameLevel;
     private boolean gameLevelChanged;
+    private GameMusicManager gameMusicManager;
+    private RectF windowRectF;
 
     Rect srcRect;
     Rect srcRect2;
@@ -50,6 +52,8 @@ public class GameManager {
         this.context = context;
         this.ScreenWidth = ScreenWidth;
         this.ScreenHeight = ScreenHeight;
+        this.windowRectF = new RectF();
+        Utils.setRectF(windowRectF, 0, 0, ScreenWidth, ScreenHeight);
         density = context.getResources().getDisplayMetrics().density;
         backBmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background);
         backBmp2 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background2);
@@ -65,6 +69,9 @@ public class GameManager {
         initHappyFish();
         npcControl = new GameNpcControl(context, ScreenWidth, ScreenHeight);
         npcControl.LoadNpc();
+        this.gameMusicManager = GameMusicManager.getInstance();
+        this.gameMusicManager.init(context);
+        this.gameMusicManager.playBGM();
     }
 
     public void setPlayerAngelArc(double angle) {
@@ -192,30 +199,47 @@ public class GameManager {
         Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
         while (playerBulletIterator.hasNext()) {
             GameSprite playerBullet = playerBulletIterator.next();
+
             for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
                     playerBulletIterator.remove();
                     enemy.decreaseHP();
                     if (!enemy.isActive()) {
+                        gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
                         player.increaseKilledEnemy();
                     }
                 }
             }
         }
-        player.setPlayerBulletList(playerBulletList);
+        ////////////////////////////////////清除玩家无效子弹////////////////////////////////////
+        if (playerBulletList.size() > 30) {
+            playerBulletIterator = playerBulletList.iterator();
+            while (playerBulletIterator.hasNext()) {
+                GameSprite playerBullet = playerBulletIterator.next();
+                if (!Utils.rectCollide(windowRectF, playerBullet.getBoundRectF())) {
+                    playerBulletIterator.remove();
+                }
+            }
+        }
         ////////////////////////////////////敌人子弹命中玩家检测/////////////////////////////////
         Iterator<GameSprite> enemyBulletIterator = enemyBulletList.iterator();
         while (enemyBulletIterator.hasNext()) {
             GameSprite enemyBullet = enemyBulletIterator.next();
             if (Utils.collideWithPlayer(player.getCollideBoxes(), enemyBullet.getBoundRectF())) {
+                int life = player.getLife();
                 player.decreaseHP();
+                if (player.getLife() != life) {
+                    gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
+                }
                 enemyBulletIterator.remove();
             }
         }
+        player.setPlayerBulletList(playerBulletList);
         ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
         for (GameNpc npc : enemyList) {
             if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
                 player.setHp(0);
+                gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
                 npc.setActive(false);
                 player.increaseKilledEnemy();
             }
