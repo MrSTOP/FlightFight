@@ -168,6 +168,7 @@ public class GameManager {
         gameArchive.setEnemyList(npcControl.getNpcList());
         gameArchive.setEnemyBulletList(npcControl.getBulletsList());
         gameArchive.setGameLevel(gameLevel);
+        gameArchive.setSpareNPC(npcControl.spareNpc());
         String str = Utils.GSON.toJson(gameArchive);
         Intent save = new Intent(context, GameSaveService.class);
         save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);
@@ -189,6 +190,7 @@ public class GameManager {
         controller.setPlayerRect(this.player.getBoundRectF());
         this.npcControl.setBulletsList(gameArchive.getEnemyBulletList());
         this.npcControl.setNpcList(gameArchive.getEnemyList());
+        this.npcControl.setNpcCur(npcControl.getNpcSum() - gameArchive.getSpareNPC());
     }
 
     private void bulletLogic() {

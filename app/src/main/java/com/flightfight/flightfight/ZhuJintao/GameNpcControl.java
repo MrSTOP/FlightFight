@@ -239,7 +239,7 @@ public class GameNpcControl {
             Iterator<GameSprite> it = cloneBoomList.iterator();
             while (it.hasNext()) {
                 GameSprite tempBoom = it.next();
-                Log.d("boomFrame:", "tempBoom.getCurrentFrame():" + tempBoom.getCurrentFrame() + "tempBoom.getTotalFrames():" + tempBoom.getTotalFrames());
+//                Log.d("boomFrame:", "tempBoom.getCurrentFrame():" + tempBoom.getCurrentFrame() + "tempBoom.getTotalFrames():" + tempBoom.getTotalFrames());
                 if ((tempBoom.getCurrentFrame() >= tempBoom.getTotalFrames() - 2) || !tempBoom.isActive()) {
                     tempBoom.releaseBitmap();
                     it.remove();
