@@ -47,6 +47,7 @@ public class GameMusicManager {
     }
 
     private void loadSoundEffect(Context context) {
+        release();
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
             AssetFileDescriptor assetFileDescriptor = context.getApplicationContext().getAssets().openFd("sounds/blast.wav");
@@ -70,7 +71,7 @@ public class GameMusicManager {
 
     public void setBGMVolume(int volume) {
         checkReady();
-        bgmMediaPlayer.setVolume((float) volume /100.0F, (float) volume /100.0F);
+        bgmMediaPlayer.setVolume((float) volume / 100.0F, (float) volume / 100.0F);
     }
 
     public void pauseBGM() {
@@ -134,14 +135,16 @@ public class GameMusicManager {
             throw new IllegalArgumentException("Sound type: " + soundType + " not exist");
         }
         mediaPlayer.seekTo(0);
-        mediaPlayer.setVolume( (float) leftVolume /100.0F, (float) rightVolume / 100.0F);
+        mediaPlayer.setVolume((float) leftVolume / 100.0F, (float) rightVolume / 100.0F);
         mediaPlayer.setLooping(loop);
         mediaPlayer.start();
     }
 
     public void release() {
-        bgmMediaPlayer.release();
-        bgmMediaPlayer = null;
+        if (bgmMediaPlayer != null) {
+            bgmMediaPlayer.release();
+            bgmMediaPlayer = null;
+        }
         for (Map.Entry<String, MediaPlayer> entry : soundNameMap.entrySet()) {
             entry.getValue().release();
         }
