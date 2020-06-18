@@ -40,6 +40,7 @@ public class GameManager {
     private int gameLevel;
     private boolean gameLevelChanged;
     private GameMusicManager gameMusicManager;
+    private RectF windowRectF;
 
     Rect srcRect;
     Rect srcRect2;
@@ -51,6 +52,8 @@ public class GameManager {
         this.context = context;
         this.ScreenWidth = ScreenWidth;
         this.ScreenHeight = ScreenHeight;
+        this.windowRectF = new RectF();
+        Utils.setRectF(windowRectF, 0, 0, ScreenWidth, ScreenHeight);
         density = context.getResources().getDisplayMetrics().density;
         backBmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background);
         backBmp2 = BitmapFactory.decodeResource(context.getResources(), R.mipmap.background2);
@@ -196,6 +199,7 @@ public class GameManager {
         Iterator<GameSprite> playerBulletIterator = playerBulletList.iterator();
         while (playerBulletIterator.hasNext()) {
             GameSprite playerBullet = playerBulletIterator.next();
+
             for (GameNpc enemy : enemyList) {
                 if (Utils.rectCollide(playerBullet.getBoundRectF(), enemy.getBoundRectF())) {
                     playerBulletIterator.remove();
@@ -207,7 +211,16 @@ public class GameManager {
                 }
             }
         }
-        player.setPlayerBulletList(playerBulletList);
+        ////////////////////////////////////清除玩家无效子弹////////////////////////////////////
+        if (playerBulletList.size() > 30) {
+            playerBulletIterator = playerBulletList.iterator();
+            while (playerBulletIterator.hasNext()) {
+                GameSprite playerBullet = playerBulletIterator.next();
+                if (!Utils.rectCollide(windowRectF, playerBullet.getBoundRectF())) {
+                    playerBulletIterator.remove();
+                }
+            }
+        }
         ////////////////////////////////////敌人子弹命中玩家检测/////////////////////////////////
         Iterator<GameSprite> enemyBulletIterator = enemyBulletList.iterator();
         while (enemyBulletIterator.hasNext()) {
@@ -221,6 +234,7 @@ public class GameManager {
                 enemyBulletIterator.remove();
             }
         }
+        player.setPlayerBulletList(playerBulletList);
         ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
         for (GameNpc npc : enemyList) {
             if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
