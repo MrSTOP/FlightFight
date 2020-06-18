@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.flightfight.flightfight.yankunwei.GameMusicManager;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yzc.PauseFragment;
 
@@ -111,5 +112,12 @@ public class GameActivity extends AppCompatActivity {
 
     public GameSurfaceView getGameSurfaceView() {
         return gameSurfaceView;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        GameMusicManager.getInstance().pauseBGM();
+        GameMusicManager.getInstance().release();
     }
 }
