@@ -126,7 +126,7 @@ public class GameNpc extends GameSprite {
     }
 
     //垂直翻转位图函数
-    public Bitmap getRotateBitmap(Bitmap source) {
+    public static Bitmap getRotateBitmap(Bitmap source) {
         Matrix matrix = new Matrix();
         int centX = source.getWidth() / 2;
         int centY = source.getHeight() / 2;

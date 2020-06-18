@@ -129,7 +129,7 @@ public class GameManager {
     }
 
     public void save(){
-        save(0);
+        save(System.currentTimeMillis());
     }
 
     public void save(long time){
