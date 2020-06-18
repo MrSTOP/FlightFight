@@ -19,6 +19,7 @@ import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.yankunwei.GameAchieveInfo;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -88,9 +89,14 @@ public class SaveGameAdapter extends BaseAdapter {
         else {
             holder = (ViewHolder)convertView.getTag();
         }
+        SimpleDateFormat f = new SimpleDateFormat("yyyy 年 MM 月 dd 日 HH 点 mm 分 ss 秒");
         DateFormat df1 = DateFormat.getDateInstance(DateFormat.LONG, Locale.CHINA);
        // holder.itemIcon.setImageResource();
-        String date = df1.format(gameInfoList.get(position).date);
+        String date = f.format(gameInfoList.get(position).date);
+
+//        String date1 =  date.substring(0, 18);
+//        String date2 = date.substring(19);
+//         date = date1 +"\n" + date2;
         holder.itemSaveGameTime.setText(date);
        holder.itemSaveGamePass.setText(String.valueOf(position));
 
