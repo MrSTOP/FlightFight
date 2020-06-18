@@ -60,6 +60,12 @@ public class GamePlayerSprite extends GameSprite {
     private int screenWidth;
     @Expose
     private int screenHeight;
+    @Expose
+    private int score;
+    @Expose
+    private int shootBulletCount;
+    @Expose
+    private int killedEnemy;
 
 
     public GamePlayerSprite(Context context, Bitmap bitmap, Bitmap leftBankBitmap, Bitmap rightBankBitmap, int bankFrame) {
@@ -155,6 +161,7 @@ public class GamePlayerSprite extends GameSprite {
 
     private void shoot() {
         playerBulletList.add(GameBulletFactory.getInstance().getPlayerBullet(GameBulletFactory.BULLET_PLAYER, this.boundRect));
+        shootBulletCount++;
     }
 
     @Override
@@ -236,6 +243,9 @@ public class GamePlayerSprite extends GameSprite {
             this.active = false;
             this.screenWidth = playerSprite.screenWidth;
             this.screenHeight = playerSprite.screenHeight;
+            this.killedEnemy = playerSprite.killedEnemy;
+            this.shootBulletCount = playerSprite.shootBulletCount;
+            this.score = playerSprite.score;
         } else {
             throw new IllegalArgumentException("gameSprite is not GamePlayerSprite\'s instance");
         }
@@ -343,5 +353,26 @@ public class GamePlayerSprite extends GameSprite {
 
     public List<GameSprite> getPlayerBulletListSafeForIteration() {
         return new ArrayList<>(this.playerBulletList);
+    }
+
+    public int getScore() {
+        this.score = this.life * 10 + this.hp + this.killedEnemy * 15 - shootBulletCount;
+        return this.score;
+    }
+
+    public int getShootBulletCount() {
+        return shootBulletCount;
+    }
+
+    public void increaseKilledEnemy() {
+        this.increaseKilledEnemy(1);
+    }
+
+    public void increaseKilledEnemy(int killedEnemy) {
+        this.killedEnemy += killedEnemy;
+    }
+
+    public int getKilledEnemy() {
+        return killedEnemy;
     }
 }
