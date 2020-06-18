@@ -342,13 +342,35 @@ public class GameNpcControl {
         }
     }
 
-    public int spareNpc(){
+    //开始新的一关
+    public void startNewRound() {
+        this.setNpcCur(0);
+        this.setBossDead(false);
+        this.setBossActive(false);
+
+        npcList.clear();
+        cloneNpcList.clear();
+        npcList = new ArrayList<>();
+        cloneNpcList = new ArrayList<>();
+
+        //子弹类直接使用Sprite类
+        bulletsList.clear();
+        cloneBulletsList.clear();
+        bulletsList = new ArrayList<>();
+        cloneBulletsList = new ArrayList<>();
+
+        //爆炸图片列表
+        boomList.clear();
+        cloneBoomList.clear();
+        boomList = new ArrayList<>();
+        cloneBoomList = new ArrayList<>();
+    }
+
+    public int spareNpc() {
         int i = getNpcSum() - getNpcCur();
-        if (i <= 0)
-        {
+        if (i <= 0) {
             return 0;
-        }
-        else return i;
+        } else return i;
     }
 
     public int getNpcSum() {
