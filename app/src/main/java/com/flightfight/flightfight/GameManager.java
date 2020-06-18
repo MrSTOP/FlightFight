@@ -159,30 +159,11 @@ public class GameManager {
     }
 
     public void setAchieveData(GameControl controller) {
-        GameArchive gameAchieve = Utils.GSON.fromJson(ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA, GameArchive.class);
-        List<GameSprite> enemyList = new ArrayList<>(gameAchieve.getEnemyList());
-        List<GameSprite> initializedEnemyList = new ArrayList<>();
-        List<GameSprite> initializedEnemyBulletList = new ArrayList<>();
-        List<GameSprite> initializedPlayerBulletList = new ArrayList<>();
-        List<GameNpc> initializedNpcList = new ArrayList<>();
-        GamePlayerSprite player = gameAchieve.getPlayer();
-        GamePlayerSprite newPlayer = new GamePlayerSprite(context,
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1),
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_left),
-                BitmapFactory.decodeResource(context.getResources(), R.mipmap.player1_right), 12);
-        Utils.initGameSprite(context, initializedPlayerBulletList, gameAchieve.getPlayer().getPlayerBulletListSafeForIteration(), Utils.GAME_ACHIEVE_PLAYER_BULLET);
-        Utils.initGameSprite(context, initializedEnemyList, enemyList, Utils.GAME_ACHIEVE_ENEMY);
-        Utils.initGameSprite(context, initializedEnemyBulletList, gameAchieve.getEnemyBulletList(), Utils.GAME_ACHIEVE_ENEMY_BULLET);
-        Utils.castNpc(initializedNpcList, initializedEnemyList);
-        newPlayer.setPlayerBulletList(initializedPlayerBulletList);
-        newPlayer.initBySaved(player);
-        gameAchieve.setPlayer(player);
-        gameAchieve.setEnemyList(initializedNpcList);
-        gameAchieve.setEnemyBulletList(initializedEnemyBulletList);
-        controller.setPlayerRect(newPlayer.getBoundRectF());
-        this.player = newPlayer;
-        this.npcControl.setBulletsList(initializedEnemyBulletList);
-        this.npcControl.setNpcList(initializedNpcList);
+        GameArchive gameArchive = Utils.parseGameAchieve(context);
+        this.player = gameArchive.getPlayer();
+        controller.setPlayerRect(this.player.getBoundRectF());
+        this.npcControl.setBulletsList(gameArchive.getEnemyBulletList());
+        this.npcControl.setNpcList(gameArchive.getEnemyList());
     }
 
     private void bulletLogic() {
