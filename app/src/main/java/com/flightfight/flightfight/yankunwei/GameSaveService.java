@@ -142,12 +142,12 @@ public class GameSaveService extends Service {
     private void loadGameAchieve(Intent intent) {
         long time = intent.getLongExtra(SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, -1);
         if (time == -1) {
-            throw new IllegalArgumentException("Game achieve ID:[" + SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG + "] not exist");
+            throw new IllegalArgumentException("Game achieve ID:[" + SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG + "] can not be null");
         }
         SharedPreferences sharedPreferences = getSharedPreferences("gameAchieves", Context.MODE_PRIVATE);
         ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA = sharedPreferences.getString(String.valueOf(time), null);
         if (ValueContainer.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG_DATA == null) {
-            throw new IllegalArgumentException("Game achieve ID:[" + SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG + "] not exist");
+            throw new IllegalArgumentException("Game achieve ID:[" + time + "] not exist");
         }
         Intent gameAchieveIntent = new Intent(SERVICE_RESPONSE_LOAD_GAME_ACHIEVE);
         sendBroadcast(gameAchieveIntent);

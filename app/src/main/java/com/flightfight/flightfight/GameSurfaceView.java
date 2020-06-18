@@ -206,9 +206,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 game.setPlayerActive(true);
             }
             if (controller.isFireTouched()) {
-                synchronized (lock) {
-                    game.load(0);
-                }
 //            game.loadBubbles();
             }
 
