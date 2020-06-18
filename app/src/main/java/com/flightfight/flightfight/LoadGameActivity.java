@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -15,8 +13,6 @@ import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
 import com.flightfight.flightfight.yzc.SaveGameAdapter;
 
-import java.io.BufferedReader;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +26,7 @@ public class LoadGameActivity extends AppCompatActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-           gameInfoList =  Utils.parsePlayerRecord();
+           gameInfoList =  Utils.parseAllGameAchieveDate();
         }
     };
 

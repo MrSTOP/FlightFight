@@ -85,7 +85,7 @@ public class Utils {
         }
     }
 
-    public static List<Date> parsePlayerRecord() {
+    public static List<Date> parseAllGameAchieveDate() {
         return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA, new TypeToken<List<Date>>(){}.getType());
     }
 
