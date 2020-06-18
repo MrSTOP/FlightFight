@@ -94,4 +94,8 @@ public class GameActivity extends AppCompatActivity {
         //   GameSurfaceView gameView = new GameSurfaceView(this, screenWidth, screenHeight, isAbout);
         //   setContentView(gameView);
     }
+
+    public GameSurfaceView getGameSurfaceView() {
+        return gameSurfaceView;
+    }
 }
