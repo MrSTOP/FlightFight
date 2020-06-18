@@ -131,7 +131,7 @@ public class GameNpcControl {
                     bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss3);
                     break;
                 default:
-                    bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss4);
+                    bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
                     break;
             }
             //Boss图片需要翻转
