@@ -37,7 +37,7 @@ public class GameNpc extends GameSprite {
     //hp:血量
     public GameNpc(Context context, Bitmap rowBitmap, int totalFrames, int rowFrames, int hp) {
         super(context, rowBitmap, totalFrames, rowFrames);
-        setHp(1);
+        setHp(3);
     }
 
 
