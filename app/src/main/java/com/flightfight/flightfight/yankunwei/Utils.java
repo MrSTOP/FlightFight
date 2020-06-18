@@ -6,6 +6,7 @@ import android.graphics.RectF;
 
 import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
+import com.flightfight.flightfight.ZhuJintao.GameNpc;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -34,12 +35,32 @@ public class Utils {
         return rect1.intersects(rect2.left, rect2.top, rect2.right, rect2.bottom);
     }
 
+    public static boolean collideWithPlayer(RectF[] playerBounds, RectF target) {
+        for (RectF bound : playerBounds) {
+            if (rectCollide(bound, target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void setRectF(RectF rectF, float left, float top, float width, float height) {
+        rectF.left = left;
+        rectF.top = top;
+        rectF.right = rectF.left + width;
+        rectF.bottom = rectF.top + height;
+    }
+
     public static void initGameSprite(Context context, List<GameSprite> dest, List<GameSprite> src, int type) {
         GameSprite newGameSprite = null;
         for (GameSprite gameSprite : src) {
             switch (type) {
                 case GAME_ACHIEVE_ENEMY:
-                    newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1));
+                    newGameSprite = new GameNpc(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.enemy1_1));
+                    newGameSprite.setActive(true);
+                    break;
+                case GAME_ACHIEVE_ENEMY_BULLET:
+                    newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet3), 2, 2);
                     break;
                 case GAME_ACHIEVE_PLAYER_BULLET:
                     newGameSprite = new GameSprite(context, BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet1), 2, 2);
@@ -50,6 +71,12 @@ public class Utils {
             }
             newGameSprite.initBySaved(gameSprite);
             dest.add(newGameSprite);
+        }
+    }
+
+    public static void castNpc(List<GameNpc> dest, List<GameSprite> src) {
+        for (GameSprite gameSprite : src) {
+            dest.add((GameNpc) gameSprite);
         }
     }
 }

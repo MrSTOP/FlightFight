@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.util.Log;
 
 import com.flightfight.flightfight.GameSprite;
 import com.flightfight.flightfight.R;
@@ -24,10 +23,13 @@ public class GameNpcControl {
 
     private int NpcSum = 100;               //NPC总数
     private int NpcCur = 0;                 //当前已有（包括死亡）NPC数量
-    private int intervalTime = 300;         //间隔时间
+    private int intervalTime = 800;         //间隔时间
+    private int bulletIntervalTime = 4000;  //子弹间隔时间
 
-    private List<GameNpc> npcList = new ArrayList<>();;
-    private List<GameNpc> cloneNpcList =  new ArrayList<>();;
+    private List<GameNpc> npcList = new ArrayList<>();
+    private List<GameNpc> cloneNpcList =  new ArrayList<>();
+
+    private static boolean BOSS_ACTIVE = false;
 
     //子弹类直接使用Sprite类
     private List<GameSprite> bulletsList = new ArrayList<>();
@@ -94,9 +96,60 @@ public class GameNpcControl {
                 }
             }
         }
+
+        if (getNpcCur() > getNpcSum() && !this.isBossActive()) {
+            Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
+            //Boss图片需要翻转
+            Bitmap trueBmp = GameNpc.getRotateBitmap(bmp);
+            GameNpc curTemNpc = new GameNpc(context, trueBmp, 1, 1);
+            curTemNpc.setSpeed(3 * density);
+            int r = rand.nextInt(3);          //0:垂直；1：左下；2：右下；
+            switch (r)
+            {
+                case 0:
+                    curTemNpc.setDir(GameNpc.DOWN);
+                    break;
+                case 1:
+                    curTemNpc.setDir(GameNpc.LEFTDOWN);
+                    break;
+                case 2:
+                    curTemNpc.setDir(GameNpc.RIGHTDOWN);
+                    break;
+            }
+            curTemNpc.setHp(10);
+            curTemNpc.setLife(1);
+            curTemNpc.setActive(true);
+            curTemNpc.setRatio(0.15f * density);
+            curTemNpc.setFireStartTime(System.currentTimeMillis());         //设置开火计时
+            float px = rand.nextInt((int) (ScreenWidth - curTemNpc.getWidth()));
+            float py = (0 - curTemNpc.getHeight());
+            curTemNpc.setX(px);
+            curTemNpc.setY(py);
+
+            //Log.d("NPC", "NPC X:" + curTemNpc.getX() + " Y:" + curTemNpc.getY() + "NPC W:" + curTemNpc.getWidth() + " H:" + curTemNpc.getHeight());
+            npcList.add(curTemNpc);
+            int i = getNpcCur();
+            setNpcCur(i++);
+            npcStartTime = System.currentTimeMillis();
+            this.setBossActive(true);
+        }
     }
 
     public void updateNpcPos() {
+        if (npcList != null) {
+            cloneNpcList = new ArrayList<>(npcList);
+            //将原始的npcList进行克隆，每次只绘制克隆的
+            //cloneNpc.addAll(npcList);
+            for (GameNpc tempNpc : cloneNpcList) {
+                tempNpc.move();
+                tempNpc.NpcBoundJudge(ScreenWidth,ScreenHeight);
+                tempNpc.setFireCurTime(System.currentTimeMillis());
+                LoadBullets(tempNpc);
+                //Log.d("NPC", "NPC X:" + tempNpc.getX() + " Y:" + tempNpc.getY() + "Move:NPC W:" + tempNpc.getWidth() + " H:" + tempNpc.getHeight());
+            }
+            cloneNpcList.clear();
+        }
+
         if (npcList != null) {
             cloneNpcList = new ArrayList<>(npcList);
             //将原始的npcList进行克隆，每次只绘制克隆的
@@ -122,6 +175,10 @@ public class GameNpcControl {
             while (it.hasNext()) {
                 GameNpc tempNpc = it.next();
                 if (tempNpc.getY() > ScreenHeight + tempNpc.getHeight() || !tempNpc.isActive()) {
+                    if (!tempNpc.isActive())
+                    {
+                        this.setNpcCur(this.getNpcSum() + 1);
+                    }
                     tempNpc.releaseBitmap();
                     it.remove();
                 }
@@ -154,7 +211,7 @@ public class GameNpcControl {
             bulletsList = new ArrayList<>();
         }
 
-        if (curCtrlNpc.getFireCurTime() - curCtrlNpc.getFireStartTime() > getIntervalTime() * 5) {
+        if (curCtrlNpc.getFireCurTime() - curCtrlNpc.getFireStartTime() > getBulletIntervalTime()) {
             Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet3);
             //子弹需要翻转
             Bitmap trueBmp = curCtrlNpc.getRotateBitmap(bmp);
@@ -166,11 +223,11 @@ public class GameNpcControl {
             curTempBullet.setActive(true);
             curTempBullet.setRatio(0.4f * density);
             float px = curCtrlNpc.getX() + ((float) curCtrlNpc.getWidth() / 3) - curTempBullet.getWidth();
-            float py = curCtrlNpc.getY() + curTempBullet.getHeight();
+            float py = curCtrlNpc.getY() + curTempBullet.getHeight() / 2;
             curTempBullet.setX(px);
             curTempBullet.setY(py);
 
-            Log.d("Bullet", "Bullet X:" + curTempBullet.getX() + " Y:" + curTempBullet.getY() + "Bullet W:" + curTempBullet.getWidth() + " H:" + curTempBullet.getHeight());
+//            Log.d("Bullet", "Bullet X:" + curTempBullet.getX() + " Y:" + curTempBullet.getY() + "Bullet W:" + curTempBullet.getWidth() + " H:" + curTempBullet.getHeight());
             bulletsList.add(curTempBullet);
             curCtrlNpc.setFireStartTime(System.currentTimeMillis());
         }
@@ -184,7 +241,7 @@ public class GameNpcControl {
             //cloneBulletsList.addAll(npcList);
             for (GameSprite tempBullet : cloneBulletsList) {
                 tempBullet.move();
-                Log.d("Bullet", "Bullet X:" + tempBullet.getX() + " Y:" + tempBullet.getY() + "Move:Bullet W:" + tempBullet.getWidth() + " H:" + tempBullet.getHeight());
+//                Log.d("Bullet", "Bullet X:" + tempBullet.getX() + " Y:" + tempBullet.getY() + "Move:Bullet W:" + tempBullet.getWidth() + " H:" + tempBullet.getHeight());
             }
             cloneBulletsList.clear();
         }
@@ -199,7 +256,7 @@ public class GameNpcControl {
             //将原始的playerMissles进行克隆，每次只绘制克隆的
             cloneNpcList.addAll(npcList);
             for (GameNpc tempNpc : cloneNpcList) {
-                tempNpc.setAlpha(100);
+                tempNpc.setAlpha(255);
                 tempNpc.draw(canvas);
             }
             //绘制完毕，清空克隆的内容
@@ -246,6 +303,14 @@ public class GameNpcControl {
         this.intervalTime = intervalTime;
     }
 
+    public int getBulletIntervalTime() {
+        return bulletIntervalTime;
+    }
+
+    public void setBulletIntervalTime(int bulletIntervalTime) {
+        this.bulletIntervalTime = bulletIntervalTime;
+    }
+
     public List<GameNpc> getNpcList() {
         return npcList;
     }
@@ -260,5 +325,13 @@ public class GameNpcControl {
 
     public void setBulletsList(List<GameSprite> bulletsList) {
         this.bulletsList = bulletsList;
+    }
+
+    public static boolean isBossActive() {
+        return BOSS_ACTIVE;
+    }
+
+    public static void setBossActive(boolean bossActive) {
+        BOSS_ACTIVE = bossActive;
     }
 }
