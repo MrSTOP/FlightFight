@@ -32,11 +32,11 @@ public class LoadGameActivity extends AppCompatActivity {
            gameInfoList =  Utils.parseAllGameAchieveDate();
             mlistAdapter = new SaveGameAdapter(LoadGameActivity.this, gameInfoList);
             mListView = findViewById(R.id.load_game_list);
+            mListView.setAdapter(mlistAdapter);
             mListView.setOnItemClickListener((parent, view, position, id) -> {
-                //  Intent intent = new Intent(this, GameActivity.class);
-                //intent.pu
-
-                //  startActivity(intent);
+                Intent intent1 = new Intent(LoadGameActivity.this, GameActivity.class);
+                intent1.putExtra(GameSaveService.SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG, gameInfoList.get(position).getTime());
+                startActivity(intent1);
             });
         }
     };
@@ -46,7 +46,7 @@ public class LoadGameActivity extends AppCompatActivity {
         Intent readStore = new Intent(this, GameSaveService.class);
         readStore.setAction(GameSaveService.SERVICE_ACTION_GET_ALL_GAME_ACHIEVE);
         startService(readStore);
-        registerReceiver(broadcastReceiver,new IntentFilter(GameSaveService.SERVICE_ACTION_GET_ALL_GAME_ACHIEVE));
+        registerReceiver(broadcastReceiver,new IntentFilter(GameSaveService.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE));
 
 
         super.onCreate(savedInstanceState);

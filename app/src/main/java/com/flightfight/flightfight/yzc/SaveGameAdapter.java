@@ -17,8 +17,10 @@ import androidx.appcompat.app.AlertDialog;
 import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 class ViewHolder{
@@ -34,7 +36,9 @@ class ViewHolder{
             throw new IllegalArgumentException("itemView can not be null");
         }
         this.itemView = itemView;
-
+        itemSaveGameTime = itemView.findViewById(R.id.item_game_time);
+        itemSaveGamePass = itemView.findViewById(R.id.item_game_pass);
+        button = itemView.findViewById(R.id.item_game_delete_button);
     }
 }
 
@@ -64,7 +68,7 @@ public class SaveGameAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public Date getItem(int position) {
         return  gameInfoList.get(position);
     }
 
@@ -83,10 +87,11 @@ public class SaveGameAdapter extends BaseAdapter {
         else {
             holder = (ViewHolder)convertView.getTag();
         }
-
+        DateFormat df1 = DateFormat.getDateInstance(DateFormat.LONG, Locale.CHINA);
        // holder.itemIcon.setImageResource();
-        holder.itemSaveGameTime.setText(position);
-       holder.itemSaveGamePass.setText((int) gameInfoList.get(position).getTime());
+        String date = df1.format(gameInfoList.get(position).getTime());
+        holder.itemSaveGameTime.setText(date);
+       holder.itemSaveGamePass.setText(String.valueOf(position));
 
         holder.button.setOnClickListener(v -> {
             showExitAlert();
