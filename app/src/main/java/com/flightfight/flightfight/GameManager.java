@@ -13,12 +13,12 @@ import com.flightfight.flightfight.ZhuJintao.GameNpc;
 import com.flightfight.flightfight.ZhuJintao.GameNpcControl;
 import com.flightfight.flightfight.yankunwei.GameArchive;
 import com.flightfight.flightfight.yankunwei.GameBulletFactory;
+import com.flightfight.flightfight.yankunwei.GameMusicManager;
 import com.flightfight.flightfight.yankunwei.GamePlayerSprite;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 import com.flightfight.flightfight.yankunwei.Utils;
 import com.flightfight.flightfight.yankunwei.ValueContainer;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +39,7 @@ public class GameManager {
     private float density;
     private int gameLevel;
     private boolean gameLevelChanged;
+    private GameMusicManager gameMusicManager;
 
     Rect srcRect;
     Rect srcRect2;
@@ -65,6 +66,8 @@ public class GameManager {
         initHappyFish();
         npcControl = new GameNpcControl(context, ScreenWidth, ScreenHeight);
         npcControl.LoadNpc();
+        this.gameMusicManager = GameMusicManager.getInstance();
+        this.gameMusicManager.init(context);
     }
 
     public void setPlayerAngelArc(double angle) {
@@ -197,6 +200,7 @@ public class GameManager {
                     playerBulletIterator.remove();
                     enemy.decreaseHP();
                     if (!enemy.isActive()) {
+                        gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
                         player.increaseKilledEnemy();
                     }
                 }
@@ -208,7 +212,11 @@ public class GameManager {
         while (enemyBulletIterator.hasNext()) {
             GameSprite enemyBullet = enemyBulletIterator.next();
             if (Utils.collideWithPlayer(player.getCollideBoxes(), enemyBullet.getBoundRectF())) {
+                int life = player.getLife();
                 player.decreaseHP();
+                if (player.getLife() != life) {
+                    gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
+                }
                 enemyBulletIterator.remove();
             }
         }
@@ -216,6 +224,7 @@ public class GameManager {
         for (GameNpc npc : enemyList) {
             if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
                 player.setHp(0);
+                gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
                 npc.setActive(false);
                 player.increaseKilledEnemy();
             }
