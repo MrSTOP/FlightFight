@@ -131,7 +131,7 @@ public class GameManager {
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
         npcControl.draw(canvas);
-        if (GameNpcControl.isBossDead() && !gameLevelChanged) {
+        if (npcControl.isBossDead() && !gameLevelChanged) {
             gameLevel++;
             gameLevelChanged = true;
         }
