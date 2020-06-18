@@ -12,10 +12,18 @@ public class GameNpc extends GameSprite {
 
     public static final int LEFTDOWN = 4;
     public static final int RIGHTDOWN = 5;
+    public static final int LEFTUP = 6;
+    public static final int RIGHTUP = 7;
+
+    public static final int isNormal = 1;
+    public static final int isBoss = 2;
 
     //开火时间
     long fireStartTime;
     long fireCurTime;
+
+    //npc类型
+    private int npcType = isNormal;
 
     //构造不带帧动画的Sprite
     public GameNpc(Context context, Bitmap rowBitmap) {
@@ -37,90 +45,207 @@ public class GameNpc extends GameSprite {
     //hp:血量
     public GameNpc(Context context, Bitmap rowBitmap, int totalFrames, int rowFrames, int hp) {
         super(context, rowBitmap, totalFrames, rowFrames);
-        setHp(1);
+        setHp(2);
     }
 
 
     //NPC移动逻辑重写
     public void move() {
         if (this.isActive() == true) {
-            Random random = new Random(System.currentTimeMillis());
-            int r = random.nextInt(3);          //0:垂直；1：左下；2：右下；
-            switch (this.getDir()) {
-                case LEFT:
-                    this.setX(this.getX() - this.getSpeed());
-                    break;
-                case DOWN:
-                    this.setY(this.getY() + this.getSpeed());
-                    break;
-                case RIGHT:
-                    this.setX(this.getX() + this.getSpeed());
-                    break;
-                case UP:
-                    this.setY(this.getY() - this.getSpeed());
-                    break;
-                case LEFTDOWN:
-                    this.setY(this.getY() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
-                    this.setX(this.getX() - this.getSpeed() * (float) Math.sin(Math.PI / 2));
+            if (this.getNpcType() != GameNpc.isBoss) {
+                Random random = new Random(System.currentTimeMillis());
+                int r = random.nextInt(3);          //0:垂直；1：左下；2：右下；
+                switch (this.getDir()) {
+                    case LEFT:
+                        this.setX(this.getX() - this.getSpeed());
+                        break;
+                    case DOWN:
+                        this.setY(this.getY() + this.getSpeed());
+                        break;
+                    case RIGHT:
+                        this.setX(this.getX() + this.getSpeed());
+                        break;
+                    case UP:
+                        this.setY(this.getY() - this.getSpeed());
+                        break;
+                    case LEFTDOWN:
+                        this.setY(this.getY() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        this.setX(this.getX() - this.getSpeed() * (float) Math.sin(Math.PI / 2));
 /*                    if (this.getX() <= 0)
                     {
                         this.setDir(this.RIGHTDOWN);
                         this.setX(0);
                     }*/
-                    break;
-                case RIGHTDOWN:
-                    this.setY(this.getY() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
-                    this.setX(this.getX() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        break;
+                    case RIGHTDOWN:
+                        this.setY(this.getY() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        this.setX(this.getX() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
 /*                    if (this.getX() >= ScreenWidth - this.getWidth())
                     {
                         this.setDir(this.LEFTDOWN);
                         this.setX(ScreenWidth - this.getWidth());
                     }*/
-                    break;
+                        break;
+                }
+            } else if (this.getNpcType() == GameNpc.isBoss) {
+                Random random = new Random(System.currentTimeMillis());
+                int r = random.nextInt(3);          //0:垂直；1：左下；2：右下；
+                switch (this.getDir()) {
+                    case LEFT:
+                        this.setX(this.getX() - this.getSpeed());
+                        break;
+                    case DOWN:
+                        this.setY(this.getY() + this.getSpeed());
+                        break;
+                    case RIGHT:
+                        this.setX(this.getX() + this.getSpeed());
+                        break;
+                    case UP:
+                        this.setY(this.getY() - this.getSpeed());
+                        break;
+                    case LEFTDOWN:
+                        this.setY(this.getY() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        this.setX(this.getX() - this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        break;
+                    case RIGHTDOWN:
+                        this.setY(this.getY() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        this.setX(this.getX() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        break;
+                    case LEFTUP:
+                        this.setY(this.getY() - this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        this.setX(this.getX() - this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        break;
+                    case RIGHTUP:
+                        this.setY(this.getY() - this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        this.setX(this.getX() + this.getSpeed() * (float) Math.sin(Math.PI / 2));
+                        break;
+                }
             }
+
         }
     }
 
-    //边界判断（不判断上下边界）
+    //边界判断（只有Boss判断上下边界）
     public void NpcBoundJudge(float ScreenWidth, float ScreenHeight) {
+        Random random = new Random(System.currentTimeMillis());
+        int r = random.nextInt(3);
         if (this.isActive() == true) {
-            switch (this.getDir()) {
-                case LEFT:
-                    if (this.getX() < 0 - this.getWidth())
-                    {
-                        this.setDir(this.RIGHT);
-                        this.setX(0);
-                    }
-                    break;
-/*                case DOWN:
-                    if (this.getY() > ScreenHeight - this.getHeight())
-                    {
-                        this.setDir(this.LEFT);
-                    }
-                    break;*/
-                case RIGHT:
-                    if (this.getX() > ScreenWidth + this.getWidth())
-                    {
-                        this.setDir(this.LEFT);
-                        this.setX(ScreenWidth - this.getWidth());
-                    }
-                    break;
-/*                case UP:
-                    break;*/
-                case LEFTDOWN:
-                    if (this.getX() <= 0)
-                    {
-                        this.setDir(this.RIGHTDOWN);
-                        this.setX(0);
-                    }
-                    break;
-                case RIGHTDOWN:
-                    if (this.getX() >= ScreenWidth - this.getWidth())
-                    {
-                        this.setDir(this.LEFTDOWN);
-                        this.setX(ScreenWidth - this.getWidth());
-                    }
-                    break;
+            if (this.getNpcType() != GameNpc.isBoss) {
+                switch (this.getDir()) {
+                    case LEFT:
+                        if (this.getX() < 0 - this.getWidth()) {
+                            this.setDir(RIGHT);
+                            this.setX(0);
+                        }
+                        break;
+                    case RIGHT:
+                        if (this.getX() > ScreenWidth + this.getWidth()) {
+                            this.setDir(LEFT);
+                            this.setX(ScreenWidth - this.getWidth());
+                        }
+                        break;
+                    case LEFTDOWN:
+                        if (this.getX() <= 0) {
+                            this.setDir(RIGHTDOWN);
+                            this.setX(0);
+                        }
+                        break;
+                    case RIGHTDOWN:
+                        if (this.getX() >= ScreenWidth - this.getWidth()) {
+                            this.setDir(LEFTDOWN);
+                            this.setX(ScreenWidth - this.getWidth());
+                        }
+                        break;
+                }
+            }
+            //Boss边界判断，限定boss只在屏幕上半部分运动
+            else if (this.getNpcType() == GameNpc.isBoss) {
+                switch (this.getDir()) {
+                    case LEFT:
+                        if (this.getX() <= 0) {
+                            this.setDir(RIGHT);
+                            this.setX(0);
+                        }
+                        break;
+                    case DOWN:
+                        if (this.getY() > ScreenHeight / 2 - this.getHeight()) {
+                            switch (r){
+                                case 0:
+                                    this.setDir(RIGHTUP);
+                                    break;
+                                case 1:
+                                    this.setDir(LEFTUP);
+                                    break;
+                                default:
+                                    this.setDir(UP);
+                                    break;
+                            }
+                            this.setY(ScreenHeight / 2 - this.getHeight());
+                        }
+                        break;
+                    case RIGHT:
+                        if (this.getX() > ScreenWidth + this.getWidth()) {
+                            this.setDir(LEFT);
+                            this.setX(ScreenWidth - this.getWidth());
+                        }
+                        break;
+                    case UP:
+                        if (this.getY() < 0) {
+                            switch (r){
+                                case 0:
+                                    this.setDir(RIGHTDOWN);
+                                    break;
+                                case 1:
+                                    this.setDir(LEFTDOWN);
+                                    break;
+                                default:
+                                    this.setDir(DOWN);
+                                    break;
+                            }
+                            this.setY(0);
+                        }
+                        break;
+                    case LEFTDOWN:
+                        if (this.getX() <= 0) {
+                            this.setDir(RIGHTDOWN);
+                            this.setX(0);
+                        }
+                        if (this.getY() > ScreenHeight / 2 - this.getHeight()) {
+                            this.setDir(RIGHTUP);
+                            this.setY(ScreenHeight / 2 - this.getHeight());
+                        }
+                        break;
+                    case RIGHTDOWN:
+                        if (this.getX() >= ScreenWidth - this.getWidth()) {
+                            this.setDir(LEFTDOWN);
+                            this.setX(ScreenWidth - this.getWidth());
+                        }
+                        if (this.getY() > ScreenHeight / 2 - this.getHeight()) {
+                            this.setDir(LEFTUP);
+                            this.setY(ScreenHeight / 2 - this.getHeight());
+                        }
+                        break;
+                    case LEFTUP:
+                        if (this.getX() <= 0) {
+                            this.setDir(RIGHTUP);
+                            this.setX(0);
+                        }
+                        if (this.getY() <= 0) {
+                            this.setDir(LEFTUP);
+                            this.setY(0);
+                        }
+                        break;
+                    case RIGHTUP:
+                        if (this.getX() >= ScreenWidth - this.getWidth()) {
+                            this.setDir(LEFTUP);
+                            this.setX(ScreenWidth - this.getWidth());
+                        }
+                        if (this.getY() <= 0) {
+                            this.setDir(RIGHTDOWN);
+                            this.setY(0);
+                        }
+                        break;
+                }
             }
         }
     }
@@ -138,8 +263,7 @@ public class GameNpc extends GameSprite {
     @Override
     public void decreaseHP() {
         this.setHp(this.getHp() - 1);
-        if(this.getHp() <= 0)
-        {
+        if (this.getHp() <= 0) {
             this.setActive(false);
         }
     }
@@ -158,5 +282,13 @@ public class GameNpc extends GameSprite {
 
     public void setFireCurTime(long fireCurTime) {
         this.fireCurTime = fireCurTime;
+    }
+
+    public int getNpcType() {
+        return npcType;
+    }
+
+    public void setNpcType(int npcType) {
+        this.npcType = npcType;
     }
 }

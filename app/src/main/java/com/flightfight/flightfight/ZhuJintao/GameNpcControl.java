@@ -78,7 +78,7 @@ public class GameNpcControl {
                             curTemNpc.setDir(GameNpc.RIGHTDOWN);
                             break;
                     }
-                    curTemNpc.setHp(1);
+                    curTemNpc.setHp(2);
                     curTemNpc.setLife(1);
                     curTemNpc.setActive(true);
                     curTemNpc.setRatio(0.15f * density);
@@ -103,6 +103,7 @@ public class GameNpcControl {
             Bitmap trueBmp = GameNpc.getRotateBitmap(bmp);
             GameNpc curTemNpc = new GameNpc(context, trueBmp, 1, 1);
             curTemNpc.setSpeed(3 * density);
+            curTemNpc.setNpcType(GameNpc.isBoss);
             int r = rand.nextInt(3);          //0:垂直；1：左下；2：右下；
             switch (r)
             {
@@ -119,7 +120,7 @@ public class GameNpcControl {
             curTemNpc.setHp(10);
             curTemNpc.setLife(1);
             curTemNpc.setActive(true);
-            curTemNpc.setRatio(0.15f * density);
+            curTemNpc.setRatio(0.1f * density);
             curTemNpc.setFireStartTime(System.currentTimeMillis());         //设置开火计时
             float px = rand.nextInt((int) (ScreenWidth - curTemNpc.getWidth()));
             float py = (0 - curTemNpc.getHeight());
