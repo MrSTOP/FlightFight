@@ -25,4 +25,8 @@
     <string name="record">排行榜</string>
     <string name="ykw_info">姓名:闫坤炜 学号:8002117038\n班级:软件工程1701\n负责音乐播放，玩家控制，部分游戏逻辑(碰撞检测、关卡)，游戏存档，排行榜存储以及部分游戏主循环等设计</string>
 
+
+
+    <string name="zjt_info">姓名:朱锦涛 学号:8002117037\n班级:软件工程1701\n负责NPC及BOSS，爆炸设计</string>
+
 </resources>

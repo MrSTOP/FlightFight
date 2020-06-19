@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/yankunwei8002117038"/>
+            />
 
         <TextView
             android:layout_width="0dp"
@@ -78,7 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/yzc_info" />
+            android:text="@string/zjt_info" />
 
     </LinearLayout>
     <Button
