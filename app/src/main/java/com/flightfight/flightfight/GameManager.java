@@ -149,7 +149,8 @@ public class GameManager {
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
         npcControl.draw(canvas);
-        if (npcControl.isBossDead() && !gameLevelChanged) {
+        System.out.println(("DEAD:" + isPlayerDead()));
+        if (npcControl.isBossDead() && !gameLevelChanged && !isPlayerDead()) {
             gameLevel++;
             gameLevelChanged = true;
             currentBackground = getCurrentBackgroundByLevel();
@@ -206,7 +207,10 @@ public class GameManager {
     public void setAchieveData(GameControl controller) {
         GameArchive gameArchive = Utils.parseGameAchieve(context);
         this.player = gameArchive.getPlayer();
+        this.gameLevel = gameArchive.getGameLevel();
+        currentBackground = getCurrentBackgroundByLevel();
         controller.setPlayerRect(this.player.getBoundRectF());
+        this.npcControl.setNowRound(this.gameLevel);
         this.npcControl.setBulletsList(gameArchive.getEnemyBulletList());
         this.npcControl.setNpcList(gameArchive.getEnemyList());
         this.npcControl.setNpcCur(npcControl.getNpcSum() - gameArchive.getSpareNPC());
@@ -259,10 +263,17 @@ public class GameManager {
         ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
         for (GameNpc npc : enemyList) {
             if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
-                player.setHp(0);
+                boolean isBoss = npc.getNpcType() == GameNpc.isBoss;
+                if (isBoss) {
+                    player.setHp(0);
+                    player.setLife(0);
+                } else {
+                    player.setHp(0);
+                }
+
                 gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
                 npc.setActive(false);
-                player.increaseKilledEnemy();
+                player.increaseKilledEnemy(isBoss ? 5 : 1);
             }
         }
 //        System.out.println("LIFE:" + player.getLife() + " HP:" + player.getHp());

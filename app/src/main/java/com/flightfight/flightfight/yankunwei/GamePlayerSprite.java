@@ -16,7 +16,7 @@ import java.util.List;
 public class GamePlayerSprite extends GameSprite {
 
     public static final int HALF_DESTINATION_AREA_LENGTH = 20;
-    public static final int SHOOT_COOL_TICK = 1;
+    public static final int SHOOT_COOL_TICK = 5;
 
 
     private static final float PLAYER_COLLIDE_BOX1_H_OFFSET = 30.0F / 78.0F;
