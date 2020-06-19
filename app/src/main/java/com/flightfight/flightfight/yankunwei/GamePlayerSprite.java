@@ -18,7 +18,6 @@ public class GamePlayerSprite extends GameSprite {
     public static final int HALF_DESTINATION_AREA_LENGTH = 20;
     public static final int SHOOT_COOL_TICK = 5;
 
-
     private static final float PLAYER_COLLIDE_BOX1_H_OFFSET = 30.0F / 78.0F;
     private static final float PLAYER_COLLIDE_BOX1_V_OFFSET = 0.0F / 88.0F;
     private static final float PLAYER_COLLIDE_BOX1_WIDTH = 18.0F / 78.0F;
@@ -31,7 +30,6 @@ public class GamePlayerSprite extends GameSprite {
     private static final float PLAYER_COLLIDE_BOX3_V_OFFSET = 59.0F / 88.0F;
     private static final float PLAYER_COLLIDE_BOX3_WIDTH = 78.0F / 78.0F;
     private static final float PLAYER_COLLIDE_BOX3_HEIGHT = 29.0F / 88.0F;
-
 
     private double angelArc;
     private float destinationX;
@@ -47,7 +45,6 @@ public class GamePlayerSprite extends GameSprite {
     private List<GameSprite> playerBulletList;
     @Expose
     protected RectF[] collideBoxes;
-
 
     /**
      * 发射子弹冷却时间
@@ -313,7 +310,7 @@ public class GamePlayerSprite extends GameSprite {
 //        }
     }
 
-    public void serDestination(float destinationX, float destinationY) {
+    public void setDestination(float destinationX, float destinationY) {
         this.destinationX = destinationX;
         this.destinationY = destinationY;
     }
@@ -335,7 +332,7 @@ public class GamePlayerSprite extends GameSprite {
     }
 
     public int getScore() {
-        return this.life * 10 + this.hp + this.killedEnemy * 15 - shootBulletCount;
+        return this.life * 30 + this.hp * 5 + this.killedEnemy * 50 - shootBulletCount / 2;
     }
 
     public void setSavedScore(GamePlayerSprite player) {

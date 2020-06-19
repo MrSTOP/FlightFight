@@ -9,13 +9,16 @@ public class GameAchieveInfo {
     public final String uuid;
     @Expose
     public final Date date;
+    @Expose
+    public final int level;
 
-    public GameAchieveInfo(String uuid, Date date) {
+    public GameAchieveInfo(String uuid, Date date, int level) {
         this.uuid = uuid;
         this.date = date;
+        this.level = level;
     }
 
-    public GameAchieveInfo(String uuid, long time) {
-        this(uuid, new Date(time));
+    public GameAchieveInfo(String uuid, long time,int level) {
+        this(uuid, new Date(time), level);
     }
 }

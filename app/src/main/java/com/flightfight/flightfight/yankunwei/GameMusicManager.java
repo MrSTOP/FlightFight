@@ -26,7 +26,8 @@ public class GameMusicManager {
         this.soundNameMap = new HashMap<>();
     }
 
-    public void init(Context context) {
+    public synchronized void init(Context context) {
+        release();
         loadSoundEffect(context);
         bgmMediaPlayer = new MediaPlayer();
         try {
@@ -41,13 +42,13 @@ public class GameMusicManager {
         setMute(mute);
     }
 
-    private void checkReady() {
+    private synchronized void checkReady() {
         if (!ready) {
             throw new IllegalStateException("GameMusicManager not ready yet.");
         }
     }
 
-    private void loadSoundEffect(Context context) {
+    private synchronized void loadSoundEffect(Context context) {
         release();
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
@@ -60,22 +61,22 @@ public class GameMusicManager {
         }
     }
 
-    public void playBGM() {
+    public synchronized void playBGM() {
         checkReady();
         bgmMediaPlayer.start();
     }
 
-    public void setBGMVolume(int volume) {
+    public synchronized void setBGMVolume(int volume) {
         checkReady();
         bgmMediaPlayer.setVolume((float) volume / 100.0F, (float) volume / 100.0F);
     }
 
-    public void pauseBGM() {
+    public synchronized void pauseBGM() {
         checkReady();
         bgmMediaPlayer.pause();
     }
 
-    public void playOrPauseBGM() {
+    public synchronized void playOrPauseBGM() {
         checkReady();
         if (bgmMediaPlayer.isPlaying()) {
             bgmMediaPlayer.pause();
@@ -84,14 +85,14 @@ public class GameMusicManager {
         }
     }
 
-    public void restartBGM() {
+    public synchronized void restartBGM() {
         checkReady();
         bgmMediaPlayer.pause();
         bgmMediaPlayer.seekTo(0);
         bgmMediaPlayer.start();
     }
 
-    public void setMute(boolean mute) {
+    public synchronized void setMute(boolean mute) {
         checkReady();
         if (mute) {
             bgmMediaPlayer.start();
@@ -115,16 +116,16 @@ public class GameMusicManager {
         this.mute = mute;
     }
 
-    public boolean isMute() {
+    public synchronized boolean isMute() {
         checkReady();
         return mute;
     }
 
-    public void play(String soundType) {
+    public synchronized void play(String soundType) {
         play(soundType, false);
     }
 
-    public void play(String soundType, boolean loop) {
+    public synchronized void play(String soundType, boolean loop) {
         checkReady();
         MediaPlayer mediaPlayer = soundNameMap.get(soundType);
         if (mediaPlayer == null) {
@@ -135,7 +136,7 @@ public class GameMusicManager {
         mediaPlayer.start();
     }
 
-    public void setVolume(String soundType, int volume) {
+    public synchronized void setVolume(String soundType, int volume) {
         checkReady();
         MediaPlayer mediaPlayer = soundNameMap.get(soundType);
         if (mediaPlayer == null) {
@@ -144,7 +145,7 @@ public class GameMusicManager {
         mediaPlayer.setVolume((float) volume / 100, (float) volume / 100);
     }
 
-    public void release() {
+    public synchronized void release() {
         if (bgmMediaPlayer != null) {
             bgmMediaPlayer.release();
             bgmMediaPlayer = null;

@@ -28,7 +28,7 @@ public class LoadGameActivity extends AppCompatActivity {
     private List<GameAchieveInfo> gameInfoList;
     private SaveGameAdapter mlistAdapter;
     private ListView mListView;
-    private Button manageStore;
+
     private Button bckBtn;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -73,7 +73,7 @@ public class LoadGameActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load_game);
-        manageStore = findViewById(R.id.manage_game);
+
         bckBtn = findViewById(R.id.load_bck);
         //gameInfoList = ;
 

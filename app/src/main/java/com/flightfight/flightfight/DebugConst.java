@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class DebugConst {
-    public static final boolean DEBUG_DRAW_SPRITE_BOUND_RECT = true;
+    public static final boolean DEBUG_DRAW_SPRITE_BOUND_RECT = false;
     public static final Paint boundPaint = new Paint();
 
     static {

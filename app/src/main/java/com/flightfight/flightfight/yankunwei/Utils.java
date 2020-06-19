@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class Utils {
 
@@ -96,7 +97,19 @@ public class Utils {
     }
 
     public static List<PlayerRecord> parsePlayerRecord() {
-        return GSON.fromJson(ValueContainer.SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG_DATA, new TypeToken<List<PlayerRecord>>() {}.getType());
+        List<PlayerRecord> playerRecordList = GSON.fromJson(ValueContainer.SERVICE_RESPONSE_LOAD_ALL_GAME_RECORD_ARG_DATA, new TypeToken<List<PlayerRecord>>() {}.getType());
+        Collections.sort(playerRecordList, (o1, o2) -> {
+            int score = o1.getScore() - o2.getScore();
+            int date = Long.compare(o1.getTime(), o2.getTime());
+            if (score != 0) {
+                return score;
+            } else if (date != 0) {
+                return date;
+            } else {
+                return o1.getPlayerName().compareTo(o2.getPlayerName());
+            }
+        });
+        return playerRecordList;
     }
 
     public static GameArchive parseGameAchieve(Context context) {

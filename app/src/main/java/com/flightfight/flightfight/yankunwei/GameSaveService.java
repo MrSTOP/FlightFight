@@ -11,7 +11,7 @@ import com.flightfight.flightfight.yankunwei.database.LeaderBoardDAO;
 import com.flightfight.flightfight.yankunwei.database.bean.PlayerRecord;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -33,13 +33,16 @@ public class GameSaveService extends Service {
     public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state.all";
 
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG = "playerRecord";
+    public static final String SERVICE_RESPONSE_SAVE_PLAYER_RECORD_ARG = "result";
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME = "gameAchieveTime";
+    public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_LEVEL = "gameLevel";
     public static final String SERVICE_RESPONSE_SAVE_GAME_ACHIEVE_ARG = "result";
     public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG = "gameTime";
     public static final String SERVICE_ACTION_DELETE_GAME_ACHIEVE_ARG = "uuid";
     public static final String SERVICE_RESPONSE_DELETE_GAME_ACHIEVE_ARG = "result";
 
-    public static final String SAVED_GAME_ACHIEVE_SUFFIX = "_ACHIEVE_TIME";
+    public static final String SAVED_GAME_ACHIEVE_TIME_SUFFIX = "_ACHIEVE_TIME";
+    public static final String SAVED_GAME_ACHIEVE_LEVEL_SUFFIX = "_ACHIEVE_LEVEL";
 
 
 //    class GameSaveServiceBinder extends Binder {
@@ -101,7 +104,8 @@ public class GameSaveService extends Service {
         String uuid = intent.getStringExtra(SERVICE_ACTION_DELETE_GAME_ACHIEVE_ARG);
         SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
         editor.remove(uuid);
-        editor.remove(uuid + SAVED_GAME_ACHIEVE_SUFFIX);
+        editor.remove(uuid + SAVED_GAME_ACHIEVE_TIME_SUFFIX);
+        editor.remove(uuid + SAVED_GAME_ACHIEVE_LEVEL_SUFFIX);
         boolean result = editor.commit();
         Intent deleteGameAchieve = new Intent(SERVICE_RESPONSE_DELETE_GAME_ACHIEVE);
         deleteGameAchieve.putExtra(SERVICE_RESPONSE_DELETE_GAME_ACHIEVE_ARG, result);
@@ -118,13 +122,17 @@ public class GameSaveService extends Service {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         Map<String, ?> allGameAchieve = sharedPreferences.getAll();
         ArrayList<GameAchieveInfo> gameAchieveInfoList = new ArrayList<>(allGameAchieve.size());
+        List<String> uuidList = new ArrayList<>();
         for (Map.Entry<String, ?> entry : allGameAchieve.entrySet()) {
-            if (entry.getKey().endsWith(SAVED_GAME_ACHIEVE_SUFFIX)) {
-                GameAchieveInfo gameAchieveInfo = new GameAchieveInfo(
-                        entry.getKey().replace(SAVED_GAME_ACHIEVE_SUFFIX, ""),
-                        Long.parseLong(entry.getValue().toString()));
-                gameAchieveInfoList.add(gameAchieveInfo);
+            if (!entry.getKey().endsWith(SAVED_GAME_ACHIEVE_TIME_SUFFIX) && !entry.getKey().endsWith(SAVED_GAME_ACHIEVE_LEVEL_SUFFIX)) {
+                uuidList.add(entry.getKey());
             }
+        }
+        for (String uuid : uuidList) {
+            GameAchieveInfo gameAchieveInfo = new GameAchieveInfo(uuid,
+                    Long.valueOf(sharedPreferences.getString(uuid + SAVED_GAME_ACHIEVE_TIME_SUFFIX,  null)),
+                    Integer.valueOf(sharedPreferences.getString(uuid + SAVED_GAME_ACHIEVE_LEVEL_SUFFIX, null)));
+            gameAchieveInfoList.add(gameAchieveInfo);
         }
         Intent gameAchieveDates = new Intent(SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE);
         ValueContainer.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE_ARG_DATA = Utils.GSON.toJson(gameAchieveInfoList);
@@ -139,7 +147,7 @@ public class GameSaveService extends Service {
         LeaderBoardDAO leaderBoardDAO = new LeaderBoardDAO(this);
         boolean result = leaderBoardDAO.insertPlayerRecord(playerRecord);
         Intent resultIntent = new Intent(SERVICE_RESPONSE_SAVE_PLAYER_RECORD);
-        resultIntent.putExtra("result", result);
+        resultIntent.putExtra(SERVICE_RESPONSE_SAVE_PLAYER_RECORD_ARG, result);
         sendBroadcast(resultIntent);
     }
 
@@ -158,15 +166,20 @@ public class GameSaveService extends Service {
         if (time == -1) {
             throw new IllegalArgumentException(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME + " not exist");
         }
+        int level = intent.getIntExtra(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_LEVEL, -1);
+        if (level == -1) {
+            throw new IllegalArgumentException(SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_LEVEL + " not exist");
+        }
         String uuidStr = UUID.randomUUID().toString();
         if (gameArchiveJson == null) {
             throw new IllegalArgumentException("\"SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA\"  can not be null");
         }
         SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(uuidStr, gameArchiveJson);
-        editor.putString(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX, String.valueOf(time));
-        System.out.println(uuidStr + " @ " + gameArchiveJson);
-        System.out.println(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX + " @ " + time);
+        editor.putString(uuidStr + SAVED_GAME_ACHIEVE_TIME_SUFFIX, String.valueOf(time));
+        editor.putString(uuidStr + SAVED_GAME_ACHIEVE_LEVEL_SUFFIX, String.valueOf(level));
+//        System.out.println(uuidStr + " @ " + gameArchiveJson);
+//        System.out.println(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX + " @ " + time);
         boolean result = editor.commit();
         Intent saveResult = new Intent(SERVICE_RESPONSE_SAVE_GAME_ACHIEVE);
         saveResult.putExtra(SERVICE_RESPONSE_SAVE_GAME_ACHIEVE_ARG, result);

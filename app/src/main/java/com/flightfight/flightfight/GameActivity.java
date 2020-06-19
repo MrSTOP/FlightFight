@@ -89,7 +89,7 @@ public class GameActivity extends AppCompatActivity {
         });
 
 
-
+GameMusicManager.getInstance().init(this);
         gameSurfaceView.setPauseButtonListener(()->{
             gameSurfaceView.setGameState(GameSurfaceView.GameState.GAME_PAUSE);
 

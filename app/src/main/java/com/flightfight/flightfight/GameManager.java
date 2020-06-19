@@ -107,7 +107,7 @@ public class GameManager {
     }
 
     public void setPlayerDestination(float x, float y) {
-        player.serDestination(x, y);
+        player.setDestination(x, y);
     }
 
     public void setPlayerFlip(boolean flip) {
@@ -129,7 +129,7 @@ public class GameManager {
         player.setAngelArc(0);
         player.setScreenSize(ScreenWidth, ScreenHeight);
         float px = (ScreenWidth - player.getWidth()) / 2;
-        float py = (ScreenHeight - player.getHeight()) / 2;
+        float py = ScreenHeight - player.getHeight() * 1.5F;
         player.setX(px);
         player.setY(py);
     }
@@ -149,7 +149,7 @@ public class GameManager {
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
         npcControl.draw(canvas);
-        System.out.println(("DEAD:" + isPlayerDead()));
+//        System.out.println(("DEAD:" + isPlayerDead()));
         if (npcControl.isBossDead() && !gameLevelChanged && !isPlayerDead()) {
             gameLevel++;
             gameLevelChanged = true;
@@ -194,6 +194,7 @@ public class GameManager {
         save.setAction(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE);
         ValueContainer.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_DATA = str;
         save.putExtra(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME, gameArchive.getGameDate().getTime());
+        save.putExtra(GameSaveService.SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_LEVEL, gameArchive.getGameLevel());
         context.startService(save);
     }
 
@@ -262,17 +263,14 @@ public class GameManager {
         player.setPlayerBulletList(playerBulletList);
         ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
         for (GameNpc npc : enemyList) {
-            if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
+            if (npc.isActive() && Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
                 boolean isBoss = npc.getNpcType() == GameNpc.isBoss;
                 if (isBoss) {
-                    player.setHp(0);
                     player.setLife(0);
-                } else {
-                    player.setHp(0);
                 }
-
+                player.setHp(0);
+                npc.setHp(0);
                 gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
-                npc.setActive(false);
                 player.increaseKilledEnemy(isBoss ? 5 : 1);
             }
         }
