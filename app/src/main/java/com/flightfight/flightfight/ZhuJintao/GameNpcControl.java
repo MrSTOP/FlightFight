@@ -101,7 +101,7 @@ public class GameNpcControl {
                             curTemNpc.setDir(GameNpc.RIGHTDOWN);
                             break;
                     }
-                    curTemNpc.setHp(2+nowRound);
+                    curTemNpc.setHp(2 + nowRound);
                     curTemNpc.setSumHp(curTemNpc.getHp());
                     curTemNpc.setLife(1);
                     curTemNpc.setActive(true);
@@ -152,7 +152,7 @@ public class GameNpcControl {
                     curTemNpc.setDir(GameNpc.RIGHTDOWN);
                     break;
             }
-            curTemNpc.setHp(40*nowRound);
+            curTemNpc.setHp(40 * nowRound);
             curTemNpc.setSumHp(curTemNpc.getHp());
             curTemNpc.setLife(1);
             curTemNpc.setActive(true);
@@ -177,8 +177,7 @@ public class GameNpcControl {
             //cloneNpc.addAll(npcList);
             for (GameNpc tempNpc : cloneNpcList) {
                 tempNpc.move();
-                if (tempNpc.getNpcType() == GameNpc.isBoss)
-                {
+                if (tempNpc.getNpcType() == GameNpc.isBoss) {
                     Bitmap bmp;
                     switch (nowRound) {
                         case 1:
@@ -194,7 +193,23 @@ public class GameNpcControl {
                             bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
                             break;
                     }
-                    tempNpc.setBitMapToNew(bmp,1,1);
+                    Bitmap trueBmp = GameNpc.getRotateBitmap(bmp);
+                    tempNpc.setBitMapToNew(trueBmp, 1, 1);
+                    tempNpc.setSpeed(3 * density);
+                    int r = rand.nextInt(3);          //0:垂直；1：左下；2：右下；
+                    switch (r) {
+                        case 0:
+                            tempNpc.setDir(GameNpc.DOWN);
+                            break;
+                        case 1:
+                            tempNpc.setDir(GameNpc.LEFTDOWN);
+                            break;
+                        case 2:
+                            tempNpc.setDir(GameNpc.RIGHTDOWN);
+                            break;
+                    }
+                    tempNpc.setLife(1);
+                    tempNpc.setRatio(0.1f * density);
                 }
                 tempNpc.NpcBoundJudge(ScreenWidth, ScreenHeight);
                 tempNpc.setFireCurTime(System.currentTimeMillis());
@@ -279,8 +294,7 @@ public class GameNpcControl {
         curTemBoom.setHp(1);
         curTemBoom.setLife(1);
         curTemBoom.setActive(true);
-        if (gameNpc.getNpcType() != GameNpc.isBoss)
-        {
+        if (gameNpc.getNpcType() != GameNpc.isBoss) {
             curTemBoom.setRatio(0.15f * density);
         } else {
             curTemBoom.setRatio(0.3f * density);
@@ -336,10 +350,8 @@ public class GameNpcControl {
 
 //            Log.d("Bullet", "Bullet X:" + curTempBullet.getX() + " Y:" + curTempBullet.getY() + "Bullet W:" + curTempBullet.getWidth() + " H:" + curTempBullet.getHeight());
             bulletsList.add(curTempBullet);
-            if (curCtrlNpc.getNpcType() == GameNpc.isBoss)
-            {
-                for (int i = 0; i < nowRound; i++)
-                {
+            if (curCtrlNpc.getNpcType() == GameNpc.isBoss) {
+                for (int i = 0; i < nowRound; i++) {
                     bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.bullet3);
                     //子弹需要翻转
                     trueBmp = curCtrlNpc.getRotateBitmap(bmp);
