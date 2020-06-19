@@ -361,7 +361,7 @@ public class GameNpc extends GameSprite {
         super.initBySaved(gameSprite);
         this.setSumHp(gameSprite.getHp());
         if (gameSprite instanceof GameNpc) {
-            this.setNpcType(GameNpc.isBoss);
+            this.setNpcType(((GameNpc) gameSprite).getNpcType());
         } else {
             throw new IllegalArgumentException("类型转换失败！");
         }
