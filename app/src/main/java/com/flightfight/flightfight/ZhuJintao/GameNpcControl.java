@@ -102,6 +102,7 @@ public class GameNpcControl {
                             break;
                     }
                     curTemNpc.setHp(2+nowRound);
+                    curTemNpc.setSumHp(curTemNpc.getHp());
                     curTemNpc.setLife(1);
                     curTemNpc.setActive(true);
                     curTemNpc.setRatio(0.15f * density);
@@ -152,6 +153,7 @@ public class GameNpcControl {
                     break;
             }
             curTemNpc.setHp(40*nowRound);
+            curTemNpc.setSumHp(curTemNpc.getHp());
             curTemNpc.setLife(1);
             curTemNpc.setActive(true);
             curTemNpc.setRatio(0.1f * density);
