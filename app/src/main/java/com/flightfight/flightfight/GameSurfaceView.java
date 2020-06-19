@@ -182,7 +182,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                             pauseRect = drawPauseBtn(mCanvas);
                             if (game.isGameLevelChanged()) {
                                 game.setGameLevelChanged(false);
-                                gameState = GameState.GAME_PAST;
+                                if (game.getGameLevel() >= 4) {
+                                    gameState = GameState.GAME_WIN;
+                                } else {
+                                    gameState = GameState.GAME_PAST;
+                                }
                                 game.initGame();
                                 controller = new GameControl(ScreenWidth, ScreenHeight);
                                 controller.setPlayerRect(game.getPlayerRectF());

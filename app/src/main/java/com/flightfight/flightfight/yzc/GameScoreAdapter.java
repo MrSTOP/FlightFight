@@ -98,7 +98,7 @@ public class GameScoreAdapter extends BaseAdapter {
 
         holder.itemScoreGameTime.setText(date);
        holder.itemSCoreGamePass.setText(String.valueOf(position+1) );
-        holder.itemScoreGame.setText("姓名:"+getItem(position).getPlayerName()+"分数:"+getItem(position).getScore());
+        holder.itemScoreGame.setText("姓名:"+getItem(position).getPlayerName()+"\t分数:"+getItem(position).getScore());
         return convertView;
     }
 
