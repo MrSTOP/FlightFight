@@ -318,12 +318,12 @@ public class GameNpc extends GameSprite {
         if (spriteBitmaps[currentFrame] != null) {
             RectF dst = new RectF();
             dst.left = x;
-            dst.top = y;
+            dst.top = y + 5;
             if (ratio == 0) {
                 ratio = 1.0f;
             }
             dst.right = x + width;
-            dst.bottom = y + height;
+            dst.bottom = y;
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setDither(true);
             paint.setAlpha(alpha);
@@ -331,12 +331,12 @@ public class GameNpc extends GameSprite {
 
             RectF colDst = new RectF();
             dst.left = x;
-            dst.top = y;
+            dst.top = y + 5;
             if (ratio == 0) {
                 ratio = 1.0f;
             }
-            dst.right = x + (width * (getHp() / getSumHp()));
-            dst.bottom = y + height;
+            dst.right = x + (width * ((float) getHp() / (float) getSumHp()));
+            dst.bottom = y;
             Paint colPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setDither(true);
             paint.setAlpha(alpha);
