@@ -279,6 +279,14 @@ public class GameNpc extends GameSprite {
         }
     }
 
+    @Override
+    public void setHp(int hp) {
+        super.setHp(hp);
+        if (life <= 0) {
+            this.active = false;
+        }
+    }
+
     public long getFireStartTime() {
         return fireStartTime;
     }

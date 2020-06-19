@@ -27,6 +27,7 @@ public class GameMusicManager {
     }
 
     public synchronized void init(Context context) {
+        release();
         loadSoundEffect(context);
         bgmMediaPlayer = new MediaPlayer();
         try {

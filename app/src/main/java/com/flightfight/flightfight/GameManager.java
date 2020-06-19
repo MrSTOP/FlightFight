@@ -149,7 +149,7 @@ public class GameManager {
         player.draw(canvas);
         npcControl.GameNpcAllManager(canvas);
         npcControl.draw(canvas);
-        System.out.println(("DEAD:" + isPlayerDead()));
+//        System.out.println(("DEAD:" + isPlayerDead()));
         if (npcControl.isBossDead() && !gameLevelChanged && !isPlayerDead()) {
             gameLevel++;
             gameLevelChanged = true;
@@ -263,17 +263,14 @@ public class GameManager {
         player.setPlayerBulletList(playerBulletList);
         ////////////////////////////////////敌人玩家碰撞检测/////////////////////////////////
         for (GameNpc npc : enemyList) {
-            if (Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
+            if (npc.isActive() && Utils.collideWithPlayer(player.getCollideBoxes(), npc.getBoundRectF())) {
                 boolean isBoss = npc.getNpcType() == GameNpc.isBoss;
                 if (isBoss) {
-                    player.setHp(0);
                     player.setLife(0);
-                } else {
-                    player.setHp(0);
                 }
-
+                player.setHp(0);
+                npc.setHp(0);
                 gameMusicManager.play(GameMusicManager.SOUND_EXPLOSION);
-                npc.setActive(false);
                 player.increaseKilledEnemy(isBoss ? 5 : 1);
             }
         }
