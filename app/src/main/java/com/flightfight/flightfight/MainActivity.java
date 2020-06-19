@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                                 Intent intent = new Intent(MainActivity.this,MainActivity.class);
                                 intent.putExtra(MainActivity.TAG_EXIT, true);
                                 startActivity(intent);
+
                             }
                         }
                 ).setNegativeButton("取消", new DialogInterface.OnClickListener() {

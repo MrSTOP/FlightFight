@@ -2,7 +2,12 @@ package com.flightfight.flightfight.ZhuJintao;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 
 import com.flightfight.flightfight.GameSprite;
 import com.google.gson.annotations.Expose;
@@ -26,6 +31,9 @@ public class GameNpc extends GameSprite {
     //npc类型
     @Expose
     private int npcType = isNormal;
+
+    //npc原（总）血量
+    private int sumHp;
 
     //构造不带帧动画的Sprite
     public GameNpc(Context context, Bitmap rowBitmap) {
@@ -295,9 +303,55 @@ public class GameNpc extends GameSprite {
         this.npcType = npcType;
     }
 
+    public int getSumHp() {
+        return sumHp;
+    }
+
+    public void setSumHp(int sumHp) {
+        this.sumHp = sumHp;
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+
+        if (spriteBitmaps[currentFrame] != null) {
+            RectF dst = new RectF();
+            dst.left = x;
+            dst.top = y + 5;
+            if (ratio == 0) {
+                ratio = 1.0f;
+            }
+            dst.right = x + width;
+            dst.bottom = y;
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setDither(true);
+            paint.setAlpha(alpha);
+            paint.setColor(Color.BLACK);
+
+            RectF colDst = new RectF();
+            dst.left = x;
+            dst.top = y + 5;
+            if (ratio == 0) {
+                ratio = 1.0f;
+            }
+            dst.right = x + (width * ((float) getHp() / (float) getSumHp()));
+            dst.bottom = y;
+            Paint colPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setDither(true);
+            paint.setAlpha(alpha);
+            paint.setColor(Color.RED);
+
+
+            canvas.drawRect(dst,paint);
+            canvas.drawRect(colDst,colPaint);
+        }
+    }
+
     @Override
     public void initBySaved(GameSprite gameSprite) {
         super.initBySaved(gameSprite);
+        this.setSumHp(gameSprite.getHp());
         if (gameSprite instanceof GameNpc) {
             this.setNpcType(((GameNpc) gameSprite).npcType);
         } else {
