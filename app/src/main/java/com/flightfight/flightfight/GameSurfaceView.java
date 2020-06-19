@@ -102,9 +102,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         textPaint.setARGB(254, 220, 0, 0);
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setFakeBoldText(true);
-        textPaint.setTextSize(80);
+        textPaint.setTextSize(80);.
         this.setKeepScreenOn(true);
-        setGameState(GameState.GAME_WIN);
+        setGameState(GameState.GAME_START);
         //  pauseBitmap = new Bitmap();
         Resources resources = context.getApplicationContext().getResources();
         pauseBitmap = BitmapFactory.decodeResource(resources, R.mipmap.bullet1);
