@@ -177,6 +177,24 @@ public class GameNpcControl {
             //cloneNpc.addAll(npcList);
             for (GameNpc tempNpc : cloneNpcList) {
                 tempNpc.move();
+                if (tempNpc.getNpcType() == GameNpc.isBoss)
+                {
+                    Bitmap bmp;
+                    switch (nowRound) {
+                        case 1:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
+                            break;
+                        case 2:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss2);
+                            break;
+                        case 3:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss3);
+                            break;
+                        default:
+                            bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
+                            break;
+                    }
+                }
                 tempNpc.NpcBoundJudge(ScreenWidth, ScreenHeight);
                 tempNpc.setFireCurTime(System.currentTimeMillis());
                 LoadBullets(tempNpc);
