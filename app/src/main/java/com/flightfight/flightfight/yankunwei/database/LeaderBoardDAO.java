@@ -45,7 +45,6 @@ public class LeaderBoardDAO {
                 playerRecords.add(playerRecord);
             }
             return playerRecords;
-
         }
     }
 
