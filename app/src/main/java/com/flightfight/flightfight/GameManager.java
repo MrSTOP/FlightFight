@@ -129,7 +129,7 @@ public class GameManager {
         player.setAngelArc(0);
         player.setScreenSize(ScreenWidth, ScreenHeight);
         float px = (ScreenWidth - player.getWidth()) / 2;
-        float py = ScreenHeight - player.getHeight();
+        float py = ScreenHeight - player.getHeight() * 1.5F;
         player.setX(px);
         player.setY(py);
     }

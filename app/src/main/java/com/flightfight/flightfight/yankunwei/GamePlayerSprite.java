@@ -332,7 +332,7 @@ public class GamePlayerSprite extends GameSprite {
     }
 
     public int getScore() {
-        return this.life * 10 + this.hp + this.killedEnemy * 15 - shootBulletCount;
+        return this.life * 10 + this.hp * 5 + this.killedEnemy * 20 - shootBulletCount * 2;
     }
 
     public void setSavedScore(GamePlayerSprite player) {
