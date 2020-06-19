@@ -196,18 +196,6 @@ public class GameNpcControl {
                     Bitmap trueBmp = GameNpc.getRotateBitmap(bmp);
                     tempNpc.setBitMapToNew(trueBmp, 1, 1);
                     tempNpc.setSpeed(3 * density);
-                    int r = rand.nextInt(3);          //0:垂直；1：左下；2：右下；
-                    switch (r) {
-                        case 0:
-                            tempNpc.setDir(GameNpc.DOWN);
-                            break;
-                        case 1:
-                            tempNpc.setDir(GameNpc.LEFTDOWN);
-                            break;
-                        case 2:
-                            tempNpc.setDir(GameNpc.RIGHTDOWN);
-                            break;
-                    }
                     tempNpc.setLife(1);
                     tempNpc.setRatio(0.1f * density);
                 }
