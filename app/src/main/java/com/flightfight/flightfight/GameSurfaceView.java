@@ -24,6 +24,9 @@ import android.widget.EditText;
 import androidx.appcompat.app.AlertDialog;
 
 import com.flightfight.flightfight.yankunwei.GameSaveService;
+import com.flightfight.flightfight.yankunwei.database.bean.PlayerRecord;
+
+import java.util.Objects;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     private static int TIME_IN_FRAME = 24;
@@ -63,7 +66,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            game.setAchieveData(controller);
+            if (Objects.equals(intent.getAction(), GameSaveService.SERVICE_RESPONSE_LOAD_GAME_ACHIEVE)) {
+                game.setAchieveData(controller);
+            } else if (Objects.equals(intent.getAction(), GameSaveService.SERVICE_RESPONSE_SAVE_PLAYER_RECORD)) {
+                boolean result = intent.getBooleanExtra(GameSaveService.SERVICE_RESPONSE_SAVE_PLAYER_RECORD_ARG, false);
+                    new AlertDialog.Builder(GameSurfaceView.this.context)
+                    .setTitle("保存结果")
+                    .setMessage(result ? "保存成功" : "保存失败")
+                    .setPositiveButton("确定", (dialog, which) -> dialog.dismiss())
+                    .show();
+            }
         }
     };
 
@@ -123,7 +135,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        context.registerReceiver(receiver, new IntentFilter(GameSaveService.SERVICE_RESPONSE_LOAD_GAME_ACHIEVE));
+        IntentFilter intentFilter = new IntentFilter(GameSaveService.SERVICE_RESPONSE_LOAD_GAME_ACHIEVE);
+        intentFilter.addAction(GameSaveService.SERVICE_RESPONSE_SAVE_PLAYER_RECORD);
+        context.registerReceiver(receiver, intentFilter);
         isRunning = true;
         new Thread(this).start();
     }
@@ -402,8 +416,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 .setTitle("恭喜,请输入你的名字")
                 .setView(input).setPositiveButton("确定", (dialog, which) -> {
                     String playerName = input.getText().toString();
-
-                    Log.e("dialogInput", "inputTitleDialog: " + playerName);
+                    PlayerRecord playerRecord = new PlayerRecord(System.currentTimeMillis(), game.getGameScore(), playerName);
+                    Intent intent = new Intent(GameSurfaceView.this.context, GameSaveService.class);
+                    intent.setAction(GameSaveService.SERVICE_ACTION_SAVE_PLAYER_RECORD);
+                    intent.putExtra(GameSaveService.SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG, playerRecord);
+                    GameSurfaceView.this.context.startService(intent);
                     dialog.dismiss();
                 })
                 .setNegativeButton("取消", (dialog, which) -> dialog.cancel()).create();

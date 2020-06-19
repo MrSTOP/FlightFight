@@ -33,6 +33,7 @@ public class GameSaveService extends Service {
     public static final String SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE = GameSaveService.class.getPackage().getName() + ".response.load.game.state.all";
 
     public static final String SERVICE_ACTION_SAVE_PLAYER_RECORD_ARG = "playerRecord";
+    public static final String SERVICE_RESPONSE_SAVE_PLAYER_RECORD_ARG = "result";
     public static final String SERVICE_ACTION_SAVE_GAME_ACHIEVE_ARG_TIME = "gameAchieveTime";
     public static final String SERVICE_RESPONSE_SAVE_GAME_ACHIEVE_ARG = "result";
     public static final String SERVICE_ACTION_LOAD_GAME_ACHIEVE_ARG = "gameTime";
@@ -139,7 +140,7 @@ public class GameSaveService extends Service {
         LeaderBoardDAO leaderBoardDAO = new LeaderBoardDAO(this);
         boolean result = leaderBoardDAO.insertPlayerRecord(playerRecord);
         Intent resultIntent = new Intent(SERVICE_RESPONSE_SAVE_PLAYER_RECORD);
-        resultIntent.putExtra("result", result);
+        resultIntent.putExtra(SERVICE_RESPONSE_SAVE_PLAYER_RECORD_ARG, result);
         sendBroadcast(resultIntent);
     }
 

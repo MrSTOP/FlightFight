@@ -80,7 +80,7 @@ public class GameScoreAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if(convertView == null){
-            convertView = layoutInflater.inflate(R.layout.layout_loadgame_list, null);
+            convertView = layoutInflater.inflate(R.layout.layout_score_list, null);
             holder = new ScoreViewHolder(convertView);
             convertView.setTag(holder);
         }

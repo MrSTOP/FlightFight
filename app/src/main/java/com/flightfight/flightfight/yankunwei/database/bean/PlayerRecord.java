@@ -1,13 +1,19 @@
 package com.flightfight.flightfight.yankunwei.database.bean;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 import java.util.Date;
 
 public class PlayerRecord implements Serializable {
 
+    @Expose
     private int id;
+    @Expose
     private long time;
+    @Expose
     private int score;
+    @Expose
     private String playerName;
 
     public PlayerRecord() {
