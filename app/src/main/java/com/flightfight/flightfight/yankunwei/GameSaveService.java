@@ -166,8 +166,8 @@ public class GameSaveService extends Service {
         SharedPreferences.Editor editor = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(uuidStr, gameArchiveJson);
         editor.putString(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX, String.valueOf(time));
-        System.out.println(uuidStr + " @ " + gameArchiveJson);
-        System.out.println(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX + " @ " + time);
+//        System.out.println(uuidStr + " @ " + gameArchiveJson);
+//        System.out.println(uuidStr + SAVED_GAME_ACHIEVE_SUFFIX + " @ " + time);
         boolean result = editor.commit();
         Intent saveResult = new Intent(SERVICE_RESPONSE_SAVE_GAME_ACHIEVE);
         saveResult.putExtra(SERVICE_RESPONSE_SAVE_GAME_ACHIEVE_ARG, result);

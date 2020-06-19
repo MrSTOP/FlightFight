@@ -12,8 +12,6 @@ import java.lang.ref.WeakReference;
 
 public class GameBulletFactory {
     public static final int DEFAULT_BULLET_SPEED = 15;
-
-
     public static final int BULLET_PLAYER = 1;
     public static final int BULLET_ENEMY = 2;
 
@@ -23,7 +21,6 @@ public class GameBulletFactory {
     private WeakReference<Context> contextWeakRef;
     private float density;
     private boolean ready = false;
-//    public static final int BULLET_
 
     private static GameBulletFactory instance = new GameBulletFactory();
 

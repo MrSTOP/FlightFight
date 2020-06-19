@@ -107,7 +107,7 @@ public class GameManager {
     }
 
     public void setPlayerDestination(float x, float y) {
-        player.serDestination(x, y);
+        player.setDestination(x, y);
     }
 
     public void setPlayerFlip(boolean flip) {
