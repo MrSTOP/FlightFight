@@ -194,6 +194,7 @@ public class GameNpcControl {
                             bmp = BitmapFactory.decodeResource(context.getResources(), R.mipmap.boss1);
                             break;
                     }
+                    tempNpc.setBitMapToNew(bmp,1,1);
                 }
                 tempNpc.NpcBoundJudge(ScreenWidth, ScreenHeight);
                 tempNpc.setFireCurTime(System.currentTimeMillis());

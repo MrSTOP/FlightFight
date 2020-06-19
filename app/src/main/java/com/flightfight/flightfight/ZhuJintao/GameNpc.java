@@ -58,6 +58,21 @@ public class GameNpc extends GameSprite {
         setHp(2);
     }
 
+    //重新设置位图的方法：
+    public void setBitMapToNew(Bitmap rowBitmap, int totalFrames, int rowFrames){
+        int frame_width = rowBitmap.getWidth() / rowFrames;
+        int rows = totalFrames / rowFrames;
+        int frame_height = rowBitmap.getHeight() / rows;
+        spriteBitmaps = new Bitmap[totalFrames];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < rowFrames; col++) {
+                spriteBitmaps[row * rowFrames + col] =
+                        Bitmap.createBitmap(rowBitmap, col * frame_width, row * frame_height,
+                                frame_width, frame_height);
+            }
+        }
+    }
+
 
     //NPC移动逻辑重写
     public void move() {
