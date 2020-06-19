@@ -95,6 +95,7 @@ public class GameScoreAdapter extends BaseAdapter {
 //        String date1 =  date.substring(0, 18);
 //        String date2 = date.substring(19);
 //         date = date1 +"\n" + date2;
+
         holder.itemScoreGameTime.setText(date);
        holder.itemSCoreGamePass.setText(String.valueOf(position+1) );
         holder.itemScoreGame.setText("姓名:"+getItem(position).getPlayerName()+"分数:"+getItem(position).getScore());

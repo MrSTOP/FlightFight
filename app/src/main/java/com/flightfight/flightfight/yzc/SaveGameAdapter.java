@@ -17,6 +17,7 @@ import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.yankunwei.GameAchieveInfo;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 
+import java.io.PipedOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -39,6 +40,7 @@ class ViewHolder{
         itemSaveGameTime = itemView.findViewById(R.id.item_game_time);
         itemSaveGamePass = itemView.findViewById(R.id.item_game_pass);
         button = itemView.findViewById(R.id.item_game_delete_button);
+        itemIcon = itemView.findViewById(R.id.rand_icon);
     }
 }
 
@@ -94,9 +96,16 @@ public class SaveGameAdapter extends BaseAdapter {
 
 //        String date1 =  date.substring(0, 18);
 //        String date2 = date.substring(19);
-//         date = date1 +"\n" + date2;
+//         date = date1 +"\n" + date2;      if
+        if(getItem(position).level == 1){
+            holder.itemIcon.setImageResource(R.mipmap.round_bck1);
+        }else if(getItem(position).level == 2){
+            holder.itemIcon.setImageResource(R.mipmap.round_bck2);
+        }else {
+            holder.itemIcon.setImageResource(R.mipmap.round_bck3);
+        }
         holder.itemSaveGameTime.setText(date);
-       holder.itemSaveGamePass.setText(String.valueOf(position));
+        holder.itemSaveGamePass.setText("关卡:"+getItem(position).level);
 
         holder.button.setOnClickListener(v -> {
 
