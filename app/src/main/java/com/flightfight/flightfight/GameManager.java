@@ -84,6 +84,7 @@ public class GameManager {
     public Bitmap getCurrentBackgroundByLevel() {
         return this.getCurrentBackgroundByLevel(this.gameLevel);
     }
+
     public Bitmap getCurrentBackgroundByLevel(int gameLevel) {
         switch (gameLevel) {
             case 1:

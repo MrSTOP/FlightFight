@@ -27,29 +27,26 @@ public class LeaderBoardDAO {
             values.put("PlayerName", playerRecord.getPlayerName());
             boolean result = database.insert(DBHelper.TABLE_LEADER_BOARD, null, values) != -1;
             return result;
-        }finally {
+        } finally {
             database.close();
         }
     }
 
     public List<PlayerRecord> getAllPlayerRecord() {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
+        List<PlayerRecord> playerRecords = new ArrayList<>();
         try (Cursor cursor = database.query(DBHelper.TABLE_LEADER_BOARD, null, null, null, null, null, null)) {
-            if (cursor.getCount() > 0) {
-                List<PlayerRecord> playerRecords = new ArrayList<>();
-                while (cursor.moveToNext()) {
-                    PlayerRecord playerRecord = new PlayerRecord();
-                    playerRecord.setId(cursor.getInt(cursor.getColumnIndexOrThrow("ID")));
-                    playerRecord.setTime(cursor.getLong(cursor.getColumnIndexOrThrow("Time")));
-                    playerRecord.setScore(cursor.getInt(cursor.getColumnIndexOrThrow("Score")));
-                    playerRecord.setPlayerName(cursor.getString(cursor.getColumnIndexOrThrow("PlayerName")));
-                    playerRecords.add(playerRecord);
-                }
-                return playerRecords;
-            } else {
-                return null;
+            while (cursor.moveToNext()) {
+                PlayerRecord playerRecord = new PlayerRecord();
+                playerRecord.setId(cursor.getInt(cursor.getColumnIndexOrThrow("ID")));
+                playerRecord.setTime(cursor.getLong(cursor.getColumnIndexOrThrow("Time")));
+                playerRecord.setScore(cursor.getInt(cursor.getColumnIndexOrThrow("Score")));
+                playerRecord.setPlayerName(cursor.getString(cursor.getColumnIndexOrThrow("PlayerName")));
+                playerRecords.add(playerRecord);
             }
+            return playerRecords;
+
         }
     }
-    
+
 }

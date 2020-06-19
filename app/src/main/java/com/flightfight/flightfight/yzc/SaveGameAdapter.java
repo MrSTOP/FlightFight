@@ -3,7 +3,6 @@ package com.flightfight.flightfight.yzc;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.flightfight.flightfight.MainActivity;
 import com.flightfight.flightfight.R;
 import com.flightfight.flightfight.yankunwei.GameAchieveInfo;
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 

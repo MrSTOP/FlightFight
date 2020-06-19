@@ -137,6 +137,20 @@
                 android:layout_margin="25dp"
                 />
             <TextView
+                android:id="@+id/main_score_game"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
+                android:background="@mipmap/menu"
+                android:text="@string/record"
+                android:textColor="#FFFFFF"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_margin="25dp"
+                />
+            <TextView
                 android:id="@+id/main_quit_game"
                 android:layout_width="250dp"
                 android:layout_height="50dp"

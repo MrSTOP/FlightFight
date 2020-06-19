@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView startGame;
     private TextView aboutGame;
     private TextView loadGame;
+    private TextView scoreGame;
     private TextView quitGame;
     private ImageView musicControl;
     private ImageView pause;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         startGame = findViewById(R.id.main_start_game);
         aboutGame = findViewById(R.id.main_about_game);
         loadGame = findViewById(R.id.main_load_game);
+        scoreGame = findViewById(R.id.main_score_game);
         quitGame = findViewById(R.id.main_quit_game);
 
         musicControl.setOnClickListener(v -> {
@@ -108,6 +110,10 @@ public class MainActivity extends AppCompatActivity {
 
         aboutGame.setOnClickListener(v -> {
             Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
+        });
+        scoreGame.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ScoreActivity.class);
             startActivity(intent);
         });
 

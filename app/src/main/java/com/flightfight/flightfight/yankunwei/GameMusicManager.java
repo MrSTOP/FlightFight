@@ -61,12 +61,7 @@ public class GameMusicManager {
     }
 
     public void playBGM() {
-        playBGM(30);
-    }
-
-    public void playBGM(int volume) {
         checkReady();
-        setBGMVolume(volume);
         bgmMediaPlayer.start();
     }
 
@@ -107,7 +102,6 @@ public class GameMusicManager {
                 musicEntry.getValue().setVolume(0.0F, 0.0F);
                 musicEntry.getValue().pause();
             }
-            System.out.println("MUTE");
         } else {
             bgmMediaPlayer.start();
             bgmMediaPlayer.setVolume(0.3F, 0.3F);
@@ -117,7 +111,6 @@ public class GameMusicManager {
                 musicEntry.getValue().setVolume(1.0F, 1.0F);
                 musicEntry.getValue().pause();
             }
-            System.out.println("NAN MUTE");
         }
         this.mute = mute;
     }
@@ -128,27 +121,27 @@ public class GameMusicManager {
     }
 
     public void play(String soundType) {
-        play(soundType, 100);
+        play(soundType, false);
     }
 
-    public void play(String soundType, int volume) {
-        play(soundType, volume, false);
-    }
-
-    public void play(String soundType, int volume, boolean loop) {
-        play(soundType, volume, volume, loop);
-    }
-
-    public void play(String soundType, int leftVolume, int rightVolume, boolean loop) {
+    public void play(String soundType, boolean loop) {
         checkReady();
         MediaPlayer mediaPlayer = soundNameMap.get(soundType);
         if (mediaPlayer == null) {
             throw new IllegalArgumentException("Sound type: " + soundType + " not exist");
         }
         mediaPlayer.seekTo(0);
-        mediaPlayer.setVolume((float) leftVolume / 100.0F, (float) rightVolume / 100.0F);
         mediaPlayer.setLooping(loop);
         mediaPlayer.start();
+    }
+
+    public void setVolume(String soundType, int volume) {
+        checkReady();
+        MediaPlayer mediaPlayer = soundNameMap.get(soundType);
+        if (mediaPlayer == null) {
+            throw new IllegalArgumentException("Sound type: " + soundType + " not exist");
+        }
+        mediaPlayer.setVolume((float) volume / 100, (float) volume / 100);
     }
 
     public void release() {
@@ -163,3 +156,4 @@ public class GameMusicManager {
         ready = false;
     }
 }
+
