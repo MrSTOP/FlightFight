@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.flightfight.flightfight.yankunwei.GameAchieveInfo;
@@ -32,6 +33,8 @@ public class LoadGameActivity extends AppCompatActivity {
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+
             Log.e("gameInfo", "onReceive: ");
             if(Objects.equals(intent.getAction(), GameSaveService.SERVICE_RESPONSE_GET_ALL_GAME_ACHIEVE))
             {

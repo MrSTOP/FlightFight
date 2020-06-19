@@ -2,6 +2,7 @@ package com.flightfight.flightfight;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
@@ -14,9 +15,13 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.EditText;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.flightfight.flightfight.yankunwei.GameSaveService;
 
@@ -36,6 +41,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private Bitmap memBmp;
 
     private Rect winAndFaildbtn;
+    private Rect playNameRect;
     private Rect pauseRect;
     private GameState gameState;
     private PauseButtonListener pauseButtonListener;
@@ -98,7 +104,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         textPaint.setFakeBoldText(true);
         textPaint.setTextSize(80);
         this.setKeepScreenOn(true);
-        setGameState(GameState.GAME_START);
+        setGameState(GameState.GAME_WIN);
         //  pauseBitmap = new Bitmap();
         Resources resources = context.getApplicationContext().getResources();
         pauseBitmap = BitmapFactory.decodeResource(resources, R.mipmap.bullet1);
@@ -235,6 +241,13 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         if (readyDrawFaildAndWin) {
             // banButtonListener.banButtonListener();
+            if(gameState == GameState.GAME_WIN){
+                if (event.getX() >= playNameRect.left && event.getX() <= playNameRect.right && event.getY() >= playNameRect.top && event.getY() <= playNameRect.bottom)
+                {
+                    inputTitleDialog();
+                }
+            }
+
             if (event.getX() >= winAndFaildbtn.left && event.getX() <= winAndFaildbtn.right && event.getY() >= winAndFaildbtn.top && event.getY() <= winAndFaildbtn.bottom) {
                 readyDrawFaildAndWin = false;
                 Intent intent = new Intent(context, MainActivity.class);
@@ -299,6 +312,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     public void drawFaildAndVictory(Canvas canvas, Bitmap faildBitmap) {
         winAndFaildbtn = new Rect();
+
         textPaint.setTextAlign(Paint.Align.LEFT);
         textPaint.setTextSize(80);
 
@@ -319,15 +333,26 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         mCanvas.drawRect(bckRect, paint);
         String btn = "返回界面";
 //        System.out.println(("SW: " + ScreenWidth + " SH: " + ScreenHeight));
-        mCanvas.drawText(btn, (ScreenWidth / 2) - 150, ScreenHeight - 200, textPaint);
+        mCanvas.drawText(btn, (ScreenWidth / 2) - 150, ScreenHeight - 300, textPaint);
         // winAndFaildbtn = textPaint.getTextBounds();
         int width = (int) textPaint.measureText(btn);
-        winAndFaildbtn.left = ScreenWidth / 2 - 100;
+        winAndFaildbtn.left = ScreenWidth / 2 - 160;
         winAndFaildbtn.right = winAndFaildbtn.left + width + 20;
-        winAndFaildbtn.top = ScreenHeight - 210 - (int) (textPaint.descent() - textPaint.ascent());
-        winAndFaildbtn.bottom = ScreenHeight - 190;
-
+        winAndFaildbtn.top = ScreenHeight - 310 - (int) (textPaint.descent() - textPaint.ascent());
+        winAndFaildbtn.bottom = ScreenHeight - 290;
+        if(gameState == GameState.GAME_WIN){
+            playNameRect = new Rect();
+            btn = "留下称谓";
+            mCanvas.drawText(btn,(ScreenWidth / 2) - 150, ScreenHeight - 150, textPaint);
+            width = (int) textPaint.measureText(btn);
+            playNameRect.left = ScreenWidth / 2 - 160;
+            playNameRect.right = winAndFaildbtn.left + width + 20;
+            playNameRect.top = ScreenHeight - 160 - (int) (textPaint.descent() - textPaint.ascent());
+            playNameRect.bottom = ScreenHeight - 140;
+        }
         readyDrawFaildAndWin = true;
+
+
     }
 
     public Rect drawPauseBtn(Canvas mCanvas) {
@@ -368,4 +393,22 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public GameManager getGame() {
         return game;
     }
+
+
+    public void inputTitleDialog() {
+        EditText input = new EditText(this.context);
+        input.setFocusable(true);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.context).setTitle("恭喜,请输入你的名字").setView(input).setPositiveButton("确定",(dialog, which) -> {
+            String playerName = input.getText().toString();
+            
+            Log.e("dialogInput", "inputTitleDialog: "+playerName);
+        }).setNegativeButton("取消",null);
+        builder.show();
+
+    }
+
+
+
+
+
 }
