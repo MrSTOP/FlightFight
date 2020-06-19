@@ -54,9 +54,6 @@ public class LoadGameActivity extends AppCompatActivity {
                     dialog.dismiss();
                 }).create().show();
                 mlistAdapter.notifyDataSetChanged();
-                //mListView = findViewById(R.id.load_game_list);
-              //  mListView.setAdapter(mlistAdapter);
-
             }
         }
     };
