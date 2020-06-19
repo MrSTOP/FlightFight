@@ -157,7 +157,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                             game.updateAnimation();
                             game.updateHappyFish();
                             game.draw(mCanvas);
-                            controller.draw(mCanvas);
 
                             drawStaus(mCanvas, ScreenWidth, ScreenHeight, game.getPlayerHp(), game.getEnemyCount(), game.getGameScore());
                             pauseRect = drawPauseBtn(mCanvas);
@@ -224,9 +223,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             }
             if (controller.isPlayerTouched()) {
                 game.setPlayerActive(true);
-            }
-            if (controller.isFireTouched()) {
-//            game.loadBubbles();
             }
 
             if (event.getX() >= pauseRect.left && event.getX() <= pauseRect.right && event.getY() >= pauseRect.top && event.getY() <= pauseRect.bottom) {

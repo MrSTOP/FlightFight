@@ -10,17 +10,7 @@ import com.flightfight.flightfight.yankunwei.Utils;
 public class GameControl {
     private int screenWidth;
     private int screenHeight;
-    private int joyPlateX;
-    private int joyPlateY;
-    private int joyPlateR;
-    private int firePlateX;
-    private int firePlateY;
-    private int firePlateR;
-    private int fireTouchX;
-    private int fireTouchY;
-    private int fireTouchR;
     private boolean noTouched;
-    private boolean fireTouched;
     private int currentDir;
 
     private RectF playerRect;
@@ -32,35 +22,9 @@ public class GameControl {
     public GameControl(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
-        InitTouchArea();
-    }
-
-    private void InitTouchArea() {
-        joyPlateR = screenWidth / 24;
-        joyPlateX = 4 * joyPlateR;
-        joyPlateY = screenHeight - 4 * joyPlateR;
-        firePlateR = screenWidth / 24;
-        firePlateX = screenWidth - 4 * joyPlateR;
-        firePlateY = screenHeight - 4 * joyPlateR;
-        fireTouchX = firePlateX;
-        fireTouchY = firePlateY;
-        fireTouchR = screenWidth / 8;
-    }
-
-    public void draw(Canvas canvas) {
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        try {
-            paint.setColor(0x20EEEEEE);
-            canvas.drawCircle(fireTouchX, fireTouchY, fireTouchR, paint);
-            paint.setColor(0x25FFFFFF);
-            canvas.drawCircle(firePlateX, firePlateY, firePlateR, paint);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void getTouch(MotionEvent event) {
-        fireTouched = false;
         noTouched = false;
         int playerTouchID = 0;
         float x = 0;
@@ -90,23 +54,6 @@ public class GameControl {
             }
         }
         ///////////////////////////////////////////////////////
-        if (pointCount == 1) {
-            x = event.getX(0);
-            y = event.getY(0);
-            if (checkPointInCircle(x, y, fireTouchX, fireTouchY, fireTouchR)) {
-                fireTouched = true;
-                //x2 = x;
-                //y2 = y;
-            }
-        } else if (pointCount > 1) {
-            for (int i = 0; i < pointCount; i++) {
-                x = event.getX(i);
-                y = event.getY(i);
-                if (checkPointInCircle(x, y, fireTouchX, fireTouchY, fireTouchR)) {
-                    fireTouched = true;
-                }
-            }
-        }
         //最后一个手指离开
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             noTouched = true;
@@ -179,11 +126,6 @@ public class GameControl {
 
     public boolean isNoTouched() {
         return noTouched;
-    }
-
-
-    public boolean isFireTouched() {
-        return fireTouched;
     }
 
     public int getCurrentDir() {
