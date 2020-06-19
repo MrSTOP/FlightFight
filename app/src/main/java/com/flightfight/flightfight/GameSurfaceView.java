@@ -241,9 +241,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         if (readyDrawFaildAndWin) {
             // banButtonListener.banButtonListener();
-            if(gameState == GameState.GAME_WIN){
-                if (event.getX() >= playNameRect.left && event.getX() <= playNameRect.right && event.getY() >= playNameRect.top && event.getY() <= playNameRect.bottom)
-                {
+            if (gameState == GameState.GAME_WIN) {
+                if (event.getX() >= playNameRect.left && event.getX() <= playNameRect.right && event.getY() >= playNameRect.top && event.getY() <= playNameRect.bottom && event.getAction() == MotionEvent.ACTION_UP) {
                     inputTitleDialog();
                 }
             }
@@ -340,10 +339,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         winAndFaildbtn.right = winAndFaildbtn.left + width + 20;
         winAndFaildbtn.top = ScreenHeight - 310 - (int) (textPaint.descent() - textPaint.ascent());
         winAndFaildbtn.bottom = ScreenHeight - 290;
-        if(gameState == GameState.GAME_WIN){
+        if (gameState == GameState.GAME_WIN) {
             playNameRect = new Rect();
             btn = "留下称谓";
-            mCanvas.drawText(btn,(ScreenWidth / 2) - 150, ScreenHeight - 150, textPaint);
+            mCanvas.drawText(btn, (ScreenWidth / 2) - 150, ScreenHeight - 150, textPaint);
             width = (int) textPaint.measureText(btn);
             playNameRect.left = ScreenWidth / 2 - 160;
             playNameRect.right = winAndFaildbtn.left + width + 20;
@@ -398,17 +397,19 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void inputTitleDialog() {
         EditText input = new EditText(this.context);
         input.setFocusable(true);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.context).setTitle("恭喜,请输入你的名字").setView(input).setPositiveButton("确定",(dialog, which) -> {
-            String playerName = input.getText().toString();
-            
-            Log.e("dialogInput", "inputTitleDialog: "+playerName);
-        }).setNegativeButton("取消",null);
-        builder.show();
+        Log.e("TAG", "inputTitleDialog: " );
+        AlertDialog alertDialog = new AlertDialog.Builder(this.context)
+                .setTitle("恭喜,请输入你的名字")
+                .setView(input).setPositiveButton("确定", (dialog, which) -> {
+                    String playerName = input.getText().toString();
+
+                    Log.e("dialogInput", "inputTitleDialog: " + playerName);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("取消", (dialog, which) -> dialog.cancel()).create();
+        alertDialog.show();
 
     }
-
-
-
 
 
 }
